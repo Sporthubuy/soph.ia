@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { CreateKUModal, type KUFormData } from "./create-ku-modal";
 
 export const KnowledgeOverview = () => {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [knowledgeUnitsState, setKnowledgeUnitsState] = useState<typeof knowledgeUnits>([]);
 
   const knowledgeUnits = [
     {
@@ -154,8 +157,40 @@ export const KnowledgeOverview = () => {
     { id: "draft", label: "Draft" },
   ];
 
+  const handleCreateKU = (formData: KUFormData) => {
+    // This will be replaced with actual API call
+    const newKU = {
+      id: knowledgeUnits.length + 1,
+      title: formData.title,
+      description: formData.description,
+      domain: formData.domain,
+      owner: "Current User",
+      status: "draft" as const,
+      trustScore: 0,
+      dependencies: formData.dependencies.length,
+      version: 1,
+      createdAt: "just now",
+      updatedAt: "just now",
+    };
+    // In a real app, you'd make an API call here
+    console.log("Creating new KU:", formData);
+    // Show success toast (to be implemented)
+  };
+
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6">
+      {/* Header with Search and Create Button */}
+      <div className="flex items-center justify-between gap-4 mb-4">
+        <h1 className="headline-lg text-black">Knowledge Units</h1>
+        <button
+          onClick={() => setIsCreateModalOpen(true)}
+          className="flex items-center gap-2 px-4 py-3 bg-[#4648d4] text-white rounded-lg hover:bg-[#3a3ab0] transition-colors font-medium body-md"
+        >
+          <span className="material-symbols-outlined text-xl">add</span>
+          New Knowledge Unit
+        </button>
+      </div>
+
       {/* Search Bar */}
       <div className="space-y-4">
         <div className="relative">
@@ -269,6 +304,13 @@ export const KnowledgeOverview = () => {
           ))}
         </div>
       </div>
+
+      {/* Create KU Modal */}
+      <CreateKUModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onSubmit={handleCreateKU}
+      />
     </div>
   );
 };
