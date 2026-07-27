@@ -2,13 +2,37 @@
 
 import { useState } from "react";
 import { CreateProjectModal, type ProjectFormData } from "./create-project-modal";
+import { createProject } from "@/lib/projects/actions";
 
-export const ProjectsOverview = () => {
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+  status?: string;
+  kuCount?: number;
+  agentCount?: number;
+  progress?: number;
+  owner?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface ProjectsOverviewProps {
+  projects: Project[];
+  locale: string;
+}
+
+export const ProjectsOverview = ({ projects: initialProjects, locale }: ProjectsOverviewProps) => {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [projects, setProjects] = useState(initialProjects);
+  const [isCreating, setIsCreating] = useState(false);
 
-  const projects = [
+  // Keep static fallback for empty state
+  const mockProjects = [
     {
       id: 1,
       name: "Aether Core Deployment",
@@ -123,6 +147,18 @@ export const ProjectsOverview = () => {
     return "bg-orange-200";
   };
 
+  const getTextColorForBackground = (bgColor: string): string => {
+    const colorMap: Record<string, string> = {
+      "#e1e0ff": "#4648d4",
+      "#dae2fd": "#000000",
+      "#fff8e1": "#f59e0b",
+      "#e0e3e5": "#45464d",
+      "#e0f2fe": "#0369a1",
+      "#fce7f3": "#ec4899",
+    };
+    return colorMap[bgColor] || "#4648d4";
+  };
+
   const tabs = [
     { id: "all", label: "All Projects" },
     { id: "active", label: "Active" },
@@ -130,10 +166,23 @@ export const ProjectsOverview = () => {
     { id: "archived", label: "Archived" },
   ];
 
-  const handleCreateProject = (formData: ProjectFormData) => {
-    // This will be replaced with actual API call
-    console.log("Creating new project:", formData);
-    // Show success toast (to be implemented)
+  const handleCreateProject = async (formData: ProjectFormData) => {
+    setIsCreating(true);
+    try {
+      const result = await createProject(formData, locale);
+      if (result.success) {
+        // Add new project to the list
+        setProjects([result.data, ...projects]);
+        setIsCreateModalOpen(false);
+        // Show success toast (to be implemented)
+        console.log("Project created successfully!");
+      }
+    } catch (error) {
+      console.error("Error creating project:", error);
+      // Show error toast (to be implemented)
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   return (
@@ -203,8 +252,13 @@ export const ProjectsOverview = () => {
       <div className="space-y-4">
         <p className="section-heading">PROJECTS</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {projects.map((project) => (
+        {projects.length === 0 ? (
+          <div className="panel p-8 text-center">
+            <p className="body-md text-[#7c839b]">No projects yet. Create one to get started!</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {projects.map((project) => (
             <div
               key={project.id}
               className="panel p-5 hover:shadow-md transition-all cursor-pointer group"
@@ -217,7 +271,7 @@ export const ProjectsOverview = () => {
                 >
                   <span
                     className="material-symbols-outlined text-2xl"
-                    style={{ color: project.textColor }}
+                    style={{ color: getTextColorForBackground(project.color) }}
                   >
                     {project.icon}
                   </span>
@@ -279,8 +333,9 @@ export const ProjectsOverview = () => {
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Create Project Modal */}
