@@ -3,6 +3,7 @@ import { redirect } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
 import { AppSidebar } from "@/components/shared/app-sidebar";
 import { AgentsOverview } from "@/components/shared/agents-overview";
+import { getAgents } from "@/lib/agents/actions";
 
 export default async function AgentsPage({
   params,
@@ -21,12 +22,14 @@ export default async function AgentsPage({
     redirect({ href: "/login", locale });
   }
 
+  const agents = await getAgents(locale);
+
   return (
     <div className="flex h-screen bg-[#f7f9fb]">
       <AppSidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 overflow-auto">
-          <AgentsOverview />
+          <AgentsOverview agents={agents} locale={locale} />
         </main>
       </div>
     </div>

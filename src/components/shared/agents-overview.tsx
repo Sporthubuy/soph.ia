@@ -2,11 +2,17 @@
 
 import { useState } from "react";
 
-export const AgentsOverview = () => {
+interface AgentsOverviewProps {
+  agents: any[];
+  locale: string;
+}
+
+export const AgentsOverview = ({ agents: initialAgents, locale }: AgentsOverviewProps) => {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
+  const [agents, setAgents] = useState(initialAgents);
 
-  const agents = [
+  const mockAgents = [
     {
       id: 1,
       name: "Research Assistant Bot",
@@ -211,6 +217,11 @@ export const AgentsOverview = () => {
       <div className="space-y-4">
         <p className="section-heading">AI AGENTS</p>
 
+        {agents.length === 0 ? (
+          <div className="panel p-8 text-center">
+            <p className="body-md text-[#7c839b]">No agents yet. Create one to get started!</p>
+          </div>
+        ) : (
         <div className="space-y-2">
           {agents.map((agent) => (
             <div
@@ -276,6 +287,7 @@ export const AgentsOverview = () => {
             </div>
           ))}
         </div>
+        )}
       </div>
     </div>
   );
