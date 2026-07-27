@@ -2,119 +2,19 @@
 
 import { useState } from "react";
 import { CreateKUModal, type KUFormData } from "./create-ku-modal";
+import { createKnowledgeUnit } from "@/lib/knowledge/actions";
 
-export const KnowledgeOverview = () => {
+interface KnowledgeOverviewProps {
+  knowledgeUnits: any[];
+  locale: string;
+}
+
+export const KnowledgeOverview = ({ knowledgeUnits: initialKUs, locale }: KnowledgeOverviewProps) => {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [knowledgeUnitsState, setKnowledgeUnitsState] = useState<typeof knowledgeUnits>([]);
-
-  const knowledgeUnits = [
-    {
-      id: 1,
-      title: "Deep Learning Fundamentals",
-      description: "Core concepts and neural network architectures for AI systems",
-      domain: "Research",
-      owner: "Alex Rivers",
-      status: "approved",
-      trustScore: 95,
-      dependencies: 3,
-      version: 4,
-      createdAt: "3 weeks ago",
-      updatedAt: "2 hours ago",
-    },
-    {
-      id: 2,
-      title: "Customer Onboarding Process",
-      description: "Step-by-step documentation for new customer setup and training",
-      domain: "Operations",
-      owner: "Sarah Chen",
-      status: "proposed",
-      trustScore: 78,
-      dependencies: 5,
-      version: 2,
-      createdAt: "1 week ago",
-      updatedAt: "1 day ago",
-    },
-    {
-      id: 3,
-      title: "GDPR Compliance Framework",
-      description: "Legal requirements and compliance procedures for data handling",
-      domain: "Legal",
-      owner: "Jordan Martinez",
-      status: "approved",
-      trustScore: 100,
-      dependencies: 8,
-      version: 3,
-      createdAt: "2 months ago",
-      updatedAt: "1 week ago",
-    },
-    {
-      id: 4,
-      title: "Product Roadmap Q4 2026",
-      description: "Feature specifications and release timeline for upcoming quarter",
-      domain: "Product",
-      owner: "Casey Wong",
-      status: "draft",
-      trustScore: 45,
-      dependencies: 2,
-      version: 1,
-      createdAt: "3 days ago",
-      updatedAt: "3 days ago",
-    },
-    {
-      id: 5,
-      title: "API Authentication Standards",
-      description: "OAuth 2.0 and JWT implementation guidelines for all services",
-      domain: "Engineering",
-      owner: "Alex Rivers",
-      status: "approved",
-      trustScore: 98,
-      dependencies: 4,
-      version: 5,
-      createdAt: "1 month ago",
-      updatedAt: "12 hours ago",
-    },
-    {
-      id: 6,
-      title: "Marketing Brand Guidelines",
-      description: "Visual identity, tone of voice, and brand messaging standards",
-      domain: "Marketing",
-      owner: "Casey Wong",
-      status: "proposed",
-      trustScore: 72,
-      dependencies: 1,
-      version: 2,
-      createdAt: "2 weeks ago",
-      updatedAt: "5 days ago",
-    },
-    {
-      id: 7,
-      title: "Database Performance Optimization",
-      description: "Query optimization, indexing strategies, and caching patterns",
-      domain: "Engineering",
-      owner: "Sarah Chen",
-      status: "approved",
-      trustScore: 92,
-      dependencies: 3,
-      version: 3,
-      createdAt: "1 month ago",
-      updatedAt: "6 days ago",
-    },
-    {
-      id: 8,
-      title: "Deprecated: Old Auth System",
-      description: "Legacy authentication system - no longer maintained",
-      domain: "Engineering",
-      owner: "Alex Rivers",
-      status: "archived",
-      trustScore: 0,
-      dependencies: 0,
-      version: 1,
-      createdAt: "6 months ago",
-      updatedAt: "3 months ago",
-    },
-  ];
+  const [knowledgeUnits, setKnowledgeUnits] = useState(initialKUs);
+  const [isCreating, setIsCreating] = useState(false);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -157,24 +57,29 @@ export const KnowledgeOverview = () => {
     { id: "draft", label: "Draft" },
   ];
 
-  const handleCreateKU = (formData: KUFormData) => {
-    // This will be replaced with actual API call
-    const newKU = {
-      id: knowledgeUnits.length + 1,
-      title: formData.title,
-      description: formData.description,
-      domain: formData.domain,
-      owner: "Current User",
-      status: "draft" as const,
-      trustScore: 0,
-      dependencies: formData.dependencies.length,
-      version: 1,
-      createdAt: "just now",
-      updatedAt: "just now",
-    };
-    // In a real app, you'd make an API call here
-    console.log("Creating new KU:", formData);
-    // Show success toast (to be implemented)
+  const handleCreateKU = async (formData: KUFormData) => {
+    setIsCreating(true);
+    try {
+      const result = await createKnowledgeUnit(
+        {
+          title: formData.title,
+          description: formData.description,
+          content: formData.content,
+          domain: formData.domain,
+          dependencies: formData.dependencies,
+        },
+        locale
+      );
+      if (result.success) {
+        setKnowledgeUnits([result.data, ...knowledgeUnits]);
+        setIsCreateModalOpen(false);
+        console.log("Knowledge Unit created successfully!");
+      }
+    } catch (error) {
+      console.error("Error creating Knowledge Unit:", error);
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   return (
@@ -244,6 +149,11 @@ export const KnowledgeOverview = () => {
       <div className="space-y-4">
         <p className="section-heading">KNOWLEDGE UNITS</p>
 
+        {knowledgeUnits.length === 0 ? (
+          <div className="panel p-8 text-center">
+            <p className="body-md text-[#7c839b]">No Knowledge Units yet. Create one to get started!</p>
+          </div>
+        ) : (
         <div className="space-y-2">
           {knowledgeUnits.map((ku) => (
             <div
@@ -303,6 +213,7 @@ export const KnowledgeOverview = () => {
             </div>
           ))}
         </div>
+        )}
       </div>
 
       {/* Create KU Modal */}

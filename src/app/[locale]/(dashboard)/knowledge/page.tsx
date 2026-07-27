@@ -3,6 +3,7 @@ import { redirect } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
 import { AppSidebar } from "@/components/shared/app-sidebar";
 import { KnowledgeOverview } from "@/components/shared/knowledge-overview";
+import { getKnowledgeUnits } from "@/lib/knowledge/actions";
 
 export default async function KnowledgePage({
   params,
@@ -21,12 +22,14 @@ export default async function KnowledgePage({
     redirect({ href: "/login", locale });
   }
 
+  const knowledgeUnits = await getKnowledgeUnits(locale);
+
   return (
     <div className="flex h-screen bg-[#f7f9fb]">
       <AppSidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 overflow-auto">
-          <KnowledgeOverview />
+          <KnowledgeOverview knowledgeUnits={knowledgeUnits} locale={locale} />
         </main>
       </div>
     </div>
