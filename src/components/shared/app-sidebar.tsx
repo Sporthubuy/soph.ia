@@ -10,7 +10,7 @@ export const AppSidebar = () => {
   const pathname = usePathname();
   const router = useRouter();
   const [isSigningOut, setIsSigningOut] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ email?: string; user_metadata?: Record<string, unknown> } | null>(null);
 
   useEffect(() => {
     const getUserData = async () => {

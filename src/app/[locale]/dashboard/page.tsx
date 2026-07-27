@@ -26,7 +26,7 @@ export default async function DashboardPage({
       <AppSidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 overflow-auto">
-          <DashboardOverview user={user} />
+          <DashboardOverview />
         </main>
       </div>
     </div>
