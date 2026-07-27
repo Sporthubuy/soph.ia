@@ -1,14 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
+import { useTranslations, useLocale } from "next-intl";
+import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { updateKnowledgeUnit } from "@/lib/knowledge/actions";
+import { renderMarkdown } from "@/lib/knowledge/markdown";
+import { toast } from "@/components/ui/toast";
+import { KUStatusBadge } from "@/components/shared/ku-status-badge";
+import {
+  KUDependencies,
+  type DependencyEdge,
+} from "@/components/editor/ku-dependencies";
 
 interface KU {
   id: string;
@@ -34,33 +41,30 @@ interface VersionItem {
   profiles: { full_name: string | null; email: string } | null;
 }
 
-const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  draft: { label: "Borrador", variant: "secondary" },
-  proposed: { label: "Propuesto", variant: "outline" },
-  approved: { label: "Aprobado", variant: "default" },
-  archived: { label: "Archivado", variant: "destructive" },
-};
 
 export const KUEditor = ({
   ku,
   versions,
+  dependencies,
+  candidates,
 }: {
   ku: KU;
   versions: VersionItem[];
+  dependencies: DependencyEdge[];
+  candidates: { id: string; title: string; status: string; version: number }[];
 }) => {
+  const t = useTranslations("editor");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const [title, setTitle] = useState(ku.title);
   const [content, setContent] = useState(ku.content);
   const [changeMessage, setChangeMessage] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [tab, setTab] = useState<"write" | "preview">("write");
   const [loading, setLoading] = useState(false);
 
   const hasChanges = title !== ku.title || content !== ku.content;
-  const cfg = statusConfig[ku.status] ?? statusConfig.draft;
 
   const handleSubmit = async (formData: FormData) => {
-    setError(null);
-    setSuccess(false);
     setLoading(true);
     formData.set("kuId", ku.id);
     formData.set("title", title);
@@ -68,9 +72,9 @@ export const KUEditor = ({
     formData.set("changeMessage", changeMessage);
     const result = await updateKnowledgeUnit(formData);
     if (result?.error) {
-      setError(result.error);
+      toast.add({ type: "error", title: t("saveError"), description: result.error });
     } else {
-      setSuccess(true);
+      toast.add({ type: "success", title: t("changeProposed"), description: t("changeProposedDesc") });
       setChangeMessage("");
     }
     setLoading(false);
@@ -81,7 +85,7 @@ export const KUEditor = ({
       <div className="flex-1 space-y-6">
         <form action={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="title">Titulo</Label>
+            <Label htmlFor="title">{t("title")}</Label>
             <Input
               id="title"
               value={title}
@@ -91,47 +95,77 @@ export const KUEditor = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="content">Contenido (Markdown)</Label>
-            <Textarea
-              id="content"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={20}
-              className="font-mono text-sm"
-            />
+            <div className="flex items-center justify-between">
+              <Label htmlFor="content">{t("contentLabel")}</Label>
+              <div className="flex rounded-md border p-0.5 text-xs">
+                <button
+                  type="button"
+                  className={`rounded px-2 py-1 ${
+                    tab === "write"
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground"
+                  }`}
+                  onClick={() => setTab("write")}
+                >
+                  {t("write")}
+                </button>
+                <button
+                  type="button"
+                  className={`rounded px-2 py-1 ${
+                    tab === "preview"
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground"
+                  }`}
+                  onClick={() => setTab("preview")}
+                >
+                  {t("preview")}
+                </button>
+              </div>
+            </div>
+            {tab === "write" ? (
+              <Textarea
+                id="content"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                rows={20}
+                className="font-mono text-sm"
+              />
+            ) : (
+              <div
+                className="prose prose-sm dark:prose-invert max-w-none overflow-auto rounded-md border p-4 text-sm leading-relaxed [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_h1]:mt-2 [&_h2]:mt-2 [&_h3]:mt-2 [&_pre]:bg-muted [&_pre]:p-3"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    renderMarkdown(content) ||
+                    `<p class="text-muted-foreground">${t("previewEmpty")}</p>`,
+                }}
+              />
+            )}
           </div>
 
           {hasChanges && (
             <div className="space-y-2">
               <Label htmlFor="changeMessage">
-                Mensaje del cambio (opcional)
+                {t("changeMessage")}
               </Label>
               <Input
                 id="changeMessage"
                 value={changeMessage}
                 onChange={(e) => setChangeMessage(e.target.value)}
-                placeholder="ej. Actualiza politica de descuentos"
+                placeholder={t("changeMessagePlaceholder")}
               />
             </div>
           )}
 
-          {error && <p className="text-sm text-destructive">{error}</p>}
-          {success && (
-            <p className="text-sm text-green-600 dark:text-green-400">
-              Cambio propuesto correctamente.
-            </p>
-          )}
-
           <div className="flex items-center gap-3">
             <Button type="submit" disabled={!hasChanges || loading}>
-              {loading ? "Guardando..." : "Proponer cambio"}
+              {loading ? t("saving") : t("proposeChange")}
             </Button>
             <Button
               type="button"
               variant="outline"
               render={<Link href="/editor" />}
             >
-              Volver al listado
+              {t("backToList")}
             </Button>
           </div>
         </form>
@@ -139,32 +173,32 @@ export const KUEditor = ({
 
       <aside className="hidden w-72 shrink-0 lg:block">
         <div className="space-y-4 rounded-lg border p-4">
-          <h3 className="font-semibold">Metadata</h3>
+          <h3 className="font-semibold">{t("details")}</h3>
           <div className="space-y-3 text-sm">
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Estado</span>
-              <Badge variant={cfg.variant}>{cfg.label}</Badge>
+              <span className="text-muted-foreground">{tc("status")}</span>
+              <KUStatusBadge status={ku.status} />
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Trust Score</span>
+              <span className="text-muted-foreground">{t("trustScore")}</span>
               <TrustBadge score={ku.trust_score} />
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Version</span>
+              <span className="text-muted-foreground">{tc("version")}</span>
               <span>{ku.version}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Dominio</span>
+              <span className="text-muted-foreground">{t("domain")}</span>
               <span>{ku.domains?.name ?? "—"}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Responsable</span>
+              <span className="text-muted-foreground">{t("owner")}</span>
               <span className="truncate max-w-[120px]">
                 {ku.profiles?.full_name ?? ku.profiles?.email ?? "—"}
               </span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">Hash</span>
+              <span className="text-muted-foreground">{t("hash")}</span>
               <code className="text-xs text-muted-foreground">
                 {ku.hash.slice(0, 8)}
               </code>
@@ -173,10 +207,18 @@ export const KUEditor = ({
 
           <Separator />
 
+          <KUDependencies
+            kuId={ku.id}
+            dependencies={dependencies}
+            candidates={candidates}
+          />
+
+          <Separator />
+
           <div>
-            <h3 className="mb-3 font-semibold">Historial de versiones</h3>
+            <h3 className="mb-3 font-semibold">{t("versionHistory")}</h3>
             {versions.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Sin versiones</p>
+              <p className="text-sm text-muted-foreground">{t("noVersions")}</p>
             ) : (
               <div className="space-y-3">
                 {versions.map((v) => (
@@ -194,7 +236,7 @@ export const KUEditor = ({
                     )}
                     <p className="text-xs text-muted-foreground">
                       {v.profiles?.full_name ?? v.profiles?.email ?? "—"} ·{" "}
-                      {new Date(v.created_at).toLocaleDateString("es")}
+                      {new Date(v.created_at).toLocaleDateString(locale)}
                     </p>
                   </div>
                 ))}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { createDomain, deleteDomain } from "@/lib/knowledge/actions";
+import { toast } from "@/components/ui/toast";
 
 interface DomainItem {
   id: string;
@@ -29,6 +31,8 @@ export const DomainSettings = ({
   organizationId: string;
   userRole: string;
 }) => {
+  const t = useTranslations("settings");
+  const tc = useTranslations("common");
   const canManage = ["owner", "admin", "editor"].includes(userRole);
   const [showForm, setShowForm] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,8 +45,10 @@ export const DomainSettings = ({
       const result = await createDomain(formData);
       if (result?.error) {
         setError(result.error);
+        toast.add({ type: "error", title: "Error", description: result.error });
       } else {
         setShowForm(false);
+        toast.add({ type: "success", title: t("domainCreated") });
       }
     });
   };
@@ -52,6 +58,9 @@ export const DomainSettings = ({
       const result = await deleteDomain(domainId);
       if (result?.error) {
         setError(result.error);
+        toast.add({ type: "error", title: "Error", description: result.error });
+      } else {
+        toast.add({ type: "success", title: t("domainDeleted") });
       }
     });
   };
@@ -61,9 +70,9 @@ export const DomainSettings = ({
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Dominios</CardTitle>
+            <CardTitle>{t("domainsTitle")}</CardTitle>
             <CardDescription>
-              Areas de conocimiento de la organizacion
+              {t("domainsDesc")}
             </CardDescription>
           </div>
           {canManage && !showForm && (
@@ -72,7 +81,7 @@ export const DomainSettings = ({
               size="sm"
               onClick={() => setShowForm(true)}
             >
-              Nuevo dominio
+              {t("newDomain")}
             </Button>
           )}
         </div>
@@ -81,17 +90,17 @@ export const DomainSettings = ({
         {showForm && (
           <form action={handleCreate} className="flex items-end gap-2">
             <div className="flex-1 space-y-1">
-              <Label htmlFor="domainName">Nombre</Label>
+              <Label htmlFor="domainName">{t("domainNameLabel")}</Label>
               <Input
                 id="domainName"
                 name="name"
-                placeholder="ej. Marketing"
+                placeholder={t("domainNamePlaceholder")}
                 required
                 autoFocus
               />
             </div>
             <Button type="submit" size="sm" disabled={isPending}>
-              {isPending ? "Creando..." : "Crear"}
+              {isPending ? t("creating") : tc("create")}
             </Button>
             <Button
               type="button"
@@ -102,7 +111,7 @@ export const DomainSettings = ({
                 setError(null);
               }}
             >
-              Cancelar
+              {tc("cancel")}
             </Button>
           </form>
         )}
@@ -111,7 +120,7 @@ export const DomainSettings = ({
 
         {domains.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            No hay dominios configurados.
+            {t("noDomains")}
           </p>
         ) : (
           <div className="space-y-2">
@@ -129,7 +138,7 @@ export const DomainSettings = ({
                     onClick={() => handleDelete(domain.id)}
                     disabled={isPending}
                   >
-                    Eliminar
+                    {tc("delete")}
                   </Button>
                 )}
               </div>

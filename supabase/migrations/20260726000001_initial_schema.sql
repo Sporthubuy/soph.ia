@@ -96,12 +96,39 @@ create policy "Authenticated users can create organizations"
   with check (auth.uid() is not null);
 
 -- RLS: users can see their own memberships
-create policy "Users can view their memberships"
+create policy "Users can view their own membership"
   on public.memberships for select
   using (user_id = auth.uid());
 
-create policy "Org owners/admins can manage memberships"
-  on public.memberships for all
+create policy "Org members can view other members"
+  on public.memberships for select
+  using (
+    exists (
+      select 1 from public.memberships as m
+      where m.organization_id = memberships.organization_id
+        and m.user_id = auth.uid()
+    )
+  );
+
+-- Insert: user_id must match auth.uid() — no self-reference, no recursion
+create policy "Users can insert themselves as member"
+  on public.memberships for insert
+  with check (user_id = auth.uid());
+
+-- Update/Delete: only owners and admins
+create policy "Owners and admins can update memberships"
+  on public.memberships for update
+  using (
+    exists (
+      select 1 from public.memberships as m
+      where m.organization_id = memberships.organization_id
+        and m.user_id = auth.uid()
+        and m.role in ('owner', 'admin')
+    )
+  );
+
+create policy "Owners and admins can delete memberships"
+  on public.memberships for delete
   using (
     exists (
       select 1 from public.memberships as m

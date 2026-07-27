@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { updateOrganization } from "@/lib/knowledge/actions";
+import { toast } from "@/components/ui/toast";
 
 export const OrgSettings = ({
   organization,
@@ -20,25 +22,22 @@ export const OrgSettings = ({
   organization: { id: string; name: string; slug: string };
   userRole: string;
 }) => {
+  const t = useTranslations("settings");
   const isOwner = userRole === "owner";
   const [name, setName] = useState(organization.name);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const hasChanges = name !== organization.name;
 
   const handleSubmit = async (formData: FormData) => {
-    setError(null);
-    setSuccess(false);
     formData.set("organizationId", organization.id);
     formData.set("name", name);
     startTransition(async () => {
       const result = await updateOrganization(formData);
       if (result?.error) {
-        setError(result.error);
+        toast.add({ type: "error", title: "Error", description: result.error });
       } else {
-        setSuccess(true);
+        toast.add({ type: "success", title: t("orgUpdated") });
       }
     });
   };
@@ -46,13 +45,13 @@ export const OrgSettings = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Organizacion</CardTitle>
-        <CardDescription>Configuracion general</CardDescription>
+        <CardTitle>{t("orgTitle")}</CardTitle>
+        <CardDescription>{t("orgDesc")}</CardDescription>
       </CardHeader>
       <CardContent>
         <form action={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="orgName">Nombre</Label>
+            <Label htmlFor="orgName">{t("orgNameLabel")}</Label>
             <Input
               id="orgName"
               value={name}
@@ -61,21 +60,15 @@ export const OrgSettings = ({
             />
           </div>
           <div className="space-y-2">
-            <Label>Slug</Label>
+            <Label>{t("slugLabel")}</Label>
             <Input value={organization.slug} disabled />
             <p className="text-xs text-muted-foreground">
-              El slug no se puede cambiar.
+              {t("slugHint")}
             </p>
           </div>
-          {error && <p className="text-sm text-destructive">{error}</p>}
-          {success && (
-            <p className="text-sm text-green-600 dark:text-green-400">
-              Guardado correctamente.
-            </p>
-          )}
           {isOwner && (
             <Button type="submit" disabled={!hasChanges || isPending}>
-              {isPending ? "Guardando..." : "Guardar"}
+              {isPending ? t("saving") : t("save")}
             </Button>
           )}
         </form>

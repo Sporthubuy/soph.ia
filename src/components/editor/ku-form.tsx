@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { useRouter } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,6 +28,8 @@ export const KUCreateForm = ({
   organizationId: string;
   domains: DomainItem[];
 }) => {
+  const t = useTranslations("editor");
+  const tc = useTranslations("common");
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -47,21 +50,21 @@ export const KUCreateForm = ({
   return (
     <form action={handleSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="title">Titulo</Label>
+        <Label htmlFor="title">{t("title")}</Label>
         <Input
           id="title"
           name="title"
-          placeholder="ej. Politica de devoluciones"
+          placeholder={t("titlePlaceholder")}
           required
           autoFocus
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="domain">Dominio</Label>
+        <Label htmlFor="domain">{t("domain")}</Label>
         <Select value={domainId} onValueChange={(v) => setDomainId(v ?? "")}>
           <SelectTrigger>
-            <SelectValue placeholder="Selecciona un dominio" />
+            <SelectValue placeholder={t("allDomains")} />
           </SelectTrigger>
           <SelectContent>
             {domains.map((d) => (
@@ -74,11 +77,11 @@ export const KUCreateForm = ({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="content">Contenido (Markdown)</Label>
+        <Label htmlFor="content">{t("contentLabel")}</Label>
         <Textarea
           id="content"
           name="content"
-          placeholder="Escribe el conocimiento aqui..."
+          placeholder={t("contentPlaceholder")}
           rows={16}
           className="font-mono text-sm"
         />
@@ -88,10 +91,10 @@ export const KUCreateForm = ({
 
       <div className="flex items-center gap-3">
         <Button type="submit" disabled={loading}>
-          {loading ? "Creando..." : "Crear como borrador"}
+          {loading ? t("creating") : t("createDraft")}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.back()}>
-          Cancelar
+          {tc("cancel")}
         </Button>
       </div>
     </form>

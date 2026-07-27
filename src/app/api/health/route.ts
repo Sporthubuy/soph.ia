@@ -36,7 +36,14 @@ export async function GET() {
     checks.neo4j = `error: ${e instanceof Error ? e.message : "unknown"}`;
   }
 
-  const allOk = Object.values(checks).every((v) => v === "ok" || v === "not_configured");
+  // Check AI providers
+  const aiProviders: string[] = [];
+  if (process.env.GOOGLE_AI_API_KEY) aiProviders.push("google");
+  if (process.env.ANTHROPIC_API_KEY) aiProviders.push("anthropic");
+  if (process.env.OPENAI_API_KEY) aiProviders.push("openai");
+  checks.ai = aiProviders.length > 0 ? `ok (${aiProviders.join(", ")})` : "not_configured";
+
+  const allOk = Object.values(checks).every((v) => v.startsWith("ok") || v === "not_configured");
 
   return NextResponse.json(
     {
