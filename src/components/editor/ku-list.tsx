@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Link from "next/link";
+import { useTranslations, useLocale } from "next-intl";
+import { Link } from "@/i18n/routing";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,13 +39,6 @@ interface DomainItem {
   name: string;
 }
 
-const statusConfig: Record<string, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-  draft: { label: "Borrador", variant: "secondary" },
-  proposed: { label: "Propuesto", variant: "outline" },
-  approved: { label: "Aprobado", variant: "default" },
-  archived: { label: "Archivado", variant: "destructive" },
-};
-
 export const KUList = ({
   knowledgeUnits,
   domains,
@@ -52,9 +46,20 @@ export const KUList = ({
   knowledgeUnits: KUItem[];
   domains: DomainItem[];
 }) => {
+  const t = useTranslations("editor");
+  const ts = useTranslations("status");
+  const tc = useTranslations("common");
+  const locale = useLocale();
   const [search, setSearch] = useState("");
   const [domainFilter, setDomainFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("all");
+
+  const statusConfig: Record<string, { variant: "default" | "secondary" | "destructive" | "outline" }> = {
+    draft: { variant: "secondary" },
+    proposed: { variant: "outline" },
+    approved: { variant: "default" },
+    archived: { variant: "destructive" },
+  };
 
   const filtered = useMemo(() => {
     return knowledgeUnits.filter((ku) => {
@@ -76,17 +81,17 @@ export const KUList = ({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-1 items-center gap-2">
           <Input
-            placeholder="Buscar por titulo..."
+            placeholder={t("searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="max-w-xs"
           />
           <Select value={domainFilter} onValueChange={(v) => setDomainFilter(v ?? "all")}>
             <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder="Dominio" />
+              <SelectValue placeholder={t("domain")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todos los dominios</SelectItem>
+              <SelectItem value="all">{t("allDomains")}</SelectItem>
               {domains.map((d) => (
                 <SelectItem key={d.id} value={d.id}>
                   {d.name}
@@ -96,19 +101,19 @@ export const KUList = ({
           </Select>
           <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v ?? "all")}>
             <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Estado" />
+              <SelectValue placeholder={tc("status")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="draft">Borrador</SelectItem>
-              <SelectItem value="proposed">Propuesto</SelectItem>
-              <SelectItem value="approved">Aprobado</SelectItem>
-              <SelectItem value="archived">Archivado</SelectItem>
+              <SelectItem value="all">{t("allStatuses")}</SelectItem>
+              <SelectItem value="draft">{ts("draft")}</SelectItem>
+              <SelectItem value="proposed">{ts("proposed")}</SelectItem>
+              <SelectItem value="approved">{ts("approved")}</SelectItem>
+              <SelectItem value="archived">{ts("archived")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <Button render={<Link href="/editor/new" />}>
-          Nueva Knowledge Unit
+          {t("newKU")}
         </Button>
       </div>
 
@@ -116,8 +121,8 @@ export const KUList = ({
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12">
           <p className="text-muted-foreground">
             {knowledgeUnits.length === 0
-              ? "Aun no hay Knowledge Units. Crea la primera."
-              : "No se encontraron resultados."}
+              ? t("noKUsYet")
+              : t("noResults")}
           </p>
           {knowledgeUnits.length === 0 && (
             <Button
@@ -125,7 +130,7 @@ export const KUList = ({
               variant="outline"
               className="mt-4"
             >
-              Crear Knowledge Unit
+              {t("createKU")}
             </Button>
           )}
         </div>
@@ -134,13 +139,13 @@ export const KUList = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Titulo</TableHead>
-                <TableHead>Dominio</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead className="text-center">Trust</TableHead>
-                <TableHead className="text-center">V.</TableHead>
-                <TableHead>Responsable</TableHead>
-                <TableHead className="text-right">Actualizado</TableHead>
+                <TableHead>{t("tableTitle")}</TableHead>
+                <TableHead>{t("tableDomain")}</TableHead>
+                <TableHead>{t("tableStatus")}</TableHead>
+                <TableHead className="text-center">{t("tableTrust")}</TableHead>
+                <TableHead className="text-center">{t("tableVersion")}</TableHead>
+                <TableHead>{t("tableOwner")}</TableHead>
+                <TableHead className="text-right">{t("tableUpdated")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -160,7 +165,7 @@ export const KUList = ({
                       {ku.domains?.[0]?.name ?? "—"}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={cfg.variant}>{cfg.label}</Badge>
+                      <Badge variant={cfg.variant}>{ts(ku.status as "draft" | "proposed" | "approved" | "archived")}</Badge>
                     </TableCell>
                     <TableCell className="text-center">
                       <TrustIndicator score={ku.trust_score} />
@@ -172,7 +177,7 @@ export const KUList = ({
                       {ku.profiles?.[0]?.full_name ?? ku.profiles?.[0]?.email ?? "—"}
                     </TableCell>
                     <TableCell className="text-right text-muted-foreground">
-                      {new Date(ku.updated_at).toLocaleDateString("es")}
+                      {new Date(ku.updated_at).toLocaleDateString(locale)}
                     </TableCell>
                   </TableRow>
                 );

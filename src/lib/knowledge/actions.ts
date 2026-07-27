@@ -2,8 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getLocale } from "next-intl/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { generateKUHash } from "@/lib/knowledge/hash";
+import { generateEmbeddingOrNull } from "@/lib/ai/embeddings";
 
 // ─── Organization / Onboarding ─────────────────────────────────────
 
@@ -18,6 +20,29 @@ export const createOrganization = async (formData: FormData) => {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
+
+  // Optional setup payload from guided wizard
+  const domainsRaw = (formData.get("domains") as string) || "[]";
+  const starterKusRaw = (formData.get("starterKus") as string) || "[]";
+  const templateId = (formData.get("templateId") as string) || "blank";
+
+  let domainNames: string[] = [];
+  let starterKus: { title: string; domainName: string; content: string }[] = [];
+  try {
+    domainNames = JSON.parse(domainsRaw) as string[];
+  } catch {
+    domainNames = ["General"];
+  }
+  try {
+    starterKus = JSON.parse(starterKusRaw) as {
+      title: string;
+      domainName: string;
+      content: string;
+    }[];
+  } catch {
+    starterKus = [];
+  }
+  if (domainNames.length === 0) domainNames = ["General"];
 
   const supabase = await createClient();
   const {
@@ -46,15 +71,92 @@ export const createOrganization = async (formData: FormData) => {
 
   if (memberError) return { error: memberError.message };
 
-  const { error: domainError } = await supabase.from("domains").insert({
-    organization_id: org.id,
-    name: "General",
-    owner_id: user.id,
-  });
+  // Create selected domains
+  const domainIdByName: Record<string, string> = {};
+  for (const domainName of domainNames) {
+    const { data: domain, error: domainError } = await supabase
+      .from("domains")
+      .insert({
+        organization_id: org.id,
+        name: domainName.trim(),
+        owner_id: user.id,
+      })
+      .select("id, name")
+      .single();
+    if (domainError) return { error: domainError.message };
+    domainIdByName[domain.name] = domain.id;
+  }
 
-  if (domainError) return { error: domainError.message };
+  // Seed starter Knowledge Units as drafts (user owns them)
+  for (const ku of starterKus) {
+    const domainId =
+      domainIdByName[ku.domainName] ?? Object.values(domainIdByName)[0];
+    if (!domainId) continue;
+    const title = ku.title.trim();
+    const content = ku.content || "";
+    const hash = generateKUHash(title, content);
+    const { data: created, error: kuError } = await supabase
+      .from("knowledge_units")
+      .insert({
+        title,
+        content,
+        hash,
+        domain_id: domainId,
+        organization_id: org.id,
+        owner_id: user.id,
+        status: "draft",
+        version: 1,
+        trust_score: 50,
+      })
+      .select("id")
+      .single();
+    if (kuError || !created) continue;
+    await supabase.from("ku_versions").insert({
+      ku_id: created.id,
+      version: 1,
+      hash,
+      title,
+      content,
+      changed_by: user.id,
+      change_message: `Plantilla ${templateId}`,
+    });
+  }
 
-  redirect("/editor");
+  revalidatePath("/[locale]/dashboard", "page");
+  revalidatePath("/[locale]/graph", "page");
+  revalidatePath("/[locale]/editor", "page");
+  const locale = await getLocale();
+  redirect(`/${locale}/dashboard`);
+};
+
+export const getGettingStartedProgress = async (organizationId: string) => {
+  const supabase = await createClient();
+  const [domains, kus, agents] = await Promise.all([
+    supabase
+      .from("domains")
+      .select("id", { count: "exact", head: true })
+      .eq("organization_id", organizationId),
+    supabase
+      .from("knowledge_units")
+      .select("id, status")
+      .eq("organization_id", organizationId),
+    supabase
+      .from("agents")
+      .select("id", { count: "exact", head: true })
+      .eq("organization_id", organizationId),
+  ]);
+
+  const list = kus.data ?? [];
+  return {
+    hasDomains: (domains.count ?? 0) > 0,
+    hasKus: list.length > 0,
+    hasProposed: list.some((k) => k.status === "proposed"),
+    hasApproved: list.some((k) => k.status === "approved"),
+    hasAgent: (agents.count ?? 0) > 0,
+    domainCount: domains.count ?? 0,
+    kuCount: list.length,
+    agentCount: agents.count ?? 0,
+  };
 };
 
 // ─── Domains ────────────────────────────────────────────────────────
@@ -94,7 +196,7 @@ export const createDomain = async (formData: FormData) => {
 
   if (error) return { error: error.message };
 
-  revalidatePath("/editor");
+  revalidatePath("/[locale]/editor", "page");
   return { success: true };
 };
 
@@ -129,6 +231,416 @@ export const getKnowledgeUnits = async (
   return data ?? [];
 };
 
+export const semanticSearchKUs = async (
+  organizationId: string,
+  query: string,
+  options?: { matchCount?: number; status?: string }
+) => {
+  const { generateEmbedding } = await import("@/lib/ai/embeddings");
+  const embedding = await generateEmbedding(query).catch(() => null);
+  if (!embedding) return [];
+
+  let supabase;
+  try {
+    supabase = createServiceClient();
+  } catch {
+    // Service client unavailable — fall back to user client
+    supabase = await createClient();
+  }
+
+  const filterStatus = options?.status ?? null;
+
+  const { data, error } = await supabase.rpc("match_kus", {
+    query_embedding: embedding,
+    query_organization_id: organizationId,
+    match_count: options?.matchCount ?? 10,
+    filter_status: filterStatus as never,
+  });
+
+  if (error) {
+    console.warn("semanticSearchKUs error:", error.message);
+    return [];
+  }
+  return (data ?? []) as {
+    id: string;
+    title: string;
+    content: string;
+    status: string;
+    domain_id: string;
+    organization_id: string;
+    similarity: number;
+  }[];
+};
+
+export const getApprovedKnowledgeUnits = async (
+  organizationId: string,
+  domainId?: string
+) => {
+  const supabase = await createClient();
+  let query = supabase
+    .from("knowledge_units")
+    .select(
+      "id, title, content, version, trust_score, domain_id, domains(name), updated_at"
+    )
+    .eq("organization_id", organizationId)
+    .eq("status", "approved")
+    .order("domain_id")
+    .order("updated_at", { ascending: false });
+
+  if (domainId) {
+    query = query.eq("domain_id", domainId);
+  }
+
+  const { data, error } = await query;
+  if (error) return [];
+  return data ?? [];
+};
+
+export const compileAgentContext = async (
+  organizationId: string,
+  selectedKuIds: string[]
+) => {
+  if (selectedKuIds.length === 0) return { context: "", units: [] };
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("knowledge_units")
+    .select("id, title, content, version, domains(name)")
+    .eq("organization_id", organizationId)
+    .eq("status", "approved")
+    .in("id", selectedKuIds)
+    .order("domain_id")
+    .order("updated_at", { ascending: false });
+
+  if (error || !data) return { context: "", units: [] };
+
+  const units = data.map((u) => ({
+    id: u.id,
+    title: u.title,
+    domain: (u.domains as unknown as { name: string }[] | null)?.[0]?.name ?? "General",
+    version: u.version,
+  }));
+
+  const sections = data.map((u) => {
+    const domain =
+      (u.domains as unknown as { name: string }[] | null)?.[0]?.name ?? "General";
+    return `## ${u.title}\n*Dominio: ${domain} · v${u.version}*\n\n${u.content}`;
+  });
+
+  const header = `# Contexto de conocimiento organizacional\n\nEste contexto fue compilado desde ${data.length} Knowledge Unit(s) verificada(s) de SOPH.IA. Responde al usuario usando esta informacion como fuente de autoridad. Si una pregunta excede el contexto, di que no tienes informacion suficiente y sugiere crear una nueva Knowledge Unit.\n`;
+  const context = `${header}\n${sections.join("\n\n---\n\n")}`;
+
+  return { context, units };
+};
+
+// ─── Agents (deploy + monitor) ──────────────────────────────────────
+
+export const getAgents = async (organizationId: string) => {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("agents")
+    .select(
+      "id, name, description, provider, model, status, visibility, rating, ratings_count, invocations, last_invoked_at, created_at, updated_at"
+    )
+    .eq("organization_id", organizationId)
+    .order("updated_at", { ascending: false });
+  return (data ?? []) as AgentRow[];
+};
+
+type AgentRow = {
+  id: string;
+  name: string;
+  description: string | null;
+  provider: string;
+  model: string;
+  status: string;
+  visibility: string;
+  rating: number;
+  ratings_count: number;
+  invocations: number;
+  last_invoked_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export const deployAgent = async (formData: FormData) => {
+  const organizationId = formData.get("organizationId") as string;
+  const name = formData.get("name") as string;
+  const description = (formData.get("description") as string) || null;
+  const systemPrompt = (formData.get("systemPrompt") as string) || null;
+  const provider = (formData.get("provider") as string) || "anthropic";
+  const model = (formData.get("model") as string) || "claude-3-5-sonnet-latest";
+  const temperature = Number(formData.get("temperature") ?? 0.4);
+  const selectedKuIdsRaw = (formData.get("selectedKuIds") as string) || "[]";
+
+  if (!organizationId || !name?.trim()) {
+    return { error: "Nombre y organizacion son obligatorios" };
+  }
+
+  let selectedKuIds: string[] = [];
+  try {
+    selectedKuIds = JSON.parse(selectedKuIdsRaw) as string[];
+  } catch {
+    return { error: "selectedKuIds debe ser JSON array" };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "No autenticado" };
+
+  const { error } = await supabase.from("agents").insert({
+    organization_id: organizationId,
+    name: name.trim(),
+    description,
+    system_prompt: systemPrompt,
+    provider,
+    model,
+    temperature,
+    selected_ku_ids: selectedKuIds,
+    status: "deployed",
+    created_by: user.id,
+  });
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/[locale]/agents", "page");
+  return { success: true };
+};
+
+export const updateAgentStatus = async (agentId: string, status: string) => {
+  const valid = ["draft", "deployed", "paused", "archived"];
+  if (!valid.includes(status)) return { error: "Estado invalido" };
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("agents")
+    .update({ status })
+    .eq("id", agentId);
+
+  if (error) return { error: error.message };
+  revalidatePath("/[locale]/agents", "page");
+  return { success: true };
+};
+
+export const deleteAgent = async (agentId: string) => {
+  const supabase = await createClient();
+  const { error } = await supabase.from("agents").delete().eq("id", agentId);
+  if (error) return { error: error.message };
+  revalidatePath("/[locale]/agents", "page");
+  return { success: true };
+};
+
+export const getAgent = async (agentId: string) => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("agents")
+    .select("*, organizations(name), profiles!agents_created_by_fkey(full_name, email)")
+    .eq("id", agentId)
+    .single();
+  if (error) return null;
+  return data;
+};
+
+// ─── Marketplace ──────────────────────────────────────────────────────
+
+export const publishAgent = async (agentId: string) => {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("agents")
+    .update({ visibility: "public" })
+    .eq("id", agentId);
+  if (error) return { error: error.message };
+  revalidatePath("/[locale]/agents", "page");
+  revalidatePath(`/[locale]/agents/${agentId}`, "page");
+  revalidatePath("/[locale]/marketplace", "page");
+  return { success: true };
+};
+
+export const unpublishAgent = async (agentId: string) => {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("agents")
+    .update({ visibility: "private" })
+    .eq("id", agentId);
+  if (error) return { error: error.message };
+  revalidatePath("/[locale]/agents", "page");
+  revalidatePath(`/[locale]/agents/${agentId}`, "page");
+  revalidatePath("/[locale]/marketplace", "page");
+  return { success: true };
+};
+
+export const getPublicAgents = async (options?: {
+  search?: string;
+  tag?: string;
+  sort?: "newest" | "rating" | "popular";
+}) => {
+  const supabase = await createClient();
+  let query = supabase
+    .from("agents")
+    .select(
+      "id, name, description, provider, model, status, rating, ratings_count, invocations, tags, organization_id, created_at, organizations(name)"
+    )
+    .eq("visibility", "public")
+    .eq("status", "deployed");
+
+  if (options?.search) {
+    query = query.or(
+      `name.ilike.%${options.search}%,description.ilike.%${options.search}%`
+    );
+  }
+  if (options?.tag) {
+    query = query.contains("tags", [options.tag]);
+  }
+
+  switch (options?.sort) {
+    case "rating":
+      query = query.order("rating", { ascending: false });
+      break;
+    case "popular":
+      query = query.order("invocations", { ascending: false });
+      break;
+    default:
+      query = query.order("created_at", { ascending: false });
+  }
+
+  const { data } = await query.limit(24);
+  return data ?? [];
+};
+
+export const getMarketplaceTags = async () => {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("agents")
+    .select("tags")
+    .eq("visibility", "public")
+    .eq("status", "deployed");
+
+  const tagSet = new Set<string>();
+  for (const row of data ?? []) {
+    for (const t of row.tags ?? []) {
+      if (t) tagSet.add(t.toLowerCase());
+    }
+  }
+  return Array.from(tagSet).sort();
+};
+
+export const cloneAgent = async (sourceAgentId: string, organizationId: string) => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "No autenticado" };
+
+  const { data: source, error: sourceErr } = await supabase
+    .from("agents")
+    .select("*")
+    .eq("id", sourceAgentId)
+    .single();
+
+  if (sourceErr || !source) return { error: "Agente no encontrado" };
+  if (source.visibility !== "public" && source.organization_id !== organizationId) {
+    return { error: "Este agente no es publico" };
+  }
+
+  const { data: cloned, error: insertErr } = await supabase
+    .from("agents")
+    .insert({
+      organization_id: organizationId,
+      name: `${source.name} (clon)`,
+      description: source.description,
+      system_prompt: source.system_prompt,
+      provider: source.provider,
+      model: source.model,
+      temperature: source.temperature,
+      selected_ku_ids: source.selected_ku_ids,
+      status: "draft",
+      visibility: "private",
+      cloned_from: sourceAgentId,
+      tags: source.tags,
+      created_by: user.id,
+    })
+    .select()
+    .single();
+
+  if (insertErr) return { error: insertErr.message };
+
+  revalidatePath("/[locale]/agents", "page");
+  revalidatePath("/[locale]/marketplace", "page");
+  const locale = await getLocale();
+  redirect(`/${locale}/agents/${cloned.id}`);
+};
+
+export const rateAgent = async (agentId: string, rating: number, review?: string) => {
+  if (rating < 1 || rating > 5) return { error: "Rating debe ser entre 1 y 5" };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "No autenticado" };
+
+  const { error } = await supabase.from("agent_ratings").upsert({
+    agent_id: agentId,
+    user_id: user.id,
+    rating,
+    review: review || null,
+  });
+
+  if (error) return { error: error.message };
+
+  try {
+    const service = createServiceClient();
+    await service.rpc("recalc_agent_rating", { agent_id: agentId });
+  } catch {
+    // non-fatal
+  }
+
+  revalidatePath(`/[locale]/agents/${agentId}`, "page");
+  revalidatePath("/[locale]/marketplace", "page");
+  return { success: true };
+};
+
+export const updateAgentConfig = async (formData: FormData) => {
+  const agentId = formData.get("agentId") as string;
+  const name = formData.get("name") as string;
+  const description = (formData.get("description") as string) || null;
+  const systemPrompt = (formData.get("systemPrompt") as string) || null;
+  const provider = (formData.get("provider") as string) || "anthropic";
+  const model = (formData.get("model") as string) || "claude-3-5-sonnet-latest";
+  const temperature = Number(formData.get("temperature") ?? 0.4);
+  const tagsRaw = (formData.get("tags") as string) || "";
+
+  if (!agentId || !name?.trim()) {
+    return { error: "ID y nombre son obligatorios" };
+  }
+
+  const tags = tagsRaw
+    .split(",")
+    .map((t) => t.trim().toLowerCase())
+    .filter(Boolean);
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("agents")
+    .update({
+      name: name.trim(),
+      description,
+      system_prompt: systemPrompt,
+      provider,
+      model,
+      temperature,
+      tags,
+    })
+    .eq("id", agentId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/[locale]/agents/${agentId}`, "page");
+  return { success: true };
+};
+
 export const getKnowledgeUnit = async (kuId: string) => {
   const supabase = await createClient();
 
@@ -144,6 +656,79 @@ export const getKnowledgeUnit = async (kuId: string) => {
   return data;
 };
 
+export const getKUDependencies = async (kuIds: string[]) => {
+  if (kuIds.length === 0) return [];
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("ku_dependencies")
+    .select("source_ku_id, target_ku_id")
+    .in("source_ku_id", kuIds);
+  return (data ?? []) as { source_ku_id: string; target_ku_id: string }[];
+};
+
+export const getKURelations = async (kuId: string) => {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("ku_dependencies")
+    .select("source_ku_id, target_ku_id")
+    .or(`source_ku_id.eq.${kuId},target_ku_id.eq.${kuId}`);
+  return (data ?? []) as {
+    source_ku_id: string;
+    target_ku_id: string;
+  }[];
+};
+
+export const addKUDependency = async (
+  sourceKuId: string,
+  targetKuId: string
+) => {
+  if (sourceKuId === targetKuId) {
+    return { error: "Una KU no puede depender de si misma" };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "No autenticado" };
+
+  const { error } = await supabase
+    .from("ku_dependencies")
+    .insert({ source_ku_id: sourceKuId, target_ku_id: targetKuId });
+
+  if (error) {
+    if (error.code === "23505") {
+      return { error: "Esta dependencia ya existe" };
+    }
+    return { error: error.message };
+  }
+
+  revalidatePath(`/[locale]/editor/${sourceKuId}`, "page");
+  return { success: true };
+};
+
+export const removeKUDependency = async (
+  sourceKuId: string,
+  targetKuId: string
+) => {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "No autenticado" };
+
+  const { error } = await supabase
+    .from("ku_dependencies")
+    .delete()
+    .eq("source_ku_id", sourceKuId)
+    .eq("target_ku_id", targetKuId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath(`/[locale]/editor/${sourceKuId}`, "page");
+  return { success: true };
+};
+
 export const getKUVersions = async (kuId: string) => {
   const supabase = await createClient();
 
@@ -154,6 +739,27 @@ export const getKUVersions = async (kuId: string) => {
     .order("version", { ascending: false });
 
   return data ?? [];
+};
+
+export const getKUDiff = async (kuId: string) => {
+  const supabase = await createClient();
+
+  const { data: versions } = await supabase
+    .from("ku_versions")
+    .select("version, title, content, changed_by, change_message, created_at")
+    .eq("ku_id", kuId)
+    .order("version", { ascending: false })
+    .limit(2);
+
+  if (!versions || versions.length === 0) return null;
+
+  const current = versions[0];
+  const previous = versions[1] ?? null;
+
+  return {
+    current,
+    previous,
+  };
 };
 
 export const createKnowledgeUnit = async (formData: FormData) => {
@@ -192,6 +798,24 @@ export const createKnowledgeUnit = async (formData: FormData) => {
 
   if (error) return { error: error.message };
 
+  // Populate embedding asynchronously with service role (RLS-safe write)
+  const embedText = `${title.trim()}\n\n${content || ""}`;
+  const embedding = await generateEmbeddingOrNull(embedText);
+  if (embedding) {
+    try {
+      const service = createServiceClient();
+      await service
+        .from("knowledge_units")
+        .update({ embedding })
+        .eq("id", ku.id);
+    } catch (e) {
+      console.warn(
+        "No se pudo actualizar embedding en create:",
+        e instanceof Error ? e.message : e
+      );
+    }
+  }
+
   const { error: versionError } = await supabase.from("ku_versions").insert({
     ku_id: ku.id,
     version: 1,
@@ -204,8 +828,9 @@ export const createKnowledgeUnit = async (formData: FormData) => {
 
   if (versionError) return { error: versionError.message };
 
-  revalidatePath("/editor");
-  redirect(`/editor/${ku.id}`);
+  revalidatePath("/[locale]/editor", "page");
+  const locale = await getLocale();
+  redirect(`/${locale}/editor/${ku.id}`);
 };
 
 export const updateKnowledgeUnit = async (formData: FormData) => {
@@ -266,8 +891,28 @@ export const updateKnowledgeUnit = async (formData: FormData) => {
 
   if (versionError) return { error: versionError.message };
 
-  revalidatePath(`/editor/${kuId}`);
-  revalidatePath("/editor");
+  // Refresh embedding after content change
+  if (newHash !== currentHash) {
+    const embedText = `${title.trim()}\n\n${content || ""}`;
+    const embedding = await generateEmbeddingOrNull(embedText);
+    if (embedding) {
+      try {
+        const service = createServiceClient();
+        await service
+          .from("knowledge_units")
+          .update({ embedding })
+          .eq("id", kuId);
+      } catch (e) {
+        console.warn(
+          "No se pudo actualizar embedding en update:",
+          e instanceof Error ? e.message : e
+        );
+      }
+    }
+  }
+
+  revalidatePath(`/[locale]/editor/${kuId}`, "page");
+  revalidatePath("/[locale]/editor", "page");
   return { success: true };
 };
 
@@ -319,9 +964,9 @@ export const approveKnowledgeUnit = async (kuId: string) => {
 
   if (error) return { error: error.message };
 
-  revalidatePath("/review");
-  revalidatePath("/editor");
-  revalidatePath(`/editor/${kuId}`);
+  revalidatePath("/[locale]/review", "page");
+  revalidatePath("/[locale]/editor", "page");
+  revalidatePath(`/[locale]/editor/${kuId}`, "page");
   return { success: true };
 };
 
@@ -351,9 +996,9 @@ export const rejectKnowledgeUnit = async (kuId: string) => {
 
   if (error) return { error: error.message };
 
-  revalidatePath("/review");
-  revalidatePath("/editor");
-  revalidatePath(`/editor/${kuId}`);
+  revalidatePath("/[locale]/review", "page");
+  revalidatePath("/[locale]/editor", "page");
+  revalidatePath(`/[locale]/editor/${kuId}`, "page");
   return { success: true };
 };
 
@@ -371,9 +1016,9 @@ export const archiveKnowledgeUnit = async (kuId: string) => {
 
   if (error) return { error: error.message };
 
-  revalidatePath("/review");
-  revalidatePath("/editor");
-  revalidatePath(`/editor/${kuId}`);
+  revalidatePath("/[locale]/review", "page");
+  revalidatePath("/[locale]/editor", "page");
+  revalidatePath(`/[locale]/editor/${kuId}`, "page");
   return { success: true };
 };
 
@@ -406,7 +1051,7 @@ export const updateOrganization = async (formData: FormData) => {
 
   if (error) return { error: error.message };
 
-  revalidatePath("/settings");
+  revalidatePath("/[locale]/settings", "page");
   return { success: true };
 };
 
@@ -429,7 +1074,7 @@ export const deleteDomain = async (domainId: string) => {
 
   if (error) return { error: error.message };
 
-  revalidatePath("/settings");
+  revalidatePath("/[locale]/settings", "page");
   return { success: true };
 };
 
@@ -465,7 +1110,7 @@ export const updateMemberRole = async (membershipId: string, role: string) => {
 
   if (error) return { error: error.message };
 
-  revalidatePath("/settings");
+  revalidatePath("/[locale]/settings", "page");
   return { success: true };
 };
 
@@ -479,6 +1124,6 @@ export const removeMember = async (membershipId: string) => {
 
   if (error) return { error: error.message };
 
-  revalidatePath("/settings");
+  revalidatePath("/[locale]/settings", "page");
   return { success: true };
 };

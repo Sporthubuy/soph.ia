@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { updateMemberRole, removeMember } from "@/lib/knowledge/actions";
+import { toast } from "@/components/ui/toast";
 
 interface MemberItem {
   id: string;
@@ -43,6 +45,7 @@ export const MemberSettings = ({
   currentUserId: string;
   userRole: string;
 }) => {
+  const t = useTranslations("settings");
   const isOwnerOrAdmin = ["owner", "admin"].includes(userRole);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -51,7 +54,12 @@ export const MemberSettings = ({
     setError(null);
     startTransition(async () => {
       const result = await updateMemberRole(membershipId, newRole);
-      if (result?.error) setError(result.error);
+      if (result?.error) {
+        setError(result.error);
+        toast.add({ type: "error", title: "Error", description: result.error });
+      } else {
+        toast.add({ type: "success", title: t("roleUpdated") });
+      }
     });
   };
 
@@ -59,15 +67,20 @@ export const MemberSettings = ({
     setError(null);
     startTransition(async () => {
       const result = await removeMember(membershipId);
-      if (result?.error) setError(result.error);
+      if (result?.error) {
+        setError(result.error);
+        toast.add({ type: "error", title: "Error", description: result.error });
+      } else {
+        toast.add({ type: "success", title: t("memberRemoved") });
+      }
     });
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Miembros</CardTitle>
-        <CardDescription>Equipo de la organizacion</CardDescription>
+        <CardTitle>{t("membersTitle")}</CardTitle>
+        <CardDescription>{t("membersDesc")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {error && <p className="text-sm text-destructive">{error}</p>}
@@ -117,7 +130,7 @@ export const MemberSettings = ({
                         onClick={() => handleRemove(member.id)}
                         disabled={isPending}
                       >
-                        Remover
+                        {t("remove")}
                       </Button>
                     </>
                   ) : (

@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
 
 export const getAuthenticatedUser = async () => {
   const supabase = await createClient();
@@ -10,7 +11,8 @@ export const getAuthenticatedUser = async () => {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    const locale = await getLocale();
+    redirect(`/${locale}/login`);
   }
 
   return { supabase, user };
