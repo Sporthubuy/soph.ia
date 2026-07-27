@@ -2,8 +2,24 @@
 
 import { useState } from "react";
 
+interface Agent {
+  id: string;
+  name: string;
+  description: string;
+  status?: string;
+  model?: string;
+  owner?: string;
+  latency?: string;
+  accuracy?: number;
+  tokensUsed?: number;
+  lastRun?: string;
+  knowledgeSize?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 interface AgentsOverviewProps {
-  agents: any[];
+  agents: Agent[];
   locale: string;
 }
 
@@ -12,9 +28,9 @@ export const AgentsOverview = ({ agents: initialAgents, locale }: AgentsOverview
   const [activeTab, setActiveTab] = useState("all");
   const [agents, setAgents] = useState(initialAgents);
 
-  const mockAgents = [
+  const mockAgents: Agent[] = [
     {
-      id: 1,
+      id: "1",
       name: "Research Assistant Bot",
       description: "Analyzes deep learning research and provides insights on neural architectures",
       status: "running",
@@ -29,7 +45,7 @@ export const AgentsOverview = ({ agents: initialAgents, locale }: AgentsOverview
       updatedAt: "2 hours ago",
     },
     {
-      id: 2,
+      id: "2",
       name: "Customer Support Agent",
       description: "Handles customer inquiries and provides onboarding assistance 24/7",
       status: "running",

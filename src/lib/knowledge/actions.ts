@@ -78,3 +78,39 @@ export async function getKnowledgeUnits(locale: string) {
     return [];
   }
 }
+
+export async function compileAgentContext(organizationId: string, selectedKuIds: string[] = []) {
+  const supabase = await createClient();
+
+  try {
+    let query = supabase
+      .from("knowledge_units")
+      .select("*")
+      .eq("organization_id", organizationId)
+      .eq("status", "approved");
+
+    if (selectedKuIds.length > 0) {
+      query = query.in("id", selectedKuIds);
+    }
+
+    const { data: units, error } = await query;
+
+    if (error) throw error;
+
+    // Compile context from all approved knowledge units
+    const context = (units || [])
+      .map((unit) => `# ${unit.title}\n\n${unit.content}`)
+      .join("\n\n---\n\n");
+
+    return {
+      context: context || "No approved knowledge units available",
+      units: units || [],
+    };
+  } catch (error) {
+    console.error("Error compiling agent context:", error);
+    return {
+      context: "Error compiling knowledge base",
+      units: [],
+    };
+  }
+}

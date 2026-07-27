@@ -4,8 +4,22 @@ import { useState } from "react";
 import { CreateKUModal, type KUFormData } from "./create-ku-modal";
 import { createKnowledgeUnit } from "@/lib/knowledge/actions";
 
+interface KnowledgeUnit {
+  id: string;
+  title: string;
+  description: string;
+  domain?: string;
+  owner?: string;
+  status?: string;
+  trustScore?: number;
+  dependencies?: number;
+  version?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 interface KnowledgeOverviewProps {
-  knowledgeUnits: any[];
+  knowledgeUnits: KnowledgeUnit[];
   locale: string;
 }
 
