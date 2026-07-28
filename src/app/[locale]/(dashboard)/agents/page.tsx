@@ -12,5 +12,5 @@ export default async function AgentsPage({
 
   const agents = await getAgents(locale);
 
-  return <AgentsOverview agents={agents} locale={locale} />;
+  return <AgentsOverview agents={agents} />;
 }

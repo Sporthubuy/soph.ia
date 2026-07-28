@@ -17,7 +17,6 @@ type Step = "welcome" | "org" | "template" | "modules" | "review";
 
 export const OnboardingForm = () => {
   const t = useTranslations("onboarding");
-  const tc = useTranslations("common");
   const [step, setStep] = useState<Step>("welcome");
   const [orgName, setOrgName] = useState("");
   const [templateId, setTemplateId] = useState<SetupTemplateId>("startup");

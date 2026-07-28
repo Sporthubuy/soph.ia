@@ -1,25 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useLocale } from "next-intl";
+import { useState } from "react";
 import { Link, usePathname, useRouter } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/client";
 
 export const AppSidebar = () => {
-  const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
   const [isSigningOut, setIsSigningOut] = useState(false);
-  const [user, setUser] = useState<{ email?: string; user_metadata?: Record<string, unknown> } | null>(null);
-
-  useEffect(() => {
-    const getUserData = async () => {
-      const supabase = createClient();
-      const { data } = await supabase.auth.getUser();
-      setUser(data.user);
-    };
-    getUserData();
-  }, []);
 
   // `ready: false` = la ruta todavia no existe. Se muestra deshabilitada en vez
   // de enlazar a un 404.

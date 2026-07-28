@@ -19,7 +19,6 @@ interface Agent {
 
 interface AgentsOverviewProps {
   agents: Agent[];
-  locale: string;
 }
 
 /**
@@ -65,7 +64,7 @@ const formatUpdatedAt = (value?: string | null) => {
   return date.toLocaleDateString();
 };
 
-export const AgentsOverview = ({ agents, locale }: AgentsOverviewProps) => {
+export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");

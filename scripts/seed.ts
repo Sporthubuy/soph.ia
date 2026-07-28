@@ -543,7 +543,6 @@ Legislacion aplicable de Uruguay.`,
   console.log(`✅ ${depCount} dependencias creadas.`);
 
   // ─── 7. Approve certain KUs (update status/approved_by) ──
-  const allKuIds = Object.values(kuIds);
   const approvedKuIds = kus
     .filter((k) => k.status === "approved")
     .map((k) => kuIds[k.title])
@@ -557,12 +556,10 @@ Legislacion aplicable de Uruguay.`,
     .eq("name", "Asistente de Soporte SportHub")
     .limit(1);
 
-  let agentId: string;
   if (existingAgent && existingAgent.length > 0) {
-    agentId = existingAgent[0].id;
     console.log("ℹ️  Agente 'Asistente de Soporte SportHub' ya existe.");
   } else {
-    const { data: agent, error: agentErr } = await supabase
+    const { error: agentErr } = await supabase
       .from("agents")
       .insert({
         organization_id: orgId,
@@ -579,14 +576,11 @@ Legislacion aplicable de Uruguay.`,
         visibility: "public",
         tags: ["soporte", "politicas", "faq"],
         created_by: userId,
-      })
-      .select()
-      .single();
+      });
 
     if (agentErr) {
       console.error("❌ Error creando agente:", agentErr.message);
     } else {
-      agentId = agent.id;
       console.log("✅ Agente 'Asistente de Soporte SportHub' creado y desplegado.");
     }
   }

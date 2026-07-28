@@ -20,9 +20,12 @@ export default function RootLayout({
   return (
     <html>
       <head>
+        {/* eslint-disable-next-line @next/next/no-page-custom-font --
+            root layout.tsx ya es el equivalente de _document en App Router;
+            la regla no reconoce ese contexto. */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=optional"
         />
       </head>
       <body className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}>
