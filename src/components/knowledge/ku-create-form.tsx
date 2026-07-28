@@ -104,7 +104,7 @@ export const KUCreateForm = ({
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto space-y-6">
+    <div className="p-8 max-w-7xl mx-auto space-y-6">
       <nav aria-label="Migas de pan" className="body-sm text-[#7c839b]">
         <Link href="/knowledge" className="hover:text-black transition-colors">
           Knowledge Units
@@ -118,158 +118,161 @@ export const KUCreateForm = ({
       </h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Informacion basica */}
-        <div className="panel p-6 space-y-5">
-          <div className="space-y-2">
-            <label htmlFor="title" className="label-sm text-[#7c839b]">
-              TITULO
-            </label>
-            <input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="Ej: Politica de reembolsos 2026"
-              autoFocus
-              className="w-full px-4 py-3 border border-[#e2e8f0] rounded-lg bg-white text-black placeholder-[#7c839b] focus:outline-none focus:ring-2 focus:ring-[#4648d4] focus:border-transparent"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="label-sm text-[#7c839b]">DOMINIO</label>
-
-            {domains.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {domains.map((d) => (
-                  <button
-                    key={d.id}
-                    type="button"
-                    onClick={() => setDomain(d.name)}
-                    className={`label-sm px-3 py-1.5 rounded-full border transition-colors ${
-                      domain === d.name
-                        ? "bg-[#4648d4] text-white border-[#4648d4]"
-                        : "bg-white text-[#45464d] border-[#e2e8f0] hover:bg-[#f7f9fb]"
-                    }`}
-                  >
-                    {d.name}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            <input
-              value={domain}
-              onChange={(e) => setDomain(e.target.value)}
-              placeholder="O escribe un dominio nuevo..."
-              className="w-full px-4 py-2.5 border border-[#e2e8f0] rounded-lg bg-white text-black placeholder-[#7c839b] focus:outline-none focus:ring-2 focus:ring-[#4648d4] focus:border-transparent body-sm"
-            />
-            <p className="body-sm text-[#7c839b]">
-              Si el dominio no existe, se crea automaticamente.
-            </p>
-          </div>
-        </div>
-
-        {/* Contenido */}
-        <div className="panel p-6 space-y-4">
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <label className="label-sm text-[#7c839b]">
-              CONTENIDO (MARKDOWN)
-            </label>
-            <div className="flex gap-1 border border-[#e2e8f0] rounded-lg p-1">
-              <button
-                type="button"
-                onClick={() => setView("write")}
-                className={`label-sm px-3 py-1.5 rounded ${
-                  view === "write"
-                    ? "bg-[#4648d4] text-white"
-                    : "text-[#45464d] hover:bg-[#f7f9fb]"
-                }`}
-              >
-                Escribir
-              </button>
-              <button
-                type="button"
-                onClick={() => setView("preview")}
-                className={`label-sm px-3 py-1.5 rounded ${
-                  view === "preview"
-                    ? "bg-[#4648d4] text-white"
-                    : "text-[#45464d] hover:bg-[#f7f9fb]"
-                }`}
-              >
-                Vista previa
-              </button>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          {/* Informacion basica */}
+          <div className="lg:col-span-4 panel p-6 space-y-5">
+            <div className="space-y-2">
+              <label htmlFor="title" className="label-sm text-[#7c839b]">
+                TITULO
+              </label>
+              <input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Ej: Politica de reembolsos 2026"
+                autoFocus
+                className="w-full px-4 py-3 border border-[#e2e8f0] rounded-lg bg-white text-black placeholder-[#7c839b] focus:outline-none focus:ring-2 focus:ring-[#4648d4] focus:border-transparent"
+              />
             </div>
-          </div>
 
-          {view === "write" ? (
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder={"Escribe en Markdown, o sube un archivo abajo...\n\n## Un titulo\n\n- Un punto\n- Otro punto"}
-              rows={16}
-              className="w-full px-4 py-3 border border-[#e2e8f0] rounded-lg bg-white text-black placeholder-[#7c839b] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#4648d4] focus:border-transparent"
-            />
-          ) : (
-            <div className="border border-[#e2e8f0] rounded-lg p-4 min-h-[24rem]">
-              {content.trim() ? (
-                <div
-                  className="ku-content body-md text-[#45464d]"
-                  dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
-                />
-              ) : (
-                <p className="body-md text-[#7c839b]">Nada que previsualizar todavia.</p>
+            <div className="space-y-2">
+              <label className="label-sm text-[#7c839b]">DOMINIO</label>
+
+              {domains.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {domains.map((d) => (
+                    <button
+                      key={d.id}
+                      type="button"
+                      onClick={() => setDomain(d.name)}
+                      className={`label-sm px-3 py-1.5 rounded-full border transition-colors ${
+                        domain === d.name
+                          ? "bg-[#4648d4] text-white border-[#4648d4]"
+                          : "bg-white text-[#45464d] border-[#e2e8f0] hover:bg-[#f7f9fb]"
+                      }`}
+                    >
+                      {d.name}
+                    </button>
+                  ))}
+                </div>
               )}
-            </div>
-          )}
 
-          {/* Subida de archivos */}
-          <div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept={ACCEPT_ATTR}
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) handleFile(file);
-              }}
-            />
-            <div
-              onDragOver={(e) => {
-                e.preventDefault();
-                setIsDragging(true);
-              }}
-              onDragLeave={() => setIsDragging(false)}
-              onDrop={handleDrop}
-              className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${
-                isDragging
-                  ? "border-[#4648d4] bg-[#f5f5ff]"
-                  : "border-[#e2e8f0]"
-              }`}
-            >
-              <span className="material-symbols-outlined text-2xl text-[#7c839b]">
-                upload_file
-              </span>
-              <p className="body-sm text-[#45464d] mt-1">
-                Arrastra un archivo aca, o{" "}
+              <input
+                value={domain}
+                onChange={(e) => setDomain(e.target.value)}
+                placeholder="O escribe un dominio nuevo..."
+                className="w-full px-4 py-2.5 border border-[#e2e8f0] rounded-lg bg-white text-black placeholder-[#7c839b] focus:outline-none focus:ring-2 focus:ring-[#4648d4] focus:border-transparent body-sm"
+              />
+              <p className="body-sm text-[#7c839b]">
+                Si el dominio no existe, se crea automaticamente.
+              </p>
+            </div>
+
+            {/* Subida de archivos */}
+            <div className="space-y-2 pt-1">
+              <label className="label-sm text-[#7c839b]">ARCHIVO</label>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept={ACCEPT_ATTR}
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFile(file);
+                }}
+              />
+              <div
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  setIsDragging(true);
+                }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={handleDrop}
+                className={`border-2 border-dashed rounded-lg p-5 text-center transition-colors ${
+                  isDragging
+                    ? "border-[#4648d4] bg-[#f5f5ff]"
+                    : "border-[#e2e8f0]"
+                }`}
+              >
+                <span className="material-symbols-outlined text-2xl text-[#7c839b]">
+                  upload_file
+                </span>
+                <p className="body-sm text-[#45464d] mt-1">
+                  Arrastra un archivo aca, o{" "}
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="text-[#4648d4] font-medium hover:underline disabled:opacity-50"
+                  >
+                    elegi uno
+                  </button>
+                </p>
+                <p className="body-sm text-[#7c839b] mt-1">
+                  PDF, DOCX, TXT, Markdown o CSV.
+                </p>
+                {isUploading && (
+                  <p className="body-sm text-[#4648d4] mt-2">Extrayendo texto...</p>
+                )}
+                {uploadError && (
+                  <p className="body-sm text-red-700 mt-2">{uploadError}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Contenido */}
+          <div className="lg:col-span-8 panel p-6 space-y-4">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <label className="label-sm text-[#7c839b]">
+                CONTENIDO (MARKDOWN)
+              </label>
+              <div className="flex gap-1 border border-[#e2e8f0] rounded-lg p-1">
                 <button
                   type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
-                  className="text-[#4648d4] font-medium hover:underline disabled:opacity-50"
+                  onClick={() => setView("write")}
+                  className={`label-sm px-3 py-1.5 rounded ${
+                    view === "write"
+                      ? "bg-[#4648d4] text-white"
+                      : "text-[#45464d] hover:bg-[#f7f9fb]"
+                  }`}
                 >
-                  elegi uno
+                  Escribir
                 </button>
-              </p>
-              <p className="body-sm text-[#7c839b] mt-1">
-                PDF, DOCX, TXT, Markdown o CSV. El texto se agrega al contenido.
-              </p>
-              {isUploading && (
-                <p className="body-sm text-[#4648d4] mt-2">Extrayendo texto...</p>
-              )}
-              {uploadError && (
-                <p className="body-sm text-red-700 mt-2">{uploadError}</p>
-              )}
+                <button
+                  type="button"
+                  onClick={() => setView("preview")}
+                  className={`label-sm px-3 py-1.5 rounded ${
+                    view === "preview"
+                      ? "bg-[#4648d4] text-white"
+                      : "text-[#45464d] hover:bg-[#f7f9fb]"
+                  }`}
+                >
+                  Vista previa
+                </button>
+              </div>
             </div>
+
+            {view === "write" ? (
+              <textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder={"Escribe en Markdown, o sube un archivo a la izquierda...\n\n## Un titulo\n\n- Un punto\n- Otro punto"}
+                rows={24}
+                className="w-full px-4 py-3 border border-[#e2e8f0] rounded-lg bg-white text-black placeholder-[#7c839b] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#4648d4] focus:border-transparent"
+              />
+            ) : (
+              <div className="border border-[#e2e8f0] rounded-lg p-4 min-h-[38rem]">
+                {content.trim() ? (
+                  <div
+                    className="ku-content body-md text-[#45464d]"
+                    dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
+                  />
+                ) : (
+                  <p className="body-md text-[#7c839b]">Nada que previsualizar todavia.</p>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
