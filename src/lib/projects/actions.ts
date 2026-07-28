@@ -61,6 +61,35 @@ export async function createProject(input: CreateProjectInput, locale: string) {
   }
 }
 
+export async function deleteProject(projectId: string, locale: string) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect({ href: "/login", locale });
+  }
+
+  try {
+    const { error } = await supabase
+      .from("projects")
+      .delete()
+      .eq("id", projectId)
+      .eq("owner_id", user.id);
+
+    if (error) throw error;
+
+    revalidatePath(`/${locale}/dashboard/projects`, "page");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    throw error;
+  }
+}
+
 export async function getProjects(locale: string) {
   const supabase = await createClient();
 

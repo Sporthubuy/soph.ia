@@ -23,7 +23,6 @@ export const AppSidebar = () => {
 
   const navItems = [
     { href: "/dashboard", label: "Overview", icon: "dashboard" },
-    { href: "/projects", label: "Projects", icon: "folder_open" },
     { href: "/knowledge", label: "Knowledge", icon: "menu_book" },
     { href: "/agents", label: "Agents", icon: "smart_toy" },
     { href: "/review", label: "Review", icon: "fact_check" },
