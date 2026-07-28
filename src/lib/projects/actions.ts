@@ -110,24 +110,48 @@ export async function getProjects(locale: string) {
   const organizationId = await getCurrentOrganizationId();
   if (!organizationId) return [];
 
-  const { data, error } = await supabase
+  // Intenta traer los proyectos con sus conteos de gente/KUs/agentes. Si las
+  // tablas de colaboracion todavia no existen (migracion sin aplicar), cae a
+  // la query base con conteos en 0 en vez de dejar el dashboard sin proyectos.
+  const enriched = await supabase
     .from("projects")
     .select("*, project_members(count), project_knowledge_units(count), project_agents(count)")
     .eq("organization_id", organizationId)
     .order("updated_at", { ascending: false });
+
+  const { data, error } = enriched.error
+    ? await supabase
+        .from("projects")
+        .select("*")
+        .eq("organization_id", organizationId)
+        .order("updated_at", { ascending: false })
+    : enriched;
 
   if (error) {
     console.error("Error fetching projects:", error);
     return [];
   }
 
-  // PostgREST devuelve los agregados como [{count: n}].
+  // PostgREST devuelve los agregados como [{count: n}]; ausentes en el fallback.
   const countOf = (rel: unknown) =>
     Array.isArray(rel) && rel.length > 0
       ? ((rel[0] as { count?: number }).count ?? 0)
       : 0;
 
-  return (data ?? []).map((p) => {
+  type ProjectRow = {
+    id: string;
+    name: string;
+    description: string;
+    icon: string;
+    color: string;
+    status: string;
+    updated_at: string;
+    project_members?: unknown;
+    project_knowledge_units?: unknown;
+    project_agents?: unknown;
+  };
+
+  return ((data ?? []) as ProjectRow[]).map((p) => {
     const { project_members, project_knowledge_units, project_agents, ...project } = p;
     return {
       ...project,
