@@ -163,7 +163,7 @@ export const KUEditor = ({
             <Button
               type="button"
               variant="outline"
-              render={<Link href="/editor" />}
+              render={<Link href="/knowledge" />}
             >
               {t("backToList")}
             </Button>

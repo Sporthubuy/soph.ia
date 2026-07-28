@@ -126,7 +126,7 @@ export const KUDependencies = ({
                 className="flex items-center justify-between gap-2 rounded-md border px-2 py-1.5"
               >
                 <Link
-                  href={`/editor/${other.id}`}
+                  href={`/knowledge/${other.id}`}
                   className="flex min-w-0 flex-1 items-center gap-2 hover:underline"
                   title={other.title}
                 >
@@ -161,7 +161,7 @@ export const KUDependencies = ({
             {incoming.map(({ edge, other }) => (
               <Link
                 key={`${edge.source_ku_id}-${edge.target_ku_id}`}
-                href={`/editor/${other.id}`}
+                href={`/knowledge/${other.id}`}
                 className="flex items-center gap-2 rounded-md border px-2 py-1.5 hover:bg-accent"
                 title={other.title}
               >

@@ -36,7 +36,8 @@ export default async function KnowledgeUnitPage({
 
   const trust = ku.trust_score ?? 0;
   const status = ku.status as string;
-  const canPropose = status === "draft" && EDITOR_ROLES.includes(role);
+  const canEdit = EDITOR_ROLES.includes(role);
+  const canPropose = status === "draft" && canEdit;
 
   return (
     <div className="p-8 max-w-4xl mx-auto space-y-6">
@@ -61,6 +62,15 @@ export default async function KnowledgeUnitPage({
             >
               {status.charAt(0).toUpperCase() + status.slice(1)}
             </span>
+            {canEdit && (
+              <Link
+                href={`/knowledge/${ku.id}/edit`}
+                className="label-sm px-3 py-1.5 rounded-lg border border-[#e2e8f0] text-[#45464d] hover:bg-[#f7f9fb] transition-colors flex items-center gap-1.5"
+              >
+                <span className="material-symbols-outlined text-base">edit</span>
+                Editar
+              </Link>
+            )}
             {canPropose && <ProposeButton kuId={ku.id} />}
           </div>
         </div>

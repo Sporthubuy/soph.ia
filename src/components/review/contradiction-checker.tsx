@@ -71,7 +71,7 @@ export const ContradictionChecker = ({ proposedKuId }: { proposedKuId: string })
             >
               <div className="flex items-center justify-between gap-2">
                 <Link
-                  href={`/editor/${c.candidateId}`}
+                  href={`/knowledge/${c.candidateId}`}
                   className="text-sm font-medium hover:underline"
                 >
                   {c.candidateTitle}

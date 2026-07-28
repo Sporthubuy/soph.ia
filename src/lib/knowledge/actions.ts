@@ -184,14 +184,33 @@ export async function getKnowledgeUnits(locale: string) {
   }
 }
 
-async function assertCanEdit() {
+/**
+ * Resultado comun de las server actions de edicion. Declara ambas claves
+ * (una siempre `never`) para que los callers puedan leer `result?.error` y
+ * `result?.success` sin narrowing explicito.
+ */
+export type ActionResult =
+  | { success: true; error?: never }
+  | { success?: never; error: string };
+
+type EditGuard =
+  | { error: string }
+  | {
+      supabase: Awaited<ReturnType<typeof createClient>>;
+      userId: string;
+      organizationId: string;
+    };
+
+// Tipo de retorno explicito: sin el, TS no siempre angosta correctamente
+// `guard` en los callers que hacen `if ("error" in guard) return guard`.
+async function assertCanEdit(): Promise<EditGuard> {
   const supabase = await createClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { error: "No autenticado." as const };
+  if (!user) return { error: "No autenticado." };
 
   const { data: membership } = await supabase
     .from("memberships")
@@ -199,10 +218,10 @@ async function assertCanEdit() {
     .eq("user_id", user.id)
     .single();
 
-  if (!membership) return { error: "El usuario no pertenece a ninguna organizacion." as const };
+  if (!membership) return { error: "El usuario no pertenece a ninguna organizacion." };
 
   if (!EDITOR_ROLES.includes(membership.role)) {
-    return { error: "No tenes permisos para editar Knowledge Units." as const };
+    return { error: "No tenes permisos para editar Knowledge Units." };
   }
 
   return { supabase, userId: user.id, organizationId: membership.organization_id };
@@ -212,7 +231,7 @@ async function assertCanEdit() {
  * Propone una KU en borrador para revision (Articulo 6: la IA/las personas
  * proponen, los owners/admins aprueban en el Review Center).
  */
-export async function proposeKnowledgeUnit(kuId: string) {
+export async function proposeKnowledgeUnit(kuId: string): Promise<ActionResult> {
   const guard = await assertCanEdit();
   if ("error" in guard) return guard;
 
@@ -480,6 +499,223 @@ export async function getKnowledgeUnit(id: string) {
     ...ku,
     domain: (domains as { name: string } | null)?.name ?? "General",
   };
+}
+
+/** Normaliza relaciones to-one: PostgREST devuelve objeto, los tipos las declaran como array. */
+function one<T>(rel: T | T[] | null): T | null {
+  return Array.isArray(rel) ? (rel[0] ?? null) : rel;
+}
+
+/** KU completa para el editor: incluye dominio y responsable para la barra lateral. */
+export async function getKnowledgeUnitForEdit(id: string) {
+  const supabase = await createClient();
+
+  const organizationId = await getCurrentOrganizationId();
+  if (!organizationId) return null;
+
+  const { data, error } = await supabase
+    .from("knowledge_units")
+    .select(
+      "*, domains(name), profiles!knowledge_units_owner_id_fkey(full_name, email)"
+    )
+    .eq("id", id)
+    .eq("organization_id", organizationId)
+    .maybeSingle();
+
+  if (error || !data) {
+    if (error) console.error("Error fetching knowledge unit para editar:", error);
+    return null;
+  }
+
+  const { domains, profiles, ...ku } = data;
+  return {
+    ...ku,
+    domains: one(domains as { name: string } | { name: string }[] | null),
+    profiles: one(
+      profiles as
+        | { full_name: string | null; email: string }
+        | { full_name: string | null; email: string }[]
+        | null
+    ),
+  };
+}
+
+/**
+ * Edita una KU y propone la nueva version para revision.
+ * El historial es inmutable (Articulo 4): se agrega una fila nueva a
+ * ku_versions, nunca se sobrescribe la anterior.
+ */
+export async function updateKnowledgeUnit(formData: FormData): Promise<ActionResult> {
+  const guard = await assertCanEdit();
+  if ("error" in guard) return guard;
+
+  const { supabase, userId, organizationId } = guard;
+
+  const kuId = formData.get("kuId") as string;
+  const title = (formData.get("title") as string)?.trim();
+  const content = (formData.get("content") as string) ?? "";
+  const changeMessage = (formData.get("changeMessage") as string)?.trim() || null;
+
+  if (!kuId) return { error: "Falta el identificador de la Knowledge Unit." };
+  if (!title) return { error: "El titulo es obligatorio." };
+
+  const { data: ku, error: fetchError } = await supabase
+    .from("knowledge_units")
+    .select("id, version")
+    .eq("id", kuId)
+    .eq("organization_id", organizationId)
+    .maybeSingle();
+
+  if (fetchError || !ku) return { error: "Knowledge Unit no encontrada." };
+
+  const version = ku.version + 1;
+  const hash = await hashVersion(title, content, version);
+
+  const { error: versionError } = await supabase.from("ku_versions").insert({
+    ku_id: kuId,
+    version,
+    hash,
+    title,
+    content,
+    changed_by: userId,
+    change_message: changeMessage,
+  });
+
+  if (versionError) return { error: versionError.message };
+
+  // Toda edicion de contenido vuelve a pedir aprobacion humana (Articulo 6),
+  // sin importar el estado previo.
+  const { error: updateError } = await supabase
+    .from("knowledge_units")
+    .update({
+      title,
+      content,
+      hash,
+      version,
+      status: "proposed",
+      approved_at: null,
+      approved_by: null,
+    })
+    .eq("id", kuId);
+
+  if (updateError) return { error: updateError.message };
+
+  revalidatePath("/[locale]/knowledge", "page");
+  revalidatePath(`/[locale]/knowledge/${kuId}`, "page");
+  revalidatePath("/[locale]/review", "page");
+  revalidatePath("/[locale]/dashboard", "page");
+
+  return { success: true };
+}
+
+/** Historial de versiones de una KU, mas reciente primero. */
+export async function getKUVersions(kuId: string) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("ku_versions")
+    .select("id, version, hash, title, change_message, created_at, profiles(full_name, email)")
+    .eq("ku_id", kuId)
+    .order("version", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching version history:", error);
+    return [];
+  }
+
+  return (data ?? []).map((v) => ({
+    ...v,
+    profiles: one(
+      v.profiles as
+        | { full_name: string | null; email: string }
+        | { full_name: string | null; email: string }[]
+        | null
+    ),
+  }));
+}
+
+/** Dependencias (aristas) donde la KU participa como origen o destino. */
+export async function getKUDependencies(kuId: string) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("ku_dependencies")
+    .select("source_ku_id, target_ku_id")
+    .or(`source_ku_id.eq.${kuId},target_ku_id.eq.${kuId}`);
+
+  if (error) {
+    console.error("Error fetching dependencies:", error);
+    return [];
+  }
+
+  return data ?? [];
+}
+
+/** Resto de KUs de la organizacion, candidatas a ser dependencia. */
+export async function getKUDependencyCandidates(excludeId: string) {
+  const supabase = await createClient();
+
+  const organizationId = await getCurrentOrganizationId();
+  if (!organizationId) return [];
+
+  const { data, error } = await supabase
+    .from("knowledge_units")
+    .select("id, title, status, version")
+    .eq("organization_id", organizationId)
+    .neq("id", excludeId)
+    .order("title", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching dependency candidates:", error);
+    return [];
+  }
+
+  return data ?? [];
+}
+
+/** Agrega "sourceId depende de targetId". */
+export async function addKUDependency(sourceId: string, targetId: string): Promise<ActionResult> {
+  const guard = await assertCanEdit();
+  if ("error" in guard) return guard;
+
+  if (sourceId === targetId) {
+    return { error: "Una Knowledge Unit no puede depender de si misma." };
+  }
+
+  const { supabase } = guard;
+
+  const { error } = await supabase
+    .from("ku_dependencies")
+    .insert({ source_ku_id: sourceId, target_ku_id: targetId });
+
+  if (error) {
+    if (error.code === "23505") return { error: "Esa dependencia ya existe." };
+    return { error: error.message };
+  }
+
+  revalidatePath("/[locale]/knowledge/[kuId]", "page");
+
+  return { success: true };
+}
+
+/** Quita la dependencia "sourceId depende de targetId". */
+export async function removeKUDependency(sourceId: string, targetId: string): Promise<ActionResult> {
+  const guard = await assertCanEdit();
+  if ("error" in guard) return guard;
+
+  const { supabase } = guard;
+
+  const { error } = await supabase
+    .from("ku_dependencies")
+    .delete()
+    .eq("source_ku_id", sourceId)
+    .eq("target_ku_id", targetId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/[locale]/knowledge/[kuId]", "page");
+
+  return { success: true };
 }
 
 export async function compileAgentContext(organizationId: string, selectedKuIds: string[] = []) {
