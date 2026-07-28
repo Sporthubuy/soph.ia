@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentOrganizationId } from "@/lib/organization/get-org";
+import { EDITOR_ROLES } from "@/lib/knowledge/constants";
 
 export interface CreateKnowledgeUnitInput {
   title: string;
@@ -181,6 +182,66 @@ export async function getKnowledgeUnits(locale: string) {
     console.error("Error fetching knowledge units:", error);
     return [];
   }
+}
+
+async function assertCanEdit() {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "No autenticado." as const };
+
+  const { data: membership } = await supabase
+    .from("memberships")
+    .select("organization_id, role")
+    .eq("user_id", user.id)
+    .single();
+
+  if (!membership) return { error: "El usuario no pertenece a ninguna organizacion." as const };
+
+  if (!EDITOR_ROLES.includes(membership.role)) {
+    return { error: "No tenes permisos para editar Knowledge Units." as const };
+  }
+
+  return { supabase, userId: user.id, organizationId: membership.organization_id };
+}
+
+/**
+ * Propone una KU en borrador para revision (Articulo 6: la IA/las personas
+ * proponen, los owners/admins aprueban en el Review Center).
+ */
+export async function proposeKnowledgeUnit(kuId: string) {
+  const guard = await assertCanEdit();
+  if ("error" in guard) return guard;
+
+  const { supabase, organizationId } = guard;
+
+  const { data: ku } = await supabase
+    .from("knowledge_units")
+    .select("id, status")
+    .eq("id", kuId)
+    .eq("organization_id", organizationId)
+    .maybeSingle();
+
+  if (!ku) return { error: "Knowledge Unit no encontrada." };
+  if (ku.status !== "draft") {
+    return { error: "Solo se pueden proponer Knowledge Units en estado 'draft'." };
+  }
+
+  const { error } = await supabase
+    .from("knowledge_units")
+    .update({ status: "proposed" })
+    .eq("id", kuId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/[locale]/knowledge", "page");
+  revalidatePath("/[locale]/review", "page");
+  revalidatePath("/[locale]/dashboard", "page");
+
+  return { success: true };
 }
 
 /** Roles que pueden aprobar o rechazar cambios (Articulo 6: las personas aprueban). */

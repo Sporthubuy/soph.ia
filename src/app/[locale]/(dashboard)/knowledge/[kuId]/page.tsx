@@ -1,8 +1,10 @@
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
-import { getKnowledgeUnit } from "@/lib/knowledge/actions";
+import { getKnowledgeUnit, getCurrentUserRole } from "@/lib/knowledge/actions";
+import { EDITOR_ROLES } from "@/lib/knowledge/constants";
 import { renderMarkdown } from "@/lib/knowledge/markdown";
+import { ProposeButton } from "@/components/knowledge/propose-button";
 
 const STATUS_STYLES: Record<string, string> = {
   approved: "bg-green-50 text-green-700 border-green-100",
@@ -26,11 +28,15 @@ export default async function KnowledgeUnitPage({
   const { locale, kuId } = await params;
   setRequestLocale(locale);
 
-  const ku = await getKnowledgeUnit(kuId);
+  const [ku, role] = await Promise.all([
+    getKnowledgeUnit(kuId),
+    getCurrentUserRole(),
+  ]);
   if (!ku) notFound();
 
   const trust = ku.trust_score ?? 0;
   const status = ku.status as string;
+  const canPropose = status === "draft" && EDITOR_ROLES.includes(role);
 
   return (
     <div className="p-8 max-w-4xl mx-auto space-y-6">
@@ -47,13 +53,16 @@ export default async function KnowledgeUnitPage({
       <header className="space-y-3">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <h1 className="headline-xl text-black font-bold">{ku.title}</h1>
-          <span
-            className={`label-sm px-2 py-1 rounded border ${
-              STATUS_STYLES[status] ?? STATUS_STYLES.archived
-            }`}
-          >
-            {status.charAt(0).toUpperCase() + status.slice(1)}
-          </span>
+          <div className="flex items-center gap-3">
+            <span
+              className={`label-sm px-2 py-1 rounded border ${
+                STATUS_STYLES[status] ?? STATUS_STYLES.archived
+              }`}
+            >
+              {status.charAt(0).toUpperCase() + status.slice(1)}
+            </span>
+            {canPropose && <ProposeButton kuId={ku.id} />}
+          </div>
         </div>
 
         <dl className="flex items-center gap-6 flex-wrap body-sm text-[#7c839b]">
