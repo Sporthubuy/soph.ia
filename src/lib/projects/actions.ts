@@ -41,7 +41,7 @@ export async function createProject(input: CreateProjectInput, locale: string) {
     if (error) throw error;
 
     // Revalidate the projects page
-    revalidatePath(`/${locale}/projects`, "page");
+    revalidatePath(`/${locale}/dashboard/projects`, "page");
 
     return { success: true, data };
   } catch (error) {

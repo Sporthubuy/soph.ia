@@ -39,7 +39,7 @@ export async function createAgent(input: CreateAgentInput, locale: string) {
 
     if (error) throw error;
 
-    revalidatePath(`/${locale}/agents`, "page");
+    revalidatePath(`/${locale}/dashboard/agents`, "page");
 
     return { success: true, data };
   } catch (error) {

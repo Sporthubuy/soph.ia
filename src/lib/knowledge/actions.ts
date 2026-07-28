@@ -43,7 +43,7 @@ export async function createKnowledgeUnit(input: CreateKnowledgeUnitInput, local
 
     if (error) throw error;
 
-    revalidatePath(`/${locale}/knowledge`, "page");
+    revalidatePath(`/${locale}/dashboard/knowledge`, "page");
 
     return { success: true, data };
   } catch (error) {
