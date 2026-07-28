@@ -13,6 +13,7 @@ export const AppSidebar = () => {
   // de enlazar a un 404.
   const navItems = [
     { href: "/dashboard", label: "Overview", icon: "dashboard", ready: true },
+    { href: "/projects", label: "Proyectos", icon: "folder_open", ready: true },
     { href: "/knowledge", label: "Knowledge", icon: "menu_book", ready: true },
     { href: "/agents", label: "Agents", icon: "smart_toy", ready: true },
     { href: "/review", label: "Review", icon: "fact_check", ready: true },
