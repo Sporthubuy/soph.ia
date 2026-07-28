@@ -3,6 +3,7 @@ import { redirect } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
 import { AppSidebar } from "@/components/shared/app-sidebar";
 import { DashboardOverview } from "@/components/shared/dashboard-overview";
+import { getRecentActivityLogs } from "@/lib/activity/actions";
 
 export default async function DashboardPage({
   params,
@@ -21,26 +22,36 @@ export default async function DashboardPage({
     redirect({ href: "/login", locale });
   }
 
-  // Fetch recent projects, knowledge units, and agents
-  const [projectsResult, kuResult, agentsResult] = await Promise.all([
+  // Get user's organization
+  const { data: membershipData } = await supabase
+    .from("memberships")
+    .select("organization_id")
+    .eq("user_id", user.id)
+    .single();
+
+  const organizationId = membershipData?.organization_id || user.id;
+
+  // Fetch recent projects, knowledge units, agents, and activity logs
+  const [projectsResult, kuResult, agentsResult, activityLogs] = await Promise.all([
     supabase
       .from("projects")
       .select("*")
-      .eq("organization_id", user.id)
+      .eq("organization_id", organizationId)
       .order("updated_at", { ascending: false })
       .limit(5),
     supabase
       .from("knowledge_units")
       .select("*")
-      .eq("organization_id", user.id)
+      .eq("organization_id", organizationId)
       .order("updated_at", { ascending: false })
       .limit(5),
     supabase
       .from("agents")
       .select("*")
-      .eq("organization_id", user.id)
+      .eq("organization_id", organizationId)
       .order("updated_at", { ascending: false })
       .limit(5),
+    getRecentActivityLogs(5),
   ]);
 
   const projects = projectsResult.data || [];
@@ -56,6 +67,7 @@ export default async function DashboardPage({
             projects={projects}
             knowledgeUnits={knowledgeUnits}
             agents={agents}
+            activityLogs={activityLogs}
           />
         </main>
       </div>

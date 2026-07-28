@@ -29,16 +29,29 @@ interface Agent {
   updated_at?: string;
 }
 
+interface ActivityLog {
+  id: string;
+  user_id: string;
+  action_type: string;
+  entity_type: string;
+  entity_id: string;
+  entity_title: string;
+  description: string;
+  created_at: string;
+}
+
 interface DashboardOverviewProps {
   projects?: Project[];
   knowledgeUnits?: KnowledgeUnit[];
   agents?: Agent[];
+  activityLogs?: ActivityLog[];
 }
 
 export const DashboardOverview = ({
   projects = [],
   knowledgeUnits = [],
   agents = [],
+  activityLogs = [],
 }: DashboardOverviewProps) => {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
@@ -121,32 +134,54 @@ export const DashboardOverview = ({
     { id: "projects", label: "Projects" },
   ];
 
-  const activityItems = [
-    {
-      id: 1,
-      author: "Alex Rivers",
-      avatar: "🧑‍💻",
-      action: "pushed a new agent template",
-      time: "24h ago",
-      link: "View changes",
-    },
-    {
-      id: 2,
-      author: "Sarah Chen",
-      avatar: "👩‍💼",
-      action: "invited 2 new researchers",
-      time: "1h ago",
-      link: "Manage team",
-    },
-    {
-      id: 3,
-      author: "System",
-      avatar: "⚙️",
-      action: "completed vector re-indexing",
-      time: "3h ago",
-      link: "Download report",
-    },
-  ];
+  // Transform activity logs to display format
+  const getActionLabel = (actionType: string) => {
+    switch (actionType) {
+      case "create_project":
+        return "created a new project";
+      case "create_knowledge_unit":
+        return "created a new knowledge unit";
+      case "approve_knowledge_unit":
+        return "approved a knowledge unit";
+      default:
+        return actionType.replace(/_/g, " ");
+    }
+  };
+
+  const getTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return "now";
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHours < 24) return `${diffHours}h ago`;
+    if (diffDays < 7) return `${diffDays}d ago`;
+    return date.toLocaleDateString();
+  };
+
+  const activityItems = activityLogs.length > 0
+    ? activityLogs.map((log) => ({
+        id: log.id,
+        author: log.user_id, // In a real app, fetch user profile
+        avatar: "👤",
+        action: `${getActionLabel(log.action_type)} "${log.entity_title}"`,
+        time: getTimeAgo(log.created_at),
+        link: "View details",
+      }))
+    : [
+        {
+          id: "1",
+          author: "No activity",
+          avatar: "📭",
+          action: "Start creating projects or knowledge units to see activity here",
+          time: "",
+          link: "",
+        },
+      ];
 
   return (
     <div className="p-8 max-w-full">
@@ -278,14 +313,22 @@ export const DashboardOverview = ({
                     {/* Activity Text */}
                     <div className="flex-1 min-w-0">
                       <p className="body-sm">
-                        <span className="font-semibold text-black">{activity.author}</span>
-                        {" "}
-                        <span className="text-[#7c839b]">{activity.action}</span>
+                        {activity.author !== "No activity" ? (
+                          <>
+                            <span className="font-semibold text-black">{activity.author}</span>
+                            {" "}
+                            <span className="text-[#7c839b]">{activity.action}</span>
+                          </>
+                        ) : (
+                          <span className="text-[#7c839b]">{activity.action}</span>
+                        )}
                       </p>
-                      <p className="label-sm text-[#7c839b] mt-1">{activity.time}</p>
-                      <a href="#" className="label-sm text-[#4648d4] hover:underline mt-1 inline-block">
-                        {activity.link}
-                      </a>
+                      {activity.time && <p className="label-sm text-[#7c839b] mt-1">{activity.time}</p>}
+                      {activity.link && (
+                        <a href="#" className="label-sm text-[#4648d4] hover:underline mt-1 inline-block">
+                          {activity.link}
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>

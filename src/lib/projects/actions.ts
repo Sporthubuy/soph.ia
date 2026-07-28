@@ -24,6 +24,17 @@ export async function createProject(input: CreateProjectInput, locale: string) {
   }
 
   try {
+    // Get user's organization (the one they're a member of)
+    const { data: membershipData, error: membershipError } = await supabase
+      .from("memberships")
+      .select("organization_id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (membershipError || !membershipData) {
+      throw new Error("User has no organization. Please contact support.");
+    }
+
     const { data, error } = await supabase
       .from("projects")
       .insert({
@@ -32,7 +43,7 @@ export async function createProject(input: CreateProjectInput, locale: string) {
         icon: input.icon,
         color: input.color,
         owner_id: user.id,
-        organization_id: user.id, // TODO: Get from org context
+        organization_id: membershipData.organization_id,
         status: "active",
       })
       .select()
