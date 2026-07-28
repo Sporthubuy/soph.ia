@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentOrganizationId } from "@/lib/organization/get-org";
 
 export interface ActivityLog {
   id: string;
@@ -22,14 +23,9 @@ export async function getRecentActivityLogs(limit: number = 10) {
     return [];
   }
 
-  // Get user's organization
-  const { data: membershipData } = await supabase
-    .from("memberships")
-    .select("organization_id")
-    .eq("user_id", user.id)
-    .single();
+  const organizationId = await getCurrentOrganizationId();
 
-  const organizationId = membershipData?.organization_id || user.id;
+  if (!organizationId) return [];
 
   const { data, error } = await supabase
     .from("activity_logs")

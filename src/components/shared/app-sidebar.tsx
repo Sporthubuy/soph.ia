@@ -21,13 +21,15 @@ export const AppSidebar = () => {
     getUserData();
   }, []);
 
+  // `ready: false` = la ruta todavia no existe. Se muestra deshabilitada en vez
+  // de enlazar a un 404.
   const navItems = [
-    { href: "/dashboard", label: "Overview", icon: "dashboard" },
-    { href: "/knowledge", label: "Knowledge", icon: "menu_book" },
-    { href: "/agents", label: "Agents", icon: "smart_toy" },
-    { href: "/review", label: "Review", icon: "fact_check" },
-    { href: "/people", label: "People", icon: "people" },
-    { href: "/marketplace", label: "Marketplace", icon: "store" },
+    { href: "/dashboard", label: "Overview", icon: "dashboard", ready: true },
+    { href: "/knowledge", label: "Knowledge", icon: "menu_book", ready: true },
+    { href: "/agents", label: "Agents", icon: "smart_toy", ready: true },
+    { href: "/review", label: "Review", icon: "fact_check", ready: true },
+    { href: "/people", label: "People", icon: "people", ready: false },
+    { href: "/marketplace", label: "Marketplace", icon: "store", ready: false },
   ];
 
   const handleSignOut = async () => {
@@ -37,18 +39,41 @@ export const AppSidebar = () => {
     router.push("/login");
   };
 
-  const NavLink = ({ item }: { item: { href: string; label: string; icon: string } }) => {
+  const NavLink = ({
+    item,
+  }: {
+    item: { href: string; label: string; icon: string; ready: boolean };
+  }) => {
+    if (!item.ready) {
+      return (
+        <span
+          aria-disabled="true"
+          title="Proximamente"
+          className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#a8adbd] cursor-not-allowed select-none"
+        >
+          <span className="material-symbols-outlined text-xl flex-shrink-0">
+            {item.icon}
+          </span>
+          <span className="body-md flex-1">{item.label}</span>
+          <span className="label-sm text-[#a8adbd] border border-[#e2e8f0] rounded px-1.5 py-0.5">
+            Pronto
+          </span>
+        </span>
+      );
+    }
+
     const isActive = pathname === item.href;
     return (
       <Link
         href={item.href}
+        aria-current={isActive ? "page" : undefined}
         className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
           isActive
             ? "bg-[#e1e0ff] text-[#4648d4] font-medium"
             : "text-[#45464d] hover:bg-[#f7f9fb]"
         }`}
       >
-        <span className={`material-symbols-outlined text-xl flex-shrink-0`}>
+        <span className="material-symbols-outlined text-xl flex-shrink-0">
           {item.icon}
         </span>
         <span className="body-md">{item.label}</span>
@@ -88,13 +113,18 @@ export const AppSidebar = () => {
 
       {/* Settings Section */}
       <div className="p-4 border-t border-[#e2e8f0]">
-        <Link
-          href="/settings"
-          className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#45464d] hover:bg-[#f7f9fb] transition-all"
+        {/* /settings todavia no existe: se muestra deshabilitado, no como link roto. */}
+        <span
+          aria-disabled="true"
+          title="Proximamente"
+          className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#a8adbd] cursor-not-allowed select-none"
         >
           <span className="material-symbols-outlined text-xl">settings</span>
-          <span className="body-md">Settings</span>
-        </Link>
+          <span className="body-md flex-1">Settings</span>
+          <span className="label-sm border border-[#e2e8f0] rounded px-1.5 py-0.5">
+            Pronto
+          </span>
+        </span>
 
         <button
           onClick={handleSignOut}

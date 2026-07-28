@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentOrganizationId } from "@/lib/organization/get-org";
 
 export interface CreateProjectInput {
   name: string;
@@ -23,18 +24,13 @@ export async function createProject(input: CreateProjectInput, locale: string) {
     redirect({ href: "/login", locale });
   }
 
+  const organizationId = await getCurrentOrganizationId();
+
+  if (!organizationId) {
+    throw new Error("El usuario no pertenece a ninguna organizacion.");
+  }
+
   try {
-    // Get user's organization (the one they're a member of)
-    const { data: membershipData, error: membershipError } = await supabase
-      .from("memberships")
-      .select("organization_id")
-      .eq("user_id", user.id)
-      .single();
-
-    if (membershipError || !membershipData) {
-      throw new Error("User has no organization. Please contact support.");
-    }
-
     const { data, error } = await supabase
       .from("projects")
       .insert({
@@ -42,8 +38,8 @@ export async function createProject(input: CreateProjectInput, locale: string) {
         description: input.description,
         icon: input.icon,
         color: input.color,
-        owner_id: user.id,
-        organization_id: membershipData.organization_id,
+        owner_id: user!.id,
+        organization_id: organizationId,
         status: "active",
       })
       .select()
@@ -51,8 +47,7 @@ export async function createProject(input: CreateProjectInput, locale: string) {
 
     if (error) throw error;
 
-    // Revalidate the projects page
-    revalidatePath(`/${locale}/dashboard/projects`, "page");
+    revalidatePath(`/${locale}/dashboard`, "page");
 
     return { success: true, data };
   } catch (error) {
@@ -77,11 +72,11 @@ export async function deleteProject(projectId: string, locale: string) {
       .from("projects")
       .delete()
       .eq("id", projectId)
-      .eq("owner_id", user.id);
+      .eq("owner_id", user!.id);
 
     if (error) throw error;
 
-    revalidatePath(`/${locale}/dashboard/projects`, "page");
+    revalidatePath(`/${locale}/dashboard`, "page");
 
     return { success: true };
   } catch (error) {
@@ -102,14 +97,9 @@ export async function getProjects(locale: string) {
   }
 
   try {
-    // Get user's organization
-    const { data: membershipData } = await supabase
-      .from("memberships")
-      .select("organization_id")
-      .eq("user_id", user.id)
-      .single();
+    const organizationId = await getCurrentOrganizationId();
 
-    const organizationId = membershipData?.organization_id || user.id;
+    if (!organizationId) return [];
 
     const { data, error } = await supabase
       .from("projects")

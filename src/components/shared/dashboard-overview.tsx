@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "@/i18n/routing";
 
 interface Project {
   id: string;
@@ -53,6 +54,7 @@ export const DashboardOverview = ({
   agents = [],
   activityLogs = [],
 }: DashboardOverviewProps) => {
+  const router = useRouter();
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
 
@@ -125,6 +127,15 @@ export const DashboardOverview = ({
       default:
         return "icon-tile-review";
     }
+  };
+
+  /** Los proyectos aun no tienen vista de detalle, asi que no navegan. */
+  const isNavigable = (type: string) =>
+    type === "knowledge-unit" || type === "agent";
+
+  const handleNavigate = (type: string, id: string) => {
+    if (type === "knowledge-unit") router.push("/knowledge/" + id);
+    else if (type === "agent") router.push("/agents/" + id);
   };
 
   const tabs = [
@@ -245,7 +256,12 @@ export const DashboardOverview = ({
               {recentItems.map((item) => (
                 <div
                   key={item.id}
-                  className="panel p-4 flex items-start gap-4 hover:bg-[#f7f9fb] transition-colors cursor-pointer"
+                  onClick={() => handleNavigate(item.type, item.id)}
+                  className={`panel p-4 flex items-start gap-4 transition-colors ${
+                    isNavigable(item.type)
+                      ? "hover:bg-[#f7f9fb] cursor-pointer"
+                      : ""
+                  }`}
                 >
                   {/* Icon */}
                   <div className={`${getIconTile(item.type)} w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0`}>
@@ -293,7 +309,7 @@ export const DashboardOverview = ({
             {agents.length > 0 ? (
               <div className="space-y-2">
                 {agents.map((agent) => (
-                  <div key={agent.id} className="panel p-4 flex items-start gap-4 hover:bg-[#f7f9fb] transition-colors">
+                  <div key={agent.id} onClick={() => handleNavigate("agent", agent.id)} className="panel p-4 flex items-start gap-4 hover:bg-[#f7f9fb] transition-colors cursor-pointer">
                     <div className="icon-tile-agent w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
                       <span className="material-symbols-outlined text-lg">smart_toy</span>
                     </div>
@@ -328,7 +344,7 @@ export const DashboardOverview = ({
             {knowledgeUnits.length > 0 ? (
               <div className="space-y-2">
                 {knowledgeUnits.map((ku) => (
-                  <div key={ku.id} className="panel p-4 flex items-start gap-4 hover:bg-[#f7f9fb] transition-colors">
+                  <div key={ku.id} onClick={() => handleNavigate("knowledge-unit", ku.id)} className="panel p-4 flex items-start gap-4 hover:bg-[#f7f9fb] transition-colors cursor-pointer">
                     <div className="icon-tile-ku w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
                       <span className="material-symbols-outlined text-lg">menu_book</span>
                     </div>

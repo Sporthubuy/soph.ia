@@ -39,8 +39,9 @@ interface ProposedKU {
   version: number;
   updated_at: string;
   domain_id: string;
-  domains: { name: string }[] | null;
-  profiles: { full_name: string | null; email: string }[] | null;
+  // Relaciones to-one: PostgREST las devuelve como objeto, no como array.
+  domains: { name: string } | null;
+  profiles: { full_name: string | null; email: string } | null;
 }
 
 export const ReviewList = ({
@@ -143,9 +144,8 @@ const ReviewCard = ({
     return null;
   }
 
-  const ownerName =
-    ku.profiles?.[0]?.full_name ?? ku.profiles?.[0]?.email ?? "—";
-  const domainName = ku.domains?.[0]?.name ?? "—";
+  const ownerName = ku.profiles?.full_name ?? ku.profiles?.email ?? "—";
+  const domainName = ku.domains?.name ?? "—";
   const oldText = diff?.previous?.content ?? "";
   const newText = diff?.current.content ?? "";
 
@@ -155,7 +155,7 @@ const ReviewCard = ({
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <CardTitle className="text-base">
-              <Link href={`/editor/${ku.id}`} className="hover:underline">
+              <Link href={`/knowledge/${ku.id}`} className="hover:underline">
                 {ku.title}
               </Link>
             </CardTitle>
