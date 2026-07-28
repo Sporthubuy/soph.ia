@@ -287,6 +287,74 @@ export const DashboardOverview = ({
             </div>
           </div>
 
+          {/* Agents Section */}
+          <div className="space-y-4">
+            <p className="section-heading">AGENTS</p>
+            {agents.length > 0 ? (
+              <div className="space-y-2">
+                {agents.map((agent) => (
+                  <div key={agent.id} className="panel p-4 flex items-start gap-4 hover:bg-[#f7f9fb] transition-colors">
+                    <div className="icon-tile-agent w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-lg">smart_toy</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="body-md font-semibold text-black">{agent.name}</h3>
+                        <span className={`label-sm px-2 py-1 rounded border ${getStatusColor(agent.status || "Idle")}`}>
+                          {agent.status || "Idle"}
+                        </span>
+                      </div>
+                      <p className="body-sm text-[#7c839b] truncate">{agent.description}</p>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <p className="label-sm text-[#7c839b]">Updated</p>
+                      <p className="body-sm text-[#7c839b]">
+                        {agent.updated_at ? new Date(agent.updated_at).toLocaleDateString() : "Recently"}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="panel p-6 text-center text-[#7c839b] body-md">
+                No agents yet. Create one to get started!
+              </div>
+            )}
+          </div>
+
+          {/* Knowledge Units Section */}
+          <div className="space-y-4">
+            <p className="section-heading">KNOWLEDGE UNITS</p>
+            {knowledgeUnits.length > 0 ? (
+              <div className="space-y-2">
+                {knowledgeUnits.map((ku) => (
+                  <div key={ku.id} className="panel p-4 flex items-start gap-4 hover:bg-[#f7f9fb] transition-colors">
+                    <div className="icon-tile-ku w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-lg">menu_book</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="body-md font-semibold text-black">{ku.title}</h3>
+                        <span className={`label-sm px-2 py-1 rounded border ${getStatusColor(ku.status || "Draft")}`}>
+                          {ku.status || "Draft"}
+                        </span>
+                      </div>
+                      <p className="body-sm text-[#7c839b] truncate">{ku.description}</p>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <p className="label-sm text-[#7c839b]">Domain</p>
+                      <p className="body-sm text-[#7c839b]">{ku.domain || "General"}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="panel p-6 text-center text-[#7c839b] body-md">
+                No knowledge units yet. Create one to get started!
+              </div>
+            )}
+          </div>
+
           {/* Workspace Core Section */}
           <div className="space-y-4">
             <p className="section-heading">WORKSPACE CORE</p>
