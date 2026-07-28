@@ -103,14 +103,6 @@ export const AppSidebar = () => {
         ))}
       </nav>
 
-      {/* New Project Button */}
-      <div className="p-4 border-t border-[#e2e8f0]">
-        <button className="w-full bg-black text-white font-medium py-3 px-4 rounded-lg hover:bg-black/90 transition-colors flex items-center justify-center gap-2 body-md">
-          <span className="material-symbols-outlined">add</span>
-          New Project
-        </button>
-      </div>
-
       {/* Settings Section */}
       <div className="p-4 border-t border-[#e2e8f0]">
         {/* /settings todavia no existe: se muestra deshabilitado, no como link roto. */}
