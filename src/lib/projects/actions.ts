@@ -73,10 +73,19 @@ export async function getProjects(locale: string) {
   }
 
   try {
+    // Get user's organization
+    const { data: membershipData } = await supabase
+      .from("memberships")
+      .select("organization_id")
+      .eq("user_id", user.id)
+      .single();
+
+    const organizationId = membershipData?.organization_id || user.id;
+
     const { data, error } = await supabase
       .from("projects")
       .select("*")
-      .eq("organization_id", user.id)
+      .eq("organization_id", organizationId)
       .order("updated_at", { ascending: false });
 
     if (error) throw error;
