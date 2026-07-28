@@ -21,12 +21,42 @@ export default async function DashboardPage({
     redirect({ href: "/login", locale });
   }
 
+  // Fetch recent projects, knowledge units, and agents
+  const [projectsResult, kuResult, agentsResult] = await Promise.all([
+    supabase
+      .from("projects")
+      .select("*")
+      .eq("organization_id", user.id)
+      .order("updated_at", { ascending: false })
+      .limit(5),
+    supabase
+      .from("knowledge_units")
+      .select("*")
+      .eq("organization_id", user.id)
+      .order("updated_at", { ascending: false })
+      .limit(5),
+    supabase
+      .from("agents")
+      .select("*")
+      .eq("organization_id", user.id)
+      .order("updated_at", { ascending: false })
+      .limit(5),
+  ]);
+
+  const projects = projectsResult.data || [];
+  const knowledgeUnits = kuResult.data || [];
+  const agents = agentsResult.data || [];
+
   return (
     <div className="flex h-screen bg-[#f7f9fb]">
       <AppSidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <main className="flex-1 overflow-auto">
-          <DashboardOverview />
+          <DashboardOverview
+            projects={projects}
+            knowledgeUnits={knowledgeUnits}
+            agents={agents}
+          />
         </main>
       </div>
     </div>

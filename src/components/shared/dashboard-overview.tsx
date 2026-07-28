@@ -2,62 +2,89 @@
 
 import { useState } from "react";
 
-export const DashboardOverview = () => {
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  icon?: string;
+  color?: string;
+  status?: string;
+  updated_at?: string;
+}
+
+interface KnowledgeUnit {
+  id: string;
+  title: string;
+  description: string;
+  domain?: string;
+  status?: string;
+  updated_at?: string;
+}
+
+interface Agent {
+  id: string;
+  name: string;
+  description: string;
+  status?: string;
+  updated_at?: string;
+}
+
+interface DashboardOverviewProps {
+  projects?: Project[];
+  knowledgeUnits?: KnowledgeUnit[];
+  agents?: Agent[];
+}
+
+export const DashboardOverview = ({
+  projects = [],
+  knowledgeUnits = [],
+  agents = [],
+}: DashboardOverviewProps) => {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
 
+  // Transform database items to UI format
   const recentItems = [
-    {
-      id: 1,
+    ...projects.map((p) => ({
+      id: p.id,
+      type: "project",
+      icon: p.icon || "folder_open",
+      title: p.name,
+      description: p.description,
+      status: p.status || "Active",
+      metadata: `Color: ${p.color || "purple"}`,
+      timestamp: p.updated_at
+        ? new Date(p.updated_at).toLocaleDateString()
+        : "Recently",
+    })),
+    ...knowledgeUnits.map((ku) => ({
+      id: ku.id,
       type: "knowledge-unit",
       icon: "menu_book",
-      title: "SOPH.IA Research Lead",
-      description: "Knowledge Scope: Deep Learning, Neuro-symbolic AI, Ethics Labs",
-      status: "RUNNING",
-      metadata: "Latency: 124ms",
-      timestamp: "2 hours ago",
-    },
-    {
-      id: 2,
-      type: "document",
-      icon: "description",
-      title: "Q3_Strategic_Roadmap_Final.pdf",
-      description: "Added 2 hours ago • 4.2 MB • 3 Linked Agents",
-      status: "VERIFIED",
-      metadata: "Accuracy: 99.2%",
-      timestamp: "2 hours ago",
-    },
-    {
-      id: 3,
-      type: "project",
-      icon: "folder_open",
-      title: "Project: Aether Core Deployment",
-      description: "85 Units • 3 Agents",
-      status: "Active Development",
-      metadata: "Progress: 65%",
-      timestamp: "1 day ago",
-    },
-    {
-      id: 4,
-      type: "document",
-      icon: "description",
-      title: "Internal_Architecture_v4.docx",
-      description: "Updated yesterday • 12.8 MB • 0 Linked Agents",
-      status: "REVIEW REQUIRED",
-      metadata: "Conflicts: 2 Items",
-      timestamp: "Yesterday",
-    },
-    {
-      id: 5,
+      title: ku.title,
+      description: ku.description,
+      status: ku.status || "Draft",
+      metadata: `Domain: ${ku.domain || "General"}`,
+      timestamp: ku.updated_at
+        ? new Date(ku.updated_at).toLocaleDateString()
+        : "Recently",
+    })),
+    ...agents.map((a) => ({
+      id: a.id,
       type: "agent",
       icon: "smart_toy",
-      title: "Content Auditor Bot",
-      description: "Knowledge Scope: Compliance, HR Policy, Legal Drafts",
-      status: "IDLE",
-      metadata: "Last Run: Oct 12",
-      timestamp: "3 days ago",
-    },
-  ];
+      title: a.name,
+      description: a.description,
+      status: a.status || "Idle",
+      metadata: `Status: ${a.status || "Idle"}`,
+      timestamp: a.updated_at
+        ? new Date(a.updated_at).toLocaleDateString()
+        : "Recently",
+    })),
+  ].sort(
+    (a, b) =>
+      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  ).slice(0, 5);
 
   const getStatusColor = (status: string) => {
     switch (status) {
