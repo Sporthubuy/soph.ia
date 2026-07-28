@@ -127,6 +127,27 @@ export async function createKnowledgeUnit(input: CreateKnowledgeUnitInput, local
   }
 }
 
+/** Dominios existentes en la organizacion, para sugerir al crear una KU. */
+export async function getDomains() {
+  const supabase = await createClient();
+
+  const organizationId = await getCurrentOrganizationId();
+  if (!organizationId) return [];
+
+  const { data, error } = await supabase
+    .from("domains")
+    .select("id, name")
+    .eq("organization_id", organizationId)
+    .order("name", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching domains:", error);
+    return [];
+  }
+
+  return data ?? [];
+}
+
 export async function getKnowledgeUnits(locale: string) {
   const supabase = await createClient();
 

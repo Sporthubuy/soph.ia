@@ -12,5 +12,5 @@ export default async function KnowledgePage({
 
   const knowledgeUnits = await getKnowledgeUnits(locale);
 
-  return <KnowledgeOverview knowledgeUnits={knowledgeUnits} locale={locale} />;
+  return <KnowledgeOverview knowledgeUnits={knowledgeUnits} />;
 }

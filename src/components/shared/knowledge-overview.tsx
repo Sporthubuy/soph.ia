@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "@/i18n/routing";
-import { CreateKUModal, type KUFormData } from "./create-ku-modal";
-import { createKnowledgeUnit } from "@/lib/knowledge/actions";
 
 /** Refleja las columnas reales de public.knowledge_units (+ domain aplanado). */
 interface KnowledgeUnit {
@@ -19,16 +17,12 @@ interface KnowledgeUnit {
 
 interface KnowledgeOverviewProps {
   knowledgeUnits: KnowledgeUnit[];
-  locale: string;
 }
 
-export const KnowledgeOverview = ({ knowledgeUnits: initialKUs, locale }: KnowledgeOverviewProps) => {
+export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverviewProps) => {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("all");
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
-  const [createError, setCreateError] = useState<string | null>(null);
 
   // La lista viene del servidor; tras crear se refresca con router.refresh().
   const knowledgeUnits = initialKUs;
@@ -117,42 +111,13 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs, locale }: Knowle
       ? knowledgeUnits.length
       : knowledgeUnits.filter((ku) => ku.status === tabId).length;
 
-  const handleCreateKU = async (formData: KUFormData) => {
-    setIsCreating(true);
-    setCreateError(null);
-    try {
-      // knowledge_units no tiene columna description: la descripcion se guarda
-      // como parrafo introductorio del Markdown, que es lo que la lista resume.
-      const content = formData.description.trim()
-        ? `${formData.description.trim()}\n\n${formData.content}`
-        : formData.content;
-
-      await createKnowledgeUnit(
-        { title: formData.title, content, domain: formData.domain },
-        locale
-      );
-
-      setIsCreateModalOpen(false);
-      // Recarga desde el servidor: evita insertar en el estado una fila con
-      // un shape distinto al que devuelve getKnowledgeUnits.
-      router.refresh();
-    } catch (error) {
-      console.error("Error creating Knowledge Unit:", error);
-      setCreateError(
-        error instanceof Error ? error.message : "No se pudo crear la Knowledge Unit."
-      );
-    } finally {
-      setIsCreating(false);
-    }
-  };
-
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6">
       {/* Header with Search and Create Button */}
       <div className="flex items-center justify-between gap-4 mb-4">
         <h1 className="headline-lg text-black">Knowledge Units</h1>
         <button
-          onClick={() => setIsCreateModalOpen(true)}
+          onClick={() => router.push("/knowledge/new")}
           className="flex items-center gap-2 px-4 py-3 bg-[#4648d4] text-white rounded-lg hover:bg-[#3a3ab0] transition-colors font-medium body-md"
         >
           <span className="material-symbols-outlined text-xl">add</span>
@@ -211,28 +176,6 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs, locale }: Knowle
         </div>
       </div>
 
-      {createError && (
-        <div
-          role="alert"
-          className="panel border-red-200 bg-red-50 p-4 flex items-start gap-3"
-        >
-          <span className="material-symbols-outlined text-red-700">error</span>
-          <div className="flex-1">
-            <p className="body-md font-medium text-red-900">
-              No se pudo crear la Knowledge Unit
-            </p>
-            <p className="body-sm text-red-800">{createError}</p>
-          </div>
-          <button
-            onClick={() => setCreateError(null)}
-            aria-label="Cerrar aviso"
-            className="text-red-700 hover:text-red-900"
-          >
-            <span className="material-symbols-outlined">close</span>
-          </button>
-        </div>
-      )}
-
       {/* Knowledge Units List */}
       <div className="space-y-4">
         <p className="section-heading">KNOWLEDGE UNITS</p>
@@ -250,7 +193,7 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs, locale }: Knowle
               y con responsable. Crea la primera para empezar.
             </p>
             <button
-              onClick={() => setIsCreateModalOpen(true)}
+              onClick={() => router.push("/knowledge/new")}
               className="mt-2 bg-[#4648d4] text-white font-medium py-2.5 px-4 rounded-lg hover:bg-[#3a3ab0] transition-colors inline-flex items-center gap-2 body-md"
             >
               <span className="material-symbols-outlined text-xl">add</span>
@@ -336,13 +279,6 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs, locale }: Knowle
           </ul>
         )}
       </div>
-
-      {/* Create KU Modal */}
-      <CreateKUModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onSubmit={handleCreateKU}
-      />
     </div>
   );
 };
