@@ -38,7 +38,7 @@ export const AgentWizard = ({
 }) => {
   const t = useTranslations("agents");
   const tc = useTranslations("common");
-  const [step, setStep] = useState<WizardStep>("select");
+  const [step, setStep] = useState<WizardStep>("configure");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [domainFilter, setDomainFilter] = useState("all");
   const [search, setSearch] = useState("");
@@ -46,10 +46,7 @@ export const AgentWizard = ({
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [systemPrompt, setSystemPrompt] = useState("");
-  const [provider, setProvider] = useState("google");
-  const [model, setModel] = useState("gemini-2.0-flash");
-  const [temperature, setTemperature] = useState(0.4);
-  const [tags, setTags] = useState("");
+  const [provider, setProvider] = useState<"anthropic" | "openai" | "gemini" | "deepseek" | "nvidia">("anthropic");
   const [makePublic, setMakePublic] = useState(false);
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -103,6 +100,7 @@ export const AgentWizard = ({
           organizationId,
           selectedKuIds: Array.from(selected),
           history: messages,
+          provider,
         }),
       });
       const json = await res.json();
@@ -129,11 +127,8 @@ export const AgentWizard = ({
         description,
         systemPrompt,
         provider,
-        model,
-        temperature,
         selectedKuIds: Array.from(selected),
         visibility: makePublic ? "public" : "private",
-        tags: tags.split(",").map((t) => t.trim().toLowerCase()).filter(Boolean),
       }),
     });
     const json = await res.json();
@@ -148,8 +143,8 @@ export const AgentWizard = ({
   };
 
   const steps: { key: WizardStep; label: string; num: number }[] = [
-    { key: "select", label: t("wizardStep1"), num: 1 },
-    { key: "configure", label: t("wizardStep2"), num: 2 },
+    { key: "configure", label: t("wizardStep1"), num: 1 },
+    { key: "select", label: t("wizardStep2"), num: 2 },
     { key: "test", label: t("wizardStep3"), num: 3 },
     { key: "deploy", label: t("wizardStep4"), num: 4 },
   ];
@@ -248,16 +243,16 @@ export const AgentWizard = ({
                 </span></div>
               </div>
             </div>
-            <Button className="w-full rounded-xl" size="lg" disabled={selected.size === 0} onClick={() => setStep("configure")}>
-              {t("continueConfig")}
+            <Button className="w-full rounded-xl" size="lg" disabled={selected.size === 0} onClick={() => setStep("test")}>
+              {t("continueTest")}
             </Button>
           </div>
         </div>
       )}
 
-      {/* ── Step 2: Configure ──────────────────── */}
+      {/* ── Step 1: Configure ──────────────────── */}
       {step === "configure" && (
-        <div className="mx-auto w-full max-w-xl space-y-6">
+        <div className="mx-auto w-full max-w-2xl space-y-6">
           <div className="card-figma p-6 space-y-5">
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">{t("agentName")}</Label>
@@ -267,62 +262,24 @@ export const AgentWizard = ({
               <Label className="text-xs text-muted-foreground">{t("agentDesc")}</Label>
               <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder={t("agentDescPlaceholder")} className="input-figma" />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">{t("provider")}</Label>
-                <select value={provider} onChange={(e) => {
-                  const p = e.target.value;
-                  setProvider(p);
-                  if (p === "anthropic") setModel("claude-3-5-sonnet-latest");
-                  else if (p === "openai") setModel("gpt-4o-mini");
-                  else if (p === "google") setModel("gemini-2.0-flash");
-                }} className="h-9 w-full rounded-lg border bg-white px-3 text-sm">
-                  <option value="google">{t("providerGoogle")}</option>
-                  <option value="anthropic">{t("providerAnthropic")}</option>
-                  <option value="openai">{t("providerOpenAI")}</option>
-                </select>
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">{t("model")}</Label>
-                <select value={model} onChange={(e) => setModel(e.target.value)} className="h-9 w-full rounded-lg border bg-white px-3 text-sm">
-                  {provider === "anthropic" ? (
-                    <>
-                      <option value="claude-3-5-sonnet-latest">Claude 3.5 Sonnet</option>
-                      <option value="claude-3-5-haiku-latest">Claude 3.5 Haiku</option>
-                      <option value="claude-3-opus-latest">Claude 3 Opus</option>
-                    </>
-                  ) : provider === "google" ? (
-                    <>
-                      <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
-                      <option value="gemini-2.0-flash-lite">Gemini 2.0 Flash Lite</option>
-                      <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-                    </>
-                  ) : (
-                    <>
-                      <option value="gpt-4o-mini">GPT-4o Mini</option>
-                      <option value="gpt-4o">GPT-4o</option>
-                      <option value="gpt-4-turbo">GPT-4 Turbo</option>
-                    </>
-                  )}
-                </select>
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">{t("temperature")}: {temperature}</Label>
-              <input type="range" min="0" max="1" step="0.1" value={temperature} onChange={(e) => setTemperature(Number(e.target.value))} className="w-full" />
-            </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">{t("systemPrompt")}</Label>
-              <Textarea value={systemPrompt} onChange={(e) => setSystemPrompt(e.target.value)} rows={3} placeholder={t("systemPromptPlaceholder")} className="input-figma" />
+              <Textarea value={systemPrompt} onChange={(e) => setSystemPrompt(e.target.value)} rows={6} placeholder={t("systemPromptPlaceholder")} className="input-figma" />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">{t("tags")}</Label>
-              <Input value={tags} onChange={(e) => setTags(e.target.value)} placeholder={t("tagsPlaceholder")} className="input-figma" />
+              <Label className="text-xs text-muted-foreground">AI Provider</Label>
+              <select value={provider} onChange={(e) => setProvider(e.target.value as any)} className="h-9 w-full rounded-lg border bg-white px-3 text-sm">
+                <option value="anthropic">💰 Anthropic Claude</option>
+                <option value="openai">💰 OpenAI GPT-4</option>
+                <option value="gemini">🆓 Google Gemini</option>
+                <option value="deepseek">🆓 DeepSeek</option>
+                <option value="nvidia">🆓 Nvidia NIM</option>
+              </select>
+              <p className="text-xs text-muted-foreground">Selecciona el modelo de IA a usar. Configura tus credenciales en Settings.</p>
             </div>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" className="rounded-xl" onClick={() => setStep("select")}>{tc("backTo")}</Button>
-            <Button className="flex-1 rounded-xl" disabled={!name.trim()} onClick={() => setStep("test")}>{t("continueTest")}</Button>
+            <Button className="flex-1 rounded-xl" disabled={!name.trim()} onClick={() => setStep("select")}>{t("continueConfig")}</Button>
           </div>
         </div>
       )}
@@ -334,7 +291,14 @@ export const AgentWizard = ({
             <h3 className="mb-4 text-sm font-semibold">{t("testChat")}</h3>
             <div className="mb-4 flex items-center gap-2">
               <Badge variant="secondary">{selected.size} KUs</Badge>
-              <Badge variant="outline">{provider} · {model}</Badge>
+              <Badge variant="outline">{name || "Sin nombre"}</Badge>
+              <Badge variant="outline">
+                {provider === "anthropic" && "💰 Anthropic"}
+                {provider === "openai" && "💰 OpenAI"}
+                {provider === "gemini" && "🆓 Gemini"}
+                {provider === "deepseek" && "🆓 DeepSeek"}
+                {provider === "nvidia" && "🆓 Nvidia"}
+              </Badge>
             </div>
             <div className="mb-3 h-80 overflow-auto rounded-lg border bg-muted/30 p-4 space-y-3">
               {messages.length === 0 ? (
@@ -356,7 +320,7 @@ export const AgentWizard = ({
             </div>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" className="rounded-xl" onClick={() => setStep("configure")}>{tc("backTo")}</Button>
+            <Button variant="outline" className="rounded-xl" onClick={() => setStep("select")}>{tc("backTo")}</Button>
             <Button className="flex-1 rounded-xl" onClick={() => setStep("deploy")}>{t("continueDeploy")}</Button>
           </div>
         </div>

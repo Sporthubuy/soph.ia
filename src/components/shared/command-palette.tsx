@@ -33,7 +33,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "Overview",
     subtitle: "Dashboard",
     href: "/dashboard",
-    icon: "dashboard",
+    icon: "📊",
     keywords: "home overview start",
   },
   {
@@ -41,7 +41,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "Projects",
     subtitle: "Go to projects",
     href: "/projects",
-    icon: "folder_open",
+    icon: "📁",
     keywords: "proyectos projects",
   },
   {
@@ -49,7 +49,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "Knowledge",
     subtitle: "Knowledge units",
     href: "/knowledge",
-    icon: "menu_book",
+    icon: "📖",
     keywords: "ku knowledge unidades",
   },
   {
@@ -57,7 +57,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "Graph",
     subtitle: "Knowledge graph",
     href: "/graph",
-    icon: "hub",
+    icon: "🔗",
     keywords: "grafo graph map",
   },
   {
@@ -65,7 +65,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "Agents",
     subtitle: "AI agents",
     href: "/agents",
-    icon: "smart_toy",
+    icon: "🤖",
     keywords: "agentes agents",
   },
   {
@@ -73,7 +73,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "Review",
     subtitle: "Review center",
     href: "/review",
-    icon: "fact_check",
+    icon: "✅",
     keywords: "review aprobar",
   },
   {
@@ -81,7 +81,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "Settings",
     subtitle: "Organization settings",
     href: "/settings",
-    icon: "settings",
+    icon: "⚙️",
     keywords: "settings config",
   },
   {
@@ -89,7 +89,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "New Knowledge Unit",
     subtitle: "Create",
     href: "/knowledge/new",
-    icon: "add_circle",
+    icon: "➕",
     keywords: "create new ku knowledge",
   },
   {
@@ -97,7 +97,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "New Project",
     subtitle: "Create",
     href: "/projects/new",
-    icon: "create_new_folder",
+    icon: "📁",
     keywords: "create new project",
   },
   {
@@ -105,15 +105,15 @@ const NAV_ACTIONS: NavAction[] = [
     title: "New Agent",
     subtitle: "Create",
     href: "/agents/new",
-    icon: "smart_toy",
+    icon: "🤖",
     keywords: "create new agent",
   },
 ];
 
 const typeIcon: Record<SearchHit["type"], string> = {
-  knowledge: "menu_book",
-  project: "folder_open",
-  agent: "smart_toy",
+  knowledge: "📖",
+  project: "📁",
+  agent: "🤖",
 };
 
 type Item =

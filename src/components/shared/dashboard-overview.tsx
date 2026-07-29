@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Link } from "@/i18n/routing";
+import { getMaterialSymbolEmoji } from "@/lib/icon-helpers";
 
 interface Project {
   id: string;
@@ -157,7 +158,7 @@ export const DashboardOverview = ({
       ...projects.map((p) => ({
         id: p.id,
         type: "project" as const,
-        icon: p.icon || "folder_open",
+        icon: getMaterialSymbolEmoji(p.icon || "folder_open"),
         title: p.name,
         description: p.description || "",
         status: p.status || "active",
@@ -169,7 +170,7 @@ export const DashboardOverview = ({
       ...knowledgeUnits.map((ku) => ({
         id: ku.id,
         type: "knowledge-unit" as const,
-        icon: "menu_book",
+        icon: "📖",
         title: ku.title,
         description: ku.description || "",
         status: ku.status || "draft",
@@ -181,7 +182,7 @@ export const DashboardOverview = ({
       ...agents.map((a) => ({
         id: a.id,
         type: "agent" as const,
-        icon: "smart_toy",
+        icon: "🤖",
         title: a.name,
         description: a.description || "",
         status: a.status || "idle",
@@ -285,7 +286,7 @@ export const DashboardOverview = ({
                 className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7c839b]"
                 aria-hidden
               >
-                search
+                🔍
               </span>
               <input
                 type="search"
@@ -303,7 +304,7 @@ export const DashboardOverview = ({
                   aria-label="Clear search"
                 >
                   <span className="text-lg" aria-hidden>
-                    close
+                    ❌
                   </span>
                 </button>
               ) : (
@@ -341,7 +342,7 @@ export const DashboardOverview = ({
               className="flex items-center gap-2 px-3 py-2 text-[#45464d] hover:bg-[#f7f9fb] rounded self-start sm:self-auto"
             >
               <span className="text-lg" aria-hidden>
-                sort
+                📊
               </span>
               <span className="body-sm">
                 Sort: {sortMode === "recent" ? "Recent" : "Name"}
@@ -425,7 +426,7 @@ export const DashboardOverview = ({
                     >
                       <div className="icon-tile-agent w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
                         <span className="text-lg" aria-hidden>
-                          smart_toy
+                          🤖
                         </span>
                       </div>
                       <div className="flex-1 min-w-0">
@@ -476,7 +477,7 @@ export const DashboardOverview = ({
                     >
                       <div className="icon-tile-ku w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
                         <span className="text-lg" aria-hidden>
-                          menu_book
+                          📖
                         </span>
                       </div>
                       <div className="flex-1 min-w-0">
@@ -522,7 +523,7 @@ export const DashboardOverview = ({
                 className="panel p-4 hover:bg-[#f7f9fb] transition-colors flex items-center gap-3"
               >
                 <span className="text-[#4648d4]" aria-hidden>
-                  add_circle
+                  ➕
                 </span>
                 <span className="body-md font-medium text-black">New KU</span>
               </Link>
@@ -531,7 +532,7 @@ export const DashboardOverview = ({
                 className="panel p-4 hover:bg-[#f7f9fb] transition-colors flex items-center gap-3"
               >
                 <span className="text-[#4648d4]" aria-hidden>
-                  create_new_folder
+                  📁
                 </span>
                 <span className="body-md font-medium text-black">New project</span>
               </Link>
@@ -540,7 +541,7 @@ export const DashboardOverview = ({
                 className="panel p-4 hover:bg-[#f7f9fb] transition-colors flex items-center gap-3"
               >
                 <span className="text-[#4648d4]" aria-hidden>
-                  hub
+                  🔗
                 </span>
                 <span className="body-md font-medium text-black">Knowledge graph</span>
               </Link>
@@ -549,7 +550,7 @@ export const DashboardOverview = ({
                 className="panel p-4 hover:bg-[#f7f9fb] transition-colors flex items-center gap-3"
               >
                 <span className="text-[#4648d4]" aria-hidden>
-                  smart_toy
+                  🤖
                 </span>
                 <span className="body-md font-medium text-black">New agent</span>
               </Link>
@@ -558,7 +559,7 @@ export const DashboardOverview = ({
                 className="panel p-4 hover:bg-[#f7f9fb] transition-colors flex items-center gap-3"
               >
                 <span className="text-[#4648d4]" aria-hidden>
-                  fact_check
+                  ✅
                 </span>
                 <span className="body-md font-medium text-black">Review queue</span>
               </Link>

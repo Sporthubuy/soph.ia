@@ -1,4 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
+import { getMaterialSymbolEmoji } from "@/lib/icon-helpers";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
@@ -74,7 +75,7 @@ export default async function ProjectDetailPage({
             style={{ backgroundColor: project.color || "#e1e0ff" }}
           >
             <span className="text-2xl">
-              {project.icon || "folder_open"}
+              {getMaterialSymbolEmoji(project.icon)}
             </span>
           </div>
 
@@ -119,6 +120,7 @@ export default async function ProjectDetailPage({
           itemId={projectId}
           itemType="project"
           currentVisibility={project.visibility ?? "private"}
+          organizationId={project.organization_id}
           onlyOwner={project.owner_id !== user?.id && !permission.canManage}
         />
       </section>

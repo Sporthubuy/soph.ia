@@ -9,7 +9,6 @@ interface UpdateVisibilityBody {
 }
 
 export async function POST(request: Request) {
-  // Update visibility for knowledge units, projects, and agents
   try {
     let body: UpdateVisibilityBody;
     try {
@@ -59,15 +58,25 @@ export async function POST(request: Request) {
     // Use service client for both fetch and update
     const serviceClient = createServiceClient();
 
+    console.log(`[Visibility API] Looking for ${itemType}:${itemId} in table ${table}`);
+
+    // Select correct owner column based on item type
+    const ownerColumn = itemType === "agent" ? "created_by" : "owner_id";
+    const selectColumns = `organization_id, ${ownerColumn}`;
+
     // Fetch the item to verify ownership
     const { data: item, error: fetchError } = await serviceClient
       .from(table)
-      .select("organization_id, owner_id, created_by")
+      .select(selectColumns)
       .eq("id", itemId)
       .single();
 
+    console.log(`[Visibility API] Fetch result:`, { item, fetchError });
+
     if (fetchError || !item) {
-      return NextResponse.json({ error: "Item not found" }, { status: 404 });
+      return NextResponse.json({
+        error: `Item not found: ${fetchError?.message || 'no data'}`
+      }, { status: 404 });
     }
 
     // Verify user is member of the organization
@@ -78,7 +87,7 @@ export async function POST(request: Request) {
       .eq("organization_id", item.organization_id)
       .maybeSingle();
 
-    const isOwner = item.owner_id === user.id || item.created_by === user.id;
+    const isOwner = (item as any)[ownerColumn] === user.id;
     const isAdmin = membership?.role === "admin" || membership?.role === "owner";
     const isMember = !!membership;
 
@@ -113,7 +122,7 @@ export async function POST(request: Request) {
       visibility,
     });
   } catch (e) {
-    console.error("Error in update-visibility:", e);
+    console.error("Error in visibility API:", e);
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "Failed to update visibility" },
       { status: 500 }

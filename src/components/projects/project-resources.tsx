@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useMemo } from "react";
 import { useRouter, Link } from "@/i18n/routing";
 import {
   addKnowledgeUnitToProject,
@@ -118,7 +118,7 @@ export const ProjectKnowledge = ({
                     className="flex items-center gap-3 p-3 rounded-lg border border-[#e2e8f0] flex-wrap"
                   >
                     <span className="text-[#4648d4]">
-                      menu_book
+                      📖
                     </span>
                     <Link
                       href={`/knowledge/${ku.id}`}
@@ -159,37 +159,7 @@ export const ProjectKnowledge = ({
         </div>
       )}
 
-      {canManage && (
-        <div className="space-y-2 pt-1">
-          <label htmlFor="add-ku" className="label-sm text-[#7c839b]">
-            AGREGAR KNOWLEDGE UNIT
-          </label>
-          {candidates.length === 0 ? (
-            <p className="body-sm text-[#7c839b]">
-              No quedan Knowledge Units disponibles para agregar.
-            </p>
-          ) : (
-            <select
-              id="add-ku"
-              value=""
-              disabled={isPending}
-              onChange={(e) => {
-                if (e.target.value) {
-                  run(() => addKnowledgeUnitToProject(projectId, e.target.value));
-                }
-              }}
-              className="w-full body-sm border border-[#e2e8f0] rounded-lg px-3 py-2.5 bg-white text-[#45464d] focus:outline-none focus:ring-2 focus:ring-[#4648d4]"
-            >
-              <option value="">Selecciona una Knowledge Unit...</option>
-              {candidates.map((ku) => (
-                <option key={ku.id} value={ku.id}>
-                  {ku.title} · {ku.domain}
-                </option>
-              ))}
-            </select>
-          )}
-        </div>
-      )}
+      {canManage && <KnowledgeUnitAdder projectId={projectId} candidates={candidates} isPending={isPending} run={run} />}
 
       {error && (
         <p role="alert" className="body-sm text-red-700">
@@ -243,7 +213,7 @@ export const ProjectAgents = ({
               className="flex items-center gap-3 p-3 rounded-lg border border-[#e2e8f0] flex-wrap"
             >
               <span className="text-[#4648d4]">
-                smart_toy
+                🤖
               </span>
               <div className="flex-1 min-w-0">
                 <Link
@@ -279,37 +249,7 @@ export const ProjectAgents = ({
         </ul>
       )}
 
-      {canManage && (
-        <div className="space-y-2 pt-1">
-          <label htmlFor="add-agent" className="label-sm text-[#7c839b]">
-            INTEGRAR AGENTE
-          </label>
-          {candidates.length === 0 ? (
-            <p className="body-sm text-[#7c839b]">
-              No quedan agentes disponibles para integrar.
-            </p>
-          ) : (
-            <select
-              id="add-agent"
-              value=""
-              disabled={isPending}
-              onChange={(e) => {
-                if (e.target.value) {
-                  run(() => addAgentToProject(projectId, e.target.value));
-                }
-              }}
-              className="w-full body-sm border border-[#e2e8f0] rounded-lg px-3 py-2.5 bg-white text-[#45464d] focus:outline-none focus:ring-2 focus:ring-[#4648d4]"
-            >
-              <option value="">Selecciona un agente...</option>
-              {candidates.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.name}
-                </option>
-              ))}
-            </select>
-          )}
-        </div>
-      )}
+      {canManage && <AgentAdder projectId={projectId} candidates={candidates} isPending={isPending} run={run} />}
 
       {error && (
         <p role="alert" className="body-sm text-red-700">
@@ -317,5 +257,200 @@ export const ProjectAgents = ({
         </p>
       )}
     </section>
+  );
+};
+
+interface KnowledgeUnitAdderProps {
+  projectId: string;
+  candidates: KUCandidate[];
+  isPending: boolean;
+  run: (fn: () => Promise<{ error?: string; success?: true }>) => void;
+}
+
+const KnowledgeUnitAdder = ({ projectId, candidates, isPending, run }: KnowledgeUnitAdderProps) => {
+  const [search, setSearch] = useState("");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return candidates;
+    return candidates.filter(
+      (ku) =>
+        ku.title.toLowerCase().includes(q) ||
+        ku.domain.toLowerCase().includes(q)
+    );
+  }, [search, candidates]);
+
+  const handleToggle = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const handleAddSelected = () => {
+    if (selectedIds.size === 0) return;
+    const ids = Array.from(selectedIds);
+    run(async () => {
+      for (const id of ids) {
+        const result = await addKnowledgeUnitToProject(projectId, id);
+        if (result?.error) return result;
+      }
+      return { success: true };
+    });
+  };
+
+  if (candidates.length === 0) {
+    return (
+      <div className="space-y-2 pt-1">
+        <label className="label-sm text-[#7c839b]">AGREGAR KNOWLEDGE UNIT</label>
+        <p className="body-sm text-[#7c839b]">
+          No quedan Knowledge Units disponibles para agregar.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2 pt-1">
+      <label className="label-sm text-[#7c839b]">AGREGAR KNOWLEDGE UNIT</label>
+      <input
+        type="text"
+        placeholder="🔍 Buscar Knowledge Unit..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full body-sm border border-[#e2e8f0] rounded-lg px-3 py-2.5 bg-white text-[#45464d] placeholder-[#7c839b] focus:outline-none focus:ring-2 focus:ring-[#4648d4]"
+      />
+      <div className="space-y-2 max-h-64 overflow-y-auto border border-[#e2e8f0] rounded-lg p-3 bg-[#f7f9fb]">
+        {filtered.slice(0, 5).map((ku) => (
+          <label key={ku.id} className="flex items-center gap-2 cursor-pointer hover:bg-white p-2 rounded transition-colors">
+            <input
+              type="checkbox"
+              checked={selectedIds.has(ku.id)}
+              onChange={() => handleToggle(ku.id)}
+              disabled={isPending}
+              className="w-4 h-4 rounded border-[#e2e8f0] text-[#4648d4] focus:ring-[#4648d4]"
+            />
+            <span className="flex-1 min-w-0">
+              <p className="body-sm text-black truncate">{ku.title}</p>
+              <p className="label-xs text-[#7c839b]">{ku.domain}</p>
+            </span>
+          </label>
+        ))}
+        {filtered.length > 5 && (
+          <p className="label-xs text-[#7c839b] text-center py-2">
+            Mostrando 5 de {filtered.length} resultados
+          </p>
+        )}
+      </div>
+      <button
+        type="button"
+        disabled={isPending || selectedIds.size === 0}
+        onClick={handleAddSelected}
+        className="w-full body-sm px-3 py-2.5 rounded-lg bg-[#4648d4] text-white font-medium hover:bg-[#3b3db8] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        Agregar seleccionadas ({selectedIds.size})
+      </button>
+    </div>
+  );
+};
+
+interface AgentAdderProps {
+  projectId: string;
+  candidates: AgentCandidate[];
+  isPending: boolean;
+  run: (fn: () => Promise<{ error?: string; success?: true }>) => void;
+}
+
+const AgentAdder = ({ projectId, candidates, isPending, run }: AgentAdderProps) => {
+  const [search, setSearch] = useState("");
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return candidates;
+    return candidates.filter((a) => a.name.toLowerCase().includes(q));
+  }, [search, candidates]);
+
+  const handleToggle = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const handleAddSelected = () => {
+    if (selectedIds.size === 0) return;
+    const ids = Array.from(selectedIds);
+    run(async () => {
+      for (const id of ids) {
+        const result = await addAgentToProject(projectId, id);
+        if (result?.error) return result;
+      }
+      return { success: true };
+    });
+  };
+
+  if (candidates.length === 0) {
+    return (
+      <div className="space-y-2 pt-1">
+        <label className="label-sm text-[#7c839b]">INTEGRAR AGENTE</label>
+        <p className="body-sm text-[#7c839b]">
+          No quedan agentes disponibles para integrar.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2 pt-1">
+      <label className="label-sm text-[#7c839b]">INTEGRAR AGENTE</label>
+      <input
+        type="text"
+        placeholder="🔍 Buscar agente..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="w-full body-sm border border-[#e2e8f0] rounded-lg px-3 py-2.5 bg-white text-[#45464d] placeholder-[#7c839b] focus:outline-none focus:ring-2 focus:ring-[#4648d4]"
+      />
+      <div className="space-y-2 max-h-64 overflow-y-auto border border-[#e2e8f0] rounded-lg p-3 bg-[#f7f9fb]">
+        {filtered.slice(0, 5).map((agent) => (
+          <label key={agent.id} className="flex items-center gap-2 cursor-pointer hover:bg-white p-2 rounded transition-colors">
+            <input
+              type="checkbox"
+              checked={selectedIds.has(agent.id)}
+              onChange={() => handleToggle(agent.id)}
+              disabled={isPending}
+              className="w-4 h-4 rounded border-[#e2e8f0] text-[#4648d4] focus:ring-[#4648d4]"
+            />
+            <span className="flex-1 min-w-0">
+              <p className="body-sm text-black">{agent.name}</p>
+            </span>
+          </label>
+        ))}
+        {filtered.length > 5 && (
+          <p className="label-xs text-[#7c839b] text-center py-2">
+            Mostrando 5 de {filtered.length} resultados
+          </p>
+        )}
+      </div>
+      <button
+        type="button"
+        disabled={isPending || selectedIds.size === 0}
+        onClick={handleAddSelected}
+        className="w-full body-sm px-3 py-2.5 rounded-lg bg-[#4648d4] text-white font-medium hover:bg-[#3b3db8] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        Agregar seleccionados ({selectedIds.size})
+      </button>
+    </div>
   );
 };

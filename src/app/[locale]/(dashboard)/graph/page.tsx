@@ -32,7 +32,7 @@ export default async function GraphPage({
           className="inline-flex items-center gap-2 self-start rounded-lg bg-[#4648d4] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#3b3db8]"
         >
           <span className="text-lg" aria-hidden>
-            add
+            ➕
           </span>
           New KU
         </Link>
@@ -46,7 +46,7 @@ export default async function GraphPage({
         <div className="panel p-4">
           <p className="label-sm text-[#7c839b]">{t("statVerified")}</p>
           <p className="headline-md font-bold text-emerald-700 mt-1">{approved}</p>
-          <p className="label-sm text-[#7c839b] mt-0.5">{t("statVerifiedSub")}</p>
+          <p className="label-sm text-[#7c839b] mt-0.5">{t("statVerifiedSub", { percent: kus.length > 0 ? Math.round((approved / kus.length) * 100) : 0 })}</p>
         </div>
         <div className="panel p-4">
           <p className="label-sm text-[#7c839b]">{t("statPending")}</p>
@@ -61,7 +61,7 @@ export default async function GraphPage({
       {kus.length === 0 ? (
         <div className="panel p-12 text-center space-y-4">
           <span className="text-5xl text-[#7c839b]" aria-hidden>
-            hub
+            🔗
           </span>
           <p className="body-md text-black font-medium">{t("emptyTitle")}</p>
           <p className="body-sm text-[#7c839b] max-w-md mx-auto">{t("emptyDesc")}</p>

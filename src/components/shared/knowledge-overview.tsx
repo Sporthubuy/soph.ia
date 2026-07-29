@@ -183,7 +183,7 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
         {knowledgeUnits.length === 0 ? (
           <div className="panel p-10 text-center space-y-3">
             <span className="text-4xl text-[#7c839b]">
-              menu_book
+              📖
             </span>
             <p className="body-md text-black font-medium">
               Todavia no hay Knowledge Units
@@ -223,7 +223,7 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
                       style={{ backgroundColor: getDomainColor(ku.domain ?? "") }}
                     >
                       <span className="text-lg">
-                        menu_book
+                        📖
                       </span>
                     </div>
 
@@ -270,7 +270,7 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
                     </div>
 
                     <span className="text-[#7c839b] flex-shrink-0">
-                      chevron_right
+                      ➜
                     </span>
                   </button>
                 </li>

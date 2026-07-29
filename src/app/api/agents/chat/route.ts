@@ -9,6 +9,7 @@ interface ChatRequestBody {
   selectedKuIds?: string[];
   history?: { role: "user" | "assistant"; content: string }[];
   agentId?: string;
+  provider?: "anthropic" | "openai" | "google" | "deepseek" | "nvidia" | "gemini";
 }
 
 const SYSTEM_BASE =
@@ -63,6 +64,18 @@ export async function POST(request: Request) {
     selectedKuIds
   );
 
+  // Map providers: gemini -> google, support all others
+  let provider: "anthropic" | "openai" | "google" | "deepseek" | "nvidia" = "anthropic";
+  if (body.provider === "openai") {
+    provider = "openai";
+  } else if (body.provider === "gemini") {
+    provider = "google";
+  } else if (body.provider === "deepseek") {
+    provider = "deepseek";
+  } else if (body.provider === "nvidia") {
+    provider = "nvidia";
+  }
+
   const messages = [
     ...history.map((h) => ({ role: h.role, content: h.content })),
     {
@@ -75,6 +88,7 @@ export async function POST(request: Request) {
 
   try {
     const result = await chat(messages, {
+      provider,
       system: SYSTEM_BASE,
       temperature: 0.4,
       maxTokens: 800,

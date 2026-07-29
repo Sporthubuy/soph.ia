@@ -53,7 +53,7 @@ export default async function NewAgentPage({
       {units.length === 0 ? (
         <div className="panel p-10 text-center space-y-4">
           <span className="text-4xl text-[#7c839b]" aria-hidden>
-            menu_book
+            📖
           </span>
           <p className="body-md text-black font-medium">
             Need approved Knowledge Units first

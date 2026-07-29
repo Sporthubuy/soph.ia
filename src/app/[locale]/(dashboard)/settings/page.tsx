@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { OrgSettings } from "@/components/settings/org-settings";
 import { MemberSettings } from "@/components/settings/member-settings";
 import { DomainSettings } from "@/components/settings/domain-settings";
+import { AIProviderSettings } from "@/components/settings/ai-provider-settings";
 import { getOrganizationSettings } from "@/lib/organization/actions";
 
 export default async function SettingsPage({
@@ -34,6 +35,7 @@ export default async function SettingsPage({
         <p className="body-md text-[#45464d]">{t("pageDesc")}</p>
       </header>
 
+      <AIProviderSettings />
       <OrgSettings organization={organization} userRole={userRole} />
       <DomainSettings
         domains={domains}

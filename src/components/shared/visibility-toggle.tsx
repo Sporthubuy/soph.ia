@@ -7,6 +7,7 @@ interface VisibilityToggleProps {
   itemId: string;
   itemType: "knowledge_unit" | "project" | "agent";
   currentVisibility: "private" | "public" | "unlisted";
+  organizationId: string;
   onlyOwner?: boolean;
 }
 
@@ -24,6 +25,7 @@ export function VisibilityToggle({
   itemId,
   itemType,
   currentVisibility,
+  organizationId,
   onlyOwner = false,
 }: VisibilityToggleProps) {
   const t = useTranslations();
@@ -40,13 +42,14 @@ export function VisibilityToggle({
     setError(null);
 
     try {
-      const response = await fetch("/api/update-visibility", {
+      const response = await fetch("/api/visibility", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           itemId,
           itemType,
           visibility: newVisibility,
+          organizationId,
         }),
       });
 

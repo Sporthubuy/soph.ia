@@ -125,7 +125,7 @@ const SidebarNav = ({ onNavigate }: { onNavigate?: () => void }) => {
           }`}
         >
           <span className="text-xl" aria-hidden>
-            settings
+            ⚙️
           </span>
           <span className="body-md">Settings</span>
         </Link>
@@ -137,7 +137,7 @@ const SidebarNav = ({ onNavigate }: { onNavigate?: () => void }) => {
           className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-[#45464d] hover:bg-[#f7f9fb] transition-colors text-left body-md"
         >
           <span className="text-xl" aria-hidden>
-            logout
+            🚪
           </span>
           <span>{isSigningOut ? "Signing out..." : "Sign out"}</span>
         </button>

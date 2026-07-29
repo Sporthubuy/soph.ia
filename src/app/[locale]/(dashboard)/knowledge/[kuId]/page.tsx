@@ -78,7 +78,7 @@ export default async function KnowledgeUnitPage({
                 className="label-sm px-3 py-1.5 rounded-lg border border-[#e2e8f0] text-[#45464d] hover:bg-[#f7f9fb] transition-colors flex items-center gap-1.5"
               >
                 <span className="text-base" aria-hidden>
-                  edit
+                  ✏️
                 </span>
                 Editar
               </Link>
@@ -117,6 +117,7 @@ export default async function KnowledgeUnitPage({
           itemId={ku.id}
           itemType="knowledge_unit"
           currentVisibility={ku.visibility ?? "private"}
+          organizationId={ku.organization_id}
           onlyOwner={ku.owner_id !== user?.id && !EDITOR_ROLES.includes(role)}
         />
       </section>

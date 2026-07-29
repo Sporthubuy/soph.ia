@@ -105,6 +105,7 @@ export default async function AgentPage({
           itemId={agentId}
           itemType="agent"
           currentVisibility={agent.visibility ?? "private"}
+          organizationId={agent.organization_id}
           onlyOwner={agent.created_by !== user?.id}
         />
       </section>
@@ -129,7 +130,7 @@ export default async function AgentPage({
                   className="flex items-center gap-3 p-3 rounded-lg border border-[#e2e8f0] hover:bg-[#f7f9fb] transition-colors"
                 >
                   <span className="text-[#4648d4]">
-                    menu_book
+                    📖
                   </span>
                   <span className="body-md text-black flex-1">{ku.title}</span>
                   <span className="body-sm text-[#7c839b]">{ku.domain}</span>

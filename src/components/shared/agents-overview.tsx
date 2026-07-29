@@ -105,7 +105,7 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
           className="bg-[#4648d4] text-white font-medium py-2.5 px-4 rounded-lg hover:bg-[#3b3db8] flex items-center gap-2 body-md transition-colors"
         >
           <span className="text-xl" aria-hidden>
-            add
+            ➕
           </span>
           Nuevo agente
         </Link>
@@ -114,7 +114,7 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
       {/* Search */}
       <div className="relative">
         <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7c839b]">
-          search
+          🔍
         </span>
         <input
           type="search"
@@ -154,7 +154,7 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
         {agents.length === 0 ? (
           <div className="panel p-10 text-center space-y-3">
             <span className="text-4xl text-[#7c839b]" aria-hidden>
-              smart_toy
+              🤖
             </span>
             <p className="body-md text-black font-medium">
               Todavia no hay agentes
@@ -168,7 +168,7 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
               className="inline-flex items-center gap-2 rounded-lg bg-[#4648d4] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#3b3db8]"
             >
               <span className="text-lg" aria-hidden>
-                add
+                ➕
               </span>
               Crear primer agente
             </Link>
@@ -195,7 +195,7 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
                   >
                     <div className="w-10 h-10 rounded-lg bg-[#e1e0ff] flex items-center justify-center flex-shrink-0">
                       <span className="text-lg text-[#4648d4]">
-                        smart_toy
+                        🤖
                       </span>
                     </div>
 
@@ -241,7 +241,7 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
                     </div>
 
                     <span className="text-[#7c839b] flex-shrink-0">
-                      chevron_right
+                      ➜
                     </span>
                   </button>
                 </li>
