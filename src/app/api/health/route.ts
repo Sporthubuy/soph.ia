@@ -13,10 +13,10 @@ export async function GET() {
     } else {
       const supabase = createClient(url, key);
       const { error } = await supabase.from("profiles").select("id").limit(1);
-      checks.supabase = error ? `error: ${error.message}` : "ok";
+      checks.supabase = error ? "error" : "ok";
     }
-  } catch (e) {
-    checks.supabase = `error: ${e instanceof Error ? e.message : "unknown"}`;
+  } catch {
+    checks.supabase = "error";
   }
 
   // Check Neo4j
@@ -32,8 +32,8 @@ export async function GET() {
       await session.close();
       checks.neo4j = "ok";
     }
-  } catch (e) {
-    checks.neo4j = `error: ${e instanceof Error ? e.message : "unknown"}`;
+  } catch {
+    checks.neo4j = "error";
   }
 
   // Check AI providers

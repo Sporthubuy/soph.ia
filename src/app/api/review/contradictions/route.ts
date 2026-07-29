@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { generateEmbedding } from "@/lib/ai/embeddings";
 import { chat } from "@/lib/ai/model-router";
 
@@ -33,6 +33,16 @@ export async function POST(request: Request) {
     );
   }
 
+  // Check auth
+  const authClient = await createClient();
+  const {
+    data: { user },
+  } = await authClient.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   let supabase;
   try {
     supabase = createServiceClient();
@@ -45,7 +55,7 @@ export async function POST(request: Request) {
 
   const { data: proposed, error: propErr } = await supabase
     .from("knowledge_units")
-    .select("id, title, content, organization_id")
+    .select("id, title, content, organization_id, visibility")
     .eq("id", proposedKuId)
     .single();
 
@@ -54,6 +64,18 @@ export async function POST(request: Request) {
       { error: "Proposed KU not found" },
       { status: 404 }
     );
+  }
+
+  // Verify access: user must be member of org or KU must be public
+  const { data: membership } = await authClient
+    .from("memberships")
+    .select("organization_id")
+    .eq("user_id", user.id)
+    .eq("organization_id", proposed.organization_id)
+    .maybeSingle();
+
+  if (!membership && proposed.visibility !== "public") {
+    return NextResponse.json({ error: "Access denied" }, { status: 403 });
   }
 
   // Find candidates via embedding similarity if embedding exists; else compute it.
