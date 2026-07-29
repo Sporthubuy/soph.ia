@@ -20,6 +20,9 @@ import { toast } from "@/components/ui/toast";
 import { KUStatusBadge } from "@/components/shared/ku-status-badge";
 import { KUDiffView } from "@/components/review/ku-diff-view";
 import { ContradictionChecker } from "@/components/review/contradiction-checker";
+import { CommentsThread } from "@/components/shared/comments-thread";
+import { ShareDialog } from "@/components/shared/share-dialog";
+import type { KuComment } from "@/lib/comments/actions";
 
 type DiffData = {
   current: {
@@ -48,10 +51,14 @@ export const ReviewList = ({
   proposals,
   userRole,
   diffs,
+  commentsByKu,
+  currentUserId,
 }: {
   proposals: ProposedKU[];
   userRole: string;
   diffs: Record<string, DiffData | null>;
+  commentsByKu: Record<string, KuComment[]>;
+  currentUserId: string;
 }) => {
   const t = useTranslations("review");
   const canReview = ["owner", "admin"].includes(userRole);
@@ -67,7 +74,7 @@ export const ReviewList = ({
         <Separator className="my-6 w-48" />
         <p className="text-sm text-muted-foreground">{t("nextStep")}</p>
         <Button
-          render={<Link href="/agents" />}
+          render={<Link href="/agents/new" />}
           variant="outline"
           size="sm"
           className="mt-2 rounded-xl"
@@ -89,6 +96,8 @@ export const ReviewList = ({
           ku={ku}
           canReview={canReview}
           diff={diffs[ku.id] ?? null}
+          comments={commentsByKu[ku.id] ?? []}
+          currentUserId={currentUserId}
         />
       ))}
     </div>
@@ -99,10 +108,14 @@ const ReviewCard = ({
   ku,
   canReview,
   diff,
+  comments,
+  currentUserId,
 }: {
   ku: ProposedKU;
   canReview: boolean;
   diff: DiffData | null;
+  comments: KuComment[];
+  currentUserId: string;
 }) => {
   const t = useTranslations("review");
   const tc = useTranslations("common");
@@ -164,13 +177,20 @@ const ReviewCard = ({
               {new Date(ku.updated_at).toLocaleDateString(locale)}
             </CardDescription>
           </div>
-          <KUStatusBadge status={ku.status} />
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <ShareDialog
+              path={`/knowledge/${ku.id}`}
+              title={ku.title}
+              triggerClassName="label-sm px-2 py-1 rounded border border-[#e2e8f0] text-[#45464d] hover:bg-[#f7f9fb] inline-flex items-center gap-1"
+            />
+            <KUStatusBadge status={ku.status} />
+          </div>
         </div>
       </CardHeader>
-<CardContent className="space-y-4">
-          <ContradictionChecker proposedKuId={ku.id} />
+      <CardContent className="space-y-4">
+        <ContradictionChecker proposedKuId={ku.id} />
 
-          {diff?.current.change_message && (
+        {diff?.current.change_message && (
           <p className="text-sm italic text-muted-foreground">
             &ldquo;{diff.current.change_message}&rdquo;
           </p>
@@ -208,9 +228,23 @@ const ReviewCard = ({
           </p>
         ) : null}
 
-        <div className="flex items-center justify-between pt-1">
+        <div className="rounded-lg border border-[#e2e8f0] bg-[#f7f9fb] p-4">
+          <CommentsThread
+            kuId={ku.id}
+            comments={comments}
+            currentUserId={currentUserId}
+            context="review"
+            title="Review feedback"
+            compact
+          />
+        </div>
+
+        <div className="flex items-center justify-between pt-1 flex-wrap gap-2">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>{t("trustLabel")}{ku.trust_score}</span>
+            <span>
+              {t("trustLabel")}
+              {ku.trust_score}
+            </span>
           </div>
           {canReview ? (
             <div className="flex items-center gap-2">
@@ -230,9 +264,7 @@ const ReviewCard = ({
               </Button>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">
-              {t("ownersOnly")}
-            </p>
+            <p className="text-sm text-muted-foreground">{t("ownersOnly")}</p>
           )}
         </div>
       </CardContent>

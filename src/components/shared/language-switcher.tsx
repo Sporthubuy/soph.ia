@@ -21,15 +21,17 @@ export const LanguageSwitcher = () => {
   };
 
   return (
-    <div className="flex items-center gap-0.5">
+    <div className="flex items-center gap-0.5" role="group" aria-label="Language">
       {locales.map((l) => (
         <button
           key={l}
+          type="button"
           onClick={() => switchLocale(l)}
+          aria-pressed={l === locale}
           className={`rounded px-1.5 py-0.5 text-[10px] font-medium transition-colors ${
             l === locale
-              ? "bg-primary/10 text-primary"
-              : "text-muted-foreground hover:text-foreground"
+              ? "bg-[#e1e0ff] text-[#4648d4]"
+              : "text-[#7c839b] hover:text-black"
           }`}
         >
           {labels[l]}

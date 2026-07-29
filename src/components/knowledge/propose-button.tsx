@@ -29,7 +29,7 @@ export const ProposeButton = ({ kuId }: { kuId: string }) => {
         disabled={isLoading}
         className="bg-[#4648d4] text-white font-medium py-2 px-4 rounded-lg hover:bg-[#3a3ab0] transition-colors disabled:opacity-50 body-sm flex items-center gap-2"
       >
-        <span className="material-symbols-outlined text-lg">forward</span>
+        <span className="text-lg">forward</span>
         {isLoading ? "Proponiendo..." : "Proponer Cambio"}
       </button>
       {error && <p className="body-sm text-red-700 max-w-xs text-right">{error}</p>}

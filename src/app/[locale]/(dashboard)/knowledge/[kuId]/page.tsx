@@ -77,7 +77,7 @@ export default async function KnowledgeUnitPage({
                 href={`/knowledge/${ku.id}/edit`}
                 className="label-sm px-3 py-1.5 rounded-lg border border-[#e2e8f0] text-[#45464d] hover:bg-[#f7f9fb] transition-colors flex items-center gap-1.5"
               >
-                <span className="material-symbols-outlined text-base" aria-hidden>
+                <span className="text-base" aria-hidden>
                   edit
                 </span>
                 Editar

@@ -710,6 +710,109 @@ export async function removeKUDependency(sourceId: string, targetId: string): Pr
   return { success: true };
 }
 
+/** Datos para el Knowledge Graph: KUs + dependencias + dominios de la org. */
+export async function getKnowledgeGraphData() {
+  const supabase = await createClient();
+  const organizationId = await getCurrentOrganizationId();
+  if (!organizationId) {
+    return { organizationId: null as string | null, kus: [], dependencies: [], domains: [] };
+  }
+
+  const [kusRes, domainsRes] = await Promise.all([
+    supabase
+      .from("knowledge_units")
+      .select("id, title, status, trust_score, version, domain_id, domains(name)")
+      .eq("organization_id", organizationId)
+      .order("title", { ascending: true }),
+    supabase
+      .from("domains")
+      .select("id, name")
+      .eq("organization_id", organizationId)
+      .order("name", { ascending: true }),
+  ]);
+
+  if (kusRes.error) {
+    console.error("Error fetching graph KUs:", kusRes.error);
+  }
+  if (domainsRes.error) {
+    console.error("Error fetching graph domains:", domainsRes.error);
+  }
+
+  const kus = (kusRes.data ?? []).map((row) => {
+    const { domains, ...ku } = row as typeof row & {
+      domains: { name: string } | { name: string }[] | null;
+    };
+    const domain = one(domains as { name: string } | { name: string }[] | null);
+    return {
+      id: ku.id as string,
+      title: ku.title as string,
+      status: ku.status as "draft" | "proposed" | "approved" | "archived",
+      trust_score: ku.trust_score as number,
+      version: ku.version as number,
+      domain_id: ku.domain_id as string,
+      domainName: domain?.name ?? "General",
+    };
+  });
+
+  const kuIds = kus.map((k) => k.id);
+  let dependencies: { source_ku_id: string; target_ku_id: string }[] = [];
+
+  if (kuIds.length > 0) {
+    const { data: deps, error: depsError } = await supabase
+      .from("ku_dependencies")
+      .select("source_ku_id, target_ku_id")
+      .in("source_ku_id", kuIds);
+
+    if (depsError) {
+      console.error("Error fetching graph dependencies:", depsError);
+    } else {
+      dependencies = deps ?? [];
+    }
+  }
+
+  return {
+    organizationId,
+    kus,
+    dependencies,
+    domains: domainsRes.data ?? [],
+  };
+}
+
+/** KUs aprobadas listas para compilar en un agente. */
+export async function getApprovedKnowledgeUnits() {
+  const supabase = await createClient();
+  const organizationId = await getCurrentOrganizationId();
+  if (!organizationId) return [];
+
+  const { data, error } = await supabase
+    .from("knowledge_units")
+    .select("id, title, content, version, trust_score, domain_id, domains(name)")
+    .eq("organization_id", organizationId)
+    .eq("status", "approved")
+    .order("title", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching approved KUs:", error);
+    return [];
+  }
+
+  return (data ?? []).map((row) => {
+    const { domains, ...ku } = row as typeof row & {
+      domains: { name: string } | { name: string }[] | null;
+    };
+    const domain = one(domains as { name: string } | { name: string }[] | null);
+    return {
+      id: ku.id as string,
+      title: ku.title as string,
+      content: ku.content as string,
+      version: ku.version as number,
+      trust_score: ku.trust_score as number,
+      domain_id: ku.domain_id as string,
+      domainName: domain?.name ?? "General",
+    };
+  });
+}
+
 export async function compileAgentContext(organizationId: string, selectedKuIds: string[] = []) {
   const supabase = await createClient();
 

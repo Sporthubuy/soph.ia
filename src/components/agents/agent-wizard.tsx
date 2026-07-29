@@ -120,15 +120,6 @@ export const AgentWizard = ({
     }
     setDeployError(null);
     setDeployLoading(true);
-    const fd = new FormData();
-    fd.set("organizationId", organizationId);
-    fd.set("name", name.trim());
-    fd.set("description", description);
-    fd.set("systemPrompt", systemPrompt);
-    fd.set("provider", provider);
-    fd.set("model", model);
-    fd.set("temperature", String(temperature));
-    fd.set("selectedKuIds", JSON.stringify(Array.from(selected)));
     const res = await fetch("/api/agents/deploy", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -168,13 +159,14 @@ export const AgentWizard = ({
   return (
     <div className="flex flex-1 flex-col gap-6">
       {/* ── Steps indicator ───────────────────── */}
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {steps.map((s, i) => (
           <div key={s.key} className="flex items-center gap-2">
             <button
+              type="button"
               onClick={() => setStep(s.key)}
               disabled={i > currentIdx + 1}
-              className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium transition-all ${
+              className={`flex items-center gap-2 rounded-full px-3 sm:px-4 py-1.5 text-sm font-medium transition-all ${
                 i === currentIdx
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : i < currentIdx
@@ -187,9 +179,13 @@ export const AgentWizard = ({
               }`}>
                 {i < currentIdx ? "✓" : s.num}
               </span>
-              {s.label}
+              <span className="hidden sm:inline">{s.label}</span>
             </button>
-            {i < steps.length - 1 && <span className="text-muted-foreground/40">→</span>}
+            {i < steps.length - 1 && (
+              <span className="text-muted-foreground/40 hidden sm:inline" aria-hidden>
+                →
+              </span>
+            )}
           </div>
         ))}
       </div>

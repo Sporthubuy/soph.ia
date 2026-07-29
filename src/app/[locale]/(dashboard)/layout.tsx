@@ -2,6 +2,7 @@ import { setRequestLocale } from "next-intl/server";
 import { redirect } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
 import { AppSidebar } from "@/components/shared/app-sidebar";
+import { DashboardChrome } from "@/components/shared/dashboard-chrome";
 
 /**
  * Shell compartido de las rutas autenticadas.
@@ -29,9 +30,10 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen bg-[#f7f9fb]">
+    <div className="flex flex-col md:flex-row h-screen bg-[#f7f9fb]">
       <AppSidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+        <DashboardChrome />
         <main className="flex-1 overflow-auto">{children}</main>
       </div>
     </div>

@@ -12,12 +12,20 @@ export interface ActivityLog {
   entity_title: string;
   description: string;
   created_at: string;
+  profiles: { full_name: string | null; email: string | null; avatar_url: string | null } | null;
 }
 
-export async function getRecentActivityLogs(limit: number = 10) {
+const one = <T>(value: T | T[] | null | undefined): T | null => {
+  if (value == null) return null;
+  return Array.isArray(value) ? (value[0] ?? null) : value;
+};
+
+export async function getRecentActivityLogs(limit: number = 10): Promise<ActivityLog[]> {
   const supabase = await createClient();
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     return [];
@@ -29,7 +37,9 @@ export async function getRecentActivityLogs(limit: number = 10) {
 
   const { data, error } = await supabase
     .from("activity_logs")
-    .select("*, user_id")
+    .select(
+      "id, user_id, action_type, entity_type, entity_id, entity_title, description, created_at, profiles(full_name, email, avatar_url)"
+    )
     .eq("organization_id", organizationId)
     .order("created_at", { ascending: false })
     .limit(limit);
@@ -39,5 +49,16 @@ export async function getRecentActivityLogs(limit: number = 10) {
     return [];
   }
 
-  return data || [];
+  return (data ?? []).map((row) => {
+    const { profiles, ...rest } = row as typeof row & {
+      profiles:
+        | { full_name: string | null; email: string | null; avatar_url: string | null }
+        | { full_name: string | null; email: string | null; avatar_url: string | null }[]
+        | null;
+    };
+    return {
+      ...rest,
+      profiles: one(profiles),
+    } as ActivityLog;
+  });
 }

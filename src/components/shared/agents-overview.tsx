@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useRouter } from "@/i18n/routing";
+import { Link, useRouter } from "@/i18n/routing";
 
 /** Refleja las columnas reales de public.agents. */
 interface Agent {
@@ -100,23 +100,20 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
     <div className="p-8 max-w-7xl mx-auto space-y-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <h1 className="headline-xl text-black font-bold">Agents</h1>
-        {/* El wizard de creacion todavia no esta conectado (/agents/new no existe). */}
-        <button
-          disabled
-          title="Proximamente"
-          className="bg-[#e2e8f0] text-[#7c839b] font-medium py-2.5 px-4 rounded-lg cursor-not-allowed flex items-center gap-2 body-md"
+        <Link
+          href="/agents/new"
+          className="bg-[#4648d4] text-white font-medium py-2.5 px-4 rounded-lg hover:bg-[#3b3db8] flex items-center gap-2 body-md transition-colors"
         >
-          <span className="material-symbols-outlined text-xl">add</span>
-          Nuevo agente
-          <span className="label-sm border border-[#cbd5e1] rounded px-1.5 py-0.5">
-            Pronto
+          <span className="text-xl" aria-hidden>
+            add
           </span>
-        </button>
+          Nuevo agente
+        </Link>
       </div>
 
       {/* Search */}
       <div className="relative">
-        <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[#7c839b]">
+        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7c839b]">
           search
         </span>
         <input
@@ -156,7 +153,7 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
 
         {agents.length === 0 ? (
           <div className="panel p-10 text-center space-y-3">
-            <span className="material-symbols-outlined text-4xl text-[#7c839b]">
+            <span className="text-4xl text-[#7c839b]" aria-hidden>
               smart_toy
             </span>
             <p className="body-md text-black font-medium">
@@ -164,8 +161,17 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
             </p>
             <p className="body-sm text-[#7c839b] max-w-md mx-auto">
               Un agente compila tus Knowledge Units aprobadas en contexto listo
-              para usar. La creacion de agentes estara disponible pronto.
+              para usar con el Model Router.
             </p>
+            <Link
+              href="/agents/new"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#4648d4] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#3b3db8]"
+            >
+              <span className="text-lg" aria-hidden>
+                add
+              </span>
+              Crear primer agente
+            </Link>
           </div>
         ) : visibleAgents.length === 0 ? (
           <div className="panel p-8 text-center">
@@ -188,7 +194,7 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
                     className="panel w-full text-left p-4 flex items-start gap-4 hover:bg-[#f7f9fb] focus:outline-none focus:ring-2 focus:ring-[#4648d4] transition-colors"
                   >
                     <div className="w-10 h-10 rounded-lg bg-[#e1e0ff] flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-lg text-[#4648d4]">
+                      <span className="text-lg text-[#4648d4]">
                         smart_toy
                       </span>
                     </div>
@@ -234,7 +240,7 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
                       </div>
                     </div>
 
-                    <span className="material-symbols-outlined text-[#7c839b] flex-shrink-0">
+                    <span className="text-[#7c839b] flex-shrink-0">
                       chevron_right
                     </span>
                   </button>

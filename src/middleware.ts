@@ -7,15 +7,22 @@ const intlMiddleware = createIntlMiddleware(routing);
 
 const protectedPaths = [
   "/dashboard",
+  "/projects",
+  "/knowledge",
   "/graph",
   "/editor",
   "/review",
   "/agents",
   "/marketplace",
   "/settings",
+  "/people",
 ];
 
-const authPaths = ["/login", "/register"];
+/** Rutas publicas de auth: si hay sesion, redirigir al dashboard (excepto reset). */
+const authPaths = ["/login", "/register", "/forgot-password"];
+
+/** Reset password requiere sesion del link de recovery; no redirigir si hay user. */
+const recoveryPaths = ["/reset-password"];
 
 const stripLocale = (pathname: string): string => {
   for (const locale of routing.locales) {
@@ -48,8 +55,9 @@ export async function middleware(request: NextRequest) {
 
   const isProtected = protectedPaths.some((p) => strippedPath.startsWith(p));
   const isAuthRoute = authPaths.some((p) => strippedPath.startsWith(p));
+  const isRecoveryRoute = recoveryPaths.some((p) => strippedPath.startsWith(p));
 
-  if (!isProtected && !isAuthRoute) {
+  if (!isProtected && !isAuthRoute && !isRecoveryRoute) {
     return intlResponse;
   }
 

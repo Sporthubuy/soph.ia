@@ -227,7 +227,7 @@ function KnowledgeGraphInner({
         </div>
       </div>
 
-      <div className="relative h-[70vh] w-full overflow-hidden rounded-lg border bg-card">
+      <div className="relative h-[min(70vh,640px)] min-h-[360px] w-full overflow-hidden rounded-lg border bg-card">
         {filteredKus.length === 0 ? (
           <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
             {t("noMatch")}

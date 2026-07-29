@@ -123,7 +123,7 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
                   }`}
                   style={{ backgroundColor: color }}
                 >
-                  <span className="material-symbols-outlined text-xl">{i}</span>
+                  <span className="text-xl">{i}</span>
                 </button>
               ))}
             </div>
@@ -157,7 +157,7 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
             role="alert"
             className="panel border-red-200 bg-red-50 p-4 flex items-start gap-3"
           >
-            <span className="material-symbols-outlined text-red-700">error</span>
+            <span className="text-red-700">error</span>
             <div className="flex-1">
               <p className="body-md font-medium text-red-900">
                 No se pudo crear el proyecto

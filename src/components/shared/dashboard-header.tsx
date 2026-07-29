@@ -8,6 +8,8 @@ type HeaderKey = "dashboard" | "graph" | "editor" | "review" | "agents" | "marke
 
 const pathToKey: Record<string, HeaderKey> = {
   "/dashboard": "dashboard",
+  "/projects": "dashboard",
+  "/knowledge": "editor",
   "/graph": "graph",
   "/editor": "editor",
   "/review": "review",

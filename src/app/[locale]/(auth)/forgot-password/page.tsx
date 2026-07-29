@@ -20,8 +20,9 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     const supabase = createClient();
+    const locale = window.location.pathname.split("/")[1] || "es";
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`
+      redirectTo: `${window.location.origin}/${locale}/reset-password`,
     });
 
     if (error) {
@@ -42,7 +43,7 @@ export default function ForgotPasswordPage() {
       <div className="panel relative z-10 w-full max-w-sm p-8 space-y-6">
         <div className="text-center space-y-2">
           <Link href="/" className="inline-flex h-10 w-10 items-center justify-center rounded bg-black">
-            <span className="material-symbols-outlined text-white text-xl">database</span>
+            <span className="text-white text-xl">database</span>
           </Link>
           <h1 className="headline-md text-black font-bold mt-4">Reset password</h1>
           <p className="body-md text-[#45464d]">Enter your email to receive reset link</p>

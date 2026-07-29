@@ -488,7 +488,7 @@
     "step4Desc": "No Review Center: diff, contradicoes e aprovacao.",
     "step5Title": "Compilar um agente",
     "step5Desc": "Selecione KUs aprovadas, teste o chat e faca o deploy.",
-    "step6Title": "Explorar o marketplace",
-    "step6Desc": "Descubra agentes publicos ou publique o seu."
+    "step6Title": "Explorar o grafo",
+    "step6Desc": "Visualize relações entre Knowledge Units e busque por significado."
   }
 }

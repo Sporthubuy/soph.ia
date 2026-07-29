@@ -181,7 +181,7 @@ export const ProjectMembers = ({
                 className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-[#e2e8f0] flex-wrap"
               >
                 <div className="w-9 h-9 rounded-full bg-[#f7f9fb] text-[#7c839b] flex items-center justify-center flex-shrink-0">
-                  <span className="material-symbols-outlined text-lg">
+                  <span className="text-lg">
                     schedule
                   </span>
                 </div>

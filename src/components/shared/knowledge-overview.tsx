@@ -120,7 +120,7 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
           onClick={() => router.push("/knowledge/new")}
           className="flex items-center gap-2 px-4 py-3 bg-[#4648d4] text-white rounded-lg hover:bg-[#3a3ab0] transition-colors font-medium body-md"
         >
-          <span className="material-symbols-outlined text-xl">add</span>
+          <span className="text-xl">➕</span>
           New Knowledge Unit
         </button>
       </div>
@@ -128,7 +128,7 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
       {/* Search Bar */}
       <div className="space-y-4">
         <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[#7c839b]">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7c839b]">
             search
           </span>
           <input
@@ -170,7 +170,7 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
         </div>
         <div className="flex items-center gap-2">
           <button className="flex items-center gap-2 px-3 py-2 text-[#45464d] hover:bg-[#f7f9fb] rounded">
-            <span className="material-symbols-outlined text-lg">sort</span>
+            <span className="text-lg">sort</span>
             <span className="body-sm">Sort: Recent</span>
           </button>
         </div>
@@ -182,7 +182,7 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
 
         {knowledgeUnits.length === 0 ? (
           <div className="panel p-10 text-center space-y-3">
-            <span className="material-symbols-outlined text-4xl text-[#7c839b]">
+            <span className="text-4xl text-[#7c839b]">
               menu_book
             </span>
             <p className="body-md text-black font-medium">
@@ -196,7 +196,7 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
               onClick={() => router.push("/knowledge/new")}
               className="mt-2 bg-[#4648d4] text-white font-medium py-2.5 px-4 rounded-lg hover:bg-[#3a3ab0] transition-colors inline-flex items-center gap-2 body-md"
             >
-              <span className="material-symbols-outlined text-xl">add</span>
+              <span className="text-xl">➕</span>
               Crear Knowledge Unit
             </button>
           </div>
@@ -222,7 +222,7 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
                       className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
                       style={{ backgroundColor: getDomainColor(ku.domain ?? "") }}
                     >
-                      <span className="material-symbols-outlined text-lg">
+                      <span className="text-lg">
                         menu_book
                       </span>
                     </div>
@@ -269,7 +269,7 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
                       </div>
                     </div>
 
-                    <span className="material-symbols-outlined text-[#7c839b] flex-shrink-0">
+                    <span className="text-[#7c839b] flex-shrink-0">
                       chevron_right
                     </span>
                   </button>

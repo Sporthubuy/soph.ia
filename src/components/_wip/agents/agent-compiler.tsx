@@ -167,7 +167,7 @@ export const AgentCompiler = ({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Button render={<Link href="/editor/new" />} variant="outline">
+          <Button render={<Link href="/knowledge/new" />} variant="outline">
             {t("createNew")}
           </Button>
         </CardContent>

@@ -120,7 +120,7 @@ export const CreateProjectModal = ({ isOpen, onClose, onSubmit }: CreateProjectM
             onClick={onClose}
             className="text-[#7c839b] hover:text-black transition-colors"
           >
-            <span className="material-symbols-outlined">close</span>
+            <span className="material-symbols-outlined">❌</span>
           </button>
         </div>
 
@@ -221,7 +221,7 @@ export const CreateProjectModal = ({ isOpen, onClose, onSubmit }: CreateProjectM
                           : "border-[#e2e8f0] hover:border-[#cbd5e1]"
                       }`}
                     >
-                      <span className="material-symbols-outlined text-2xl">{icon}</span>
+                      <span className="text-2xl">{icon}</span>
                     </button>
                   ))}
                 </div>
@@ -246,7 +246,7 @@ export const CreateProjectModal = ({ isOpen, onClose, onSubmit }: CreateProjectM
                     >
                       <div className="flex items-center justify-between">
                         <span
-                          className="material-symbols-outlined text-lg"
+                          className="text-lg"
                           style={{ color: colorOption.text }}
                         >
                           {formData.icon}
@@ -283,7 +283,7 @@ export const CreateProjectModal = ({ isOpen, onClose, onSubmit }: CreateProjectM
                         style={{ backgroundColor: formData.color, opacity: 0.8 }}
                       >
                         <span
-                          className="material-symbols-outlined text-3xl"
+                          className="text-3xl"
                           style={{ color: COLORS.find((c) => c.value === formData.color)?.text }}
                         >
                           {formData.icon}
@@ -355,14 +355,14 @@ export const CreateProjectModal = ({ isOpen, onClose, onSubmit }: CreateProjectM
                 className="px-4 py-2 bg-[#4648d4] text-white rounded-lg hover:bg-[#3a3ab0] transition-colors body-md font-medium flex items-center gap-2"
               >
                 Next
-                <span className="material-symbols-outlined text-lg">arrow_forward</span>
+                <span className="text-lg">arrow_forward</span>
               </button>
             ) : (
               <button
                 onClick={handleSubmit}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors body-md font-medium flex items-center gap-2"
               >
-                <span className="material-symbols-outlined text-lg">check</span>
+                <span className="text-lg">check</span>
                 Create Project
               </button>
             )}

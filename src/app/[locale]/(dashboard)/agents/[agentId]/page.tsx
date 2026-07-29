@@ -128,7 +128,7 @@ export default async function AgentPage({
                   href={`/knowledge/${ku.id}`}
                   className="flex items-center gap-3 p-3 rounded-lg border border-[#e2e8f0] hover:bg-[#f7f9fb] transition-colors"
                 >
-                  <span className="material-symbols-outlined text-[#4648d4]">
+                  <span className="text-[#4648d4]">
                     menu_book
                   </span>
                   <span className="body-md text-black flex-1">{ku.title}</span>

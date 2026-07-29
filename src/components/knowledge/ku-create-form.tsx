@@ -194,7 +194,7 @@ export const KUCreateForm = ({
                     : "border-[#e2e8f0]"
                 }`}
               >
-                <span className="material-symbols-outlined text-2xl text-[#7c839b]">
+                <span className="text-2xl text-[#7c839b]">
                   upload_file
                 </span>
                 <p className="body-sm text-[#45464d] mt-1">
@@ -281,7 +281,7 @@ export const KUCreateForm = ({
             role="alert"
             className="panel border-red-200 bg-red-50 p-4 flex items-start gap-3"
           >
-            <span className="material-symbols-outlined text-red-700">error</span>
+            <span className="text-red-700">error</span>
             <div className="flex-1">
               <p className="body-md font-medium text-red-900">
                 No se pudo crear la Knowledge Unit

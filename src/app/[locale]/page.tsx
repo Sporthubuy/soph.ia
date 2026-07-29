@@ -9,7 +9,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-black rounded flex items-center justify-center">
-              <span className="material-symbols-outlined text-white text-xl">database</span>
+              <span className="text-white text-xl">database</span>
             </div>
             <div>
               <h1 className="headline-lg text-black font-bold">SOPH.IA</h1>
@@ -137,7 +137,7 @@ export default function LandingPage() {
       <footer className="border-t border-[#e2e8f0] bg-white px-6 py-6">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="body-md text-black font-bold">SOPH.IA</p>
-          <p className="label-sm text-[#45464d]">© 2024 SOPH.IA. All rights reserved.</p>
+          <p className="label-sm text-[#45464d]">© 2026 SOPH.IA. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <Link href="/login" className="label-sm text-[#45464d] hover:text-black transition-colors">
               Login

@@ -73,7 +73,7 @@ export default async function ProjectDetailPage({
             className="w-14 h-14 rounded-lg flex items-center justify-center flex-shrink-0"
             style={{ backgroundColor: project.color || "#e1e0ff" }}
           >
-            <span className="material-symbols-outlined text-2xl">
+            <span className="text-2xl">
               {project.icon || "folder_open"}
             </span>
           </div>

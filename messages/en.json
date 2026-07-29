@@ -488,7 +488,7 @@
     "step4Desc": "In Review Center: diff, contradictions, and approval.",
     "step5Title": "Compile an agent",
     "step5Desc": "Select approved KUs, test the chat, and deploy.",
-    "step6Title": "Explore the marketplace",
-    "step6Desc": "Discover public agents or publish yours."
+    "step6Title": "Explore the graph",
+    "step6Desc": "Visualize relationships between Knowledge Units and search by meaning."
   }
 }

@@ -50,7 +50,7 @@ function KUNodeBase({ data }: { data: KUNodeData }) {
         </Badge>
       </div>
       <Link
-        href={`/editor/${data.kuId}`}
+        href={`/knowledge/${data.kuId}`}
         className="block truncate text-sm font-medium hover:underline"
         title={data.title}
       >

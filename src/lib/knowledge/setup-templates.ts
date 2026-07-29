@@ -447,14 +447,14 @@ export const GETTING_STARTED_STEPS = [
     id: "first_ku",
     title: "Crear la primera Knowledge Unit",
     description: "Una politica, proceso o idea versionada con responsable.",
-    href: "/editor/new",
+    href: "/knowledge/new",
     check: "hasKus",
   },
   {
     id: "propose",
     title: "Proponer un cambio",
     description: 'Edita una KU y usa "Proponer cambio" (no sobrescribir).',
-    href: "/editor",
+    href: "/knowledge",
     check: "hasProposed",
   },
   {

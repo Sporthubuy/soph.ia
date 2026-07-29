@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   let body: {
@@ -29,12 +29,34 @@ export async function POST(request: Request) {
     );
   }
 
-  let supabase;
-  try {
-    supabase = createServiceClient();
-  } catch {
-    supabase = await createClient();
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const { data: membership } = await supabase
+    .from("memberships")
+    .select("role")
+    .eq("user_id", user.id)
+    .eq("organization_id", organizationId)
+    .maybeSingle();
+
+  if (!membership || !["owner", "admin", "editor"].includes(membership.role)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const selectedKuIds = body.selectedKuIds ?? [];
+  const visibility =
+    body.visibility === "public" || body.visibility === "unlisted"
+      ? body.visibility
+      : "private";
+  const tags = (body.tags ?? [])
+    .map((t) => t.trim().toLowerCase())
+    .filter(Boolean);
 
   const { data: agent, error } = await supabase
     .from("agents")
@@ -46,13 +68,13 @@ export async function POST(request: Request) {
       provider: body.provider || "anthropic",
       model: body.model || "claude-3-5-sonnet-latest",
       temperature: body.temperature ?? 0.4,
-      selected_ku_ids: body.selectedKuIds ?? [],
+      selected_ku_ids: selectedKuIds,
       status: "deployed",
-      visibility: body.visibility || "private",
-      tags: body.tags ?? [],
-      created_by: (await supabase.auth.getUser()).data.user?.id,
+      visibility,
+      tags,
+      created_by: user.id,
     })
-    .select()
+    .select("id, name")
     .single();
 
   if (error) {

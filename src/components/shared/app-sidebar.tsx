@@ -124,7 +124,7 @@ const SidebarNav = ({ onNavigate }: { onNavigate?: () => void }) => {
               : "text-[#45464d] hover:bg-[#f7f9fb]"
           }`}
         >
-          <span className="material-symbols-outlined text-xl" aria-hidden>
+          <span className="text-xl" aria-hidden>
             settings
           </span>
           <span className="body-md">Settings</span>
@@ -136,7 +136,7 @@ const SidebarNav = ({ onNavigate }: { onNavigate?: () => void }) => {
           disabled={isSigningOut}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-[#45464d] hover:bg-[#f7f9fb] transition-colors text-left body-md"
         >
-          <span className="material-symbols-outlined text-xl" aria-hidden>
+          <span className="text-xl" aria-hidden>
             logout
           </span>
           <span>{isSigningOut ? "Signing out..." : "Sign out"}</span>
@@ -171,7 +171,7 @@ export const AppSidebar = () => {
           </button>
           <Link href="/dashboard" className="flex items-center gap-2 min-w-0">
             <div className="w-8 h-8 bg-black rounded flex items-center justify-center flex-shrink-0">
-              <span className="material-symbols-outlined text-white text-base" aria-hidden>
+              <span className="text-white text-base" aria-hidden>
                 database
               </span>
             </div>

@@ -73,7 +73,7 @@ export const SemanticSearch = ({
           {results.map((r) => (
             <Link
               key={r.id}
-              href={`/editor/${r.id}`}
+              href={`/knowledge/${r.id}`}
               className="block rounded-md border px-3 py-2 hover:bg-accent"
             >
               <div className="flex items-center justify-between gap-2">

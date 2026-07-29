@@ -117,7 +117,7 @@ export const ProjectKnowledge = ({
                     key={ku.linkId}
                     className="flex items-center gap-3 p-3 rounded-lg border border-[#e2e8f0] flex-wrap"
                   >
-                    <span className="material-symbols-outlined text-[#4648d4]">
+                    <span className="text-[#4648d4]">
                       menu_book
                     </span>
                     <Link
@@ -242,7 +242,7 @@ export const ProjectAgents = ({
               key={agent.linkId}
               className="flex items-center gap-3 p-3 rounded-lg border border-[#e2e8f0] flex-wrap"
             >
-              <span className="material-symbols-outlined text-[#4648d4]">
+              <span className="text-[#4648d4]">
                 smart_toy
               </span>
               <div className="flex-1 min-w-0">

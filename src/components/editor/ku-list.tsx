@@ -112,7 +112,7 @@ export const KUList = ({
             </SelectContent>
           </Select>
         </div>
-        <Button render={<Link href="/editor/new" />}>
+        <Button render={<Link href="/knowledge/new" />}>
           {t("newKU")}
         </Button>
       </div>
@@ -126,7 +126,7 @@ export const KUList = ({
           </p>
           {knowledgeUnits.length === 0 && (
             <Button
-              render={<Link href="/editor/new" />}
+              render={<Link href="/knowledge/new" />}
               variant="outline"
               className="mt-4"
             >
@@ -155,7 +155,7 @@ export const KUList = ({
                   <TableRow key={ku.id}>
                     <TableCell>
                       <Link
-                        href={`/editor/${ku.id}`}
+                        href={`/knowledge/${ku.id}`}
                         className="font-medium hover:underline"
                       >
                         {ku.title}

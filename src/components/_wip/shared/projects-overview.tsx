@@ -99,7 +99,7 @@ export const ProjectsOverview = ({ projects: initialProjects, locale }: Projects
           onClick={() => setIsCreateModalOpen(true)}
           className="flex items-center gap-2 px-4 py-3 bg-[#4648d4] text-white rounded-lg hover:bg-[#3a3ab0] transition-colors font-medium body-md"
         >
-          <span className="material-symbols-outlined text-xl">add</span>
+          <span className="text-xl">➕</span>
           New Project
         </button>
       </div>
@@ -107,7 +107,7 @@ export const ProjectsOverview = ({ projects: initialProjects, locale }: Projects
       {/* Search Bar */}
       <div className="space-y-4">
         <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[#7c839b]">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7c839b]">
             search
           </span>
           <input
@@ -147,7 +147,7 @@ export const ProjectsOverview = ({ projects: initialProjects, locale }: Projects
         </div>
         <div className="flex items-center gap-2">
           <button className="flex items-center gap-2 px-3 py-2 text-[#45464d] hover:bg-[#f7f9fb] rounded">
-            <span className="material-symbols-outlined text-lg">sort</span>
+            <span className="text-lg">sort</span>
             <span className="body-sm">Sort: Recent</span>
           </button>
         </div>
@@ -175,7 +175,7 @@ export const ProjectsOverview = ({ projects: initialProjects, locale }: Projects
                   style={{ backgroundColor: project.color }}
                 >
                   <span
-                    className="material-symbols-outlined text-2xl"
+                    className="text-2xl"
                     style={{ color: getTextColorForBackground(project.color) }}
                   >
                     {project.icon}

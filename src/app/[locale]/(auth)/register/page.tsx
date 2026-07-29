@@ -46,7 +46,7 @@ export default function RegisterPage() {
       <div className="panel relative z-10 w-full max-w-sm p-8 space-y-6">
         <div className="text-center space-y-2">
           <Link href="/" className="inline-flex h-10 w-10 items-center justify-center rounded bg-black">
-            <span className="material-symbols-outlined text-white text-xl">database</span>
+            <span className="text-white text-xl">database</span>
           </Link>
           <h1 className="headline-md text-black font-bold mt-4">Create account</h1>
           <p className="body-md text-[#45464d]">Start building knowledge</p>
