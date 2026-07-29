@@ -11,11 +11,11 @@ interface VisibilityToggleProps {
 }
 
 const VISIBILITY_LABELS = {
-  private: { label: "Private", icon: "lock", description: "Only organization members" },
-  public: { label: "Public", icon: "public", description: "Visible to everyone, in marketplace" },
+  private: { label: "Private", icon: "🔒", description: "Only organization members" },
+  public: { label: "Public", icon: "🌐", description: "Visible to everyone, in marketplace" },
   unlisted: {
     label: "Unlisted",
-    icon: "link",
+    icon: "🔗",
     description: "Visible to everyone but not in marketplace",
   },
 };
@@ -68,7 +68,7 @@ export function VisibilityToggle({
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <span className="material-symbols-outlined text-lg text-[#7c839b]">{current.icon}</span>
+        <span className="text-2xl">{current.icon}</span>
         <div>
           <p className="label-md text-[#45464d]">Visibility</p>
           <p className="body-sm text-[#7c839b]">{current.description}</p>
@@ -94,7 +94,7 @@ export function VisibilityToggle({
                   : "border-[#e2e8f0] hover:border-[#cbd5e1]"
               } ${isLoading || onlyOwner ? "opacity-50 cursor-not-allowed" : ""}`}
             >
-              <span className="material-symbols-outlined text-2xl">{icon}</span>
+              <span className="text-3xl">{icon}</span>
               <span className="label-xs text-center text-[#45464d]">{label}</span>
             </button>
           )
