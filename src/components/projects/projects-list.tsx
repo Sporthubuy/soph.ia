@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "@/i18n/routing";
+import { getMaterialSymbolEmoji } from "@/lib/icon-helpers";
 
 interface ProjectItem {
   id: string;
@@ -70,15 +71,15 @@ export const ProjectsList = ({ projects }: { projects: ProjectItem[] }) => {
           onClick={() => router.push("/projects/new")}
           className="flex items-center gap-2 px-4 py-3 bg-[#4648d4] text-white rounded-lg hover:bg-[#3a3ab0] transition-colors font-medium body-md"
         >
-          <span className="material-symbols-outlined text-xl">add</span>
+          <span className="text-xl">➕</span>
           Nuevo proyecto
         </button>
       </div>
 
       {projects.length > 0 && (
         <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[#7c839b]">
-            search
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7c839b]">
+            🔍
           </span>
           <input
             type="search"
@@ -93,8 +94,8 @@ export const ProjectsList = ({ projects }: { projects: ProjectItem[] }) => {
 
       {projects.length === 0 ? (
         <div className="panel p-10 text-center space-y-3">
-          <span className="material-symbols-outlined text-4xl text-[#7c839b]">
-            folder_open
+          <span className="text-4xl text-[#7c839b]">
+            📁
           </span>
           <p className="body-md text-black font-medium">Todavia no hay proyectos</p>
           <p className="body-sm text-[#7c839b] max-w-md mx-auto">
@@ -105,7 +106,7 @@ export const ProjectsList = ({ projects }: { projects: ProjectItem[] }) => {
             onClick={() => router.push("/projects/new")}
             className="mt-2 bg-[#4648d4] text-white font-medium py-2.5 px-4 rounded-lg hover:bg-[#3a3ab0] transition-colors inline-flex items-center gap-2 body-md"
           >
-            <span className="material-symbols-outlined text-xl">add</span>
+            <span className="text-xl">➕</span>
             Crear el primero
           </button>
         </div>
@@ -130,8 +131,8 @@ export const ProjectsList = ({ projects }: { projects: ProjectItem[] }) => {
                       className="w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0"
                       style={{ backgroundColor: project.color || "#e1e0ff" }}
                     >
-                      <span className="material-symbols-outlined text-xl">
-                        {project.icon || "folder_open"}
+                      <span className="text-xl">
+                        {getMaterialSymbolEmoji(project.icon)}
                       </span>
                     </div>
                     <span
@@ -154,24 +155,24 @@ export const ProjectsList = ({ projects }: { projects: ProjectItem[] }) => {
 
                   <dl className="flex items-center gap-4 body-sm text-[#7c839b] flex-wrap">
                     <div className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-base">
-                        group
+                      <span className="text-base">
+                        👥
                       </span>
                       <dd className="font-semibold text-[#45464d]">
                         {project.memberCount}
                       </dd>
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-base">
-                        menu_book
+                      <span className="text-base">
+                        📖
                       </span>
                       <dd className="font-semibold text-[#45464d]">
                         {project.kuCount}
                       </dd>
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="material-symbols-outlined text-base">
-                        smart_toy
+                      <span className="text-base">
+                        🤖
                       </span>
                       <dd className="font-semibold text-[#45464d]">
                         {project.agentCount}
