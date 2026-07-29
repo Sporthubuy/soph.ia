@@ -19,7 +19,7 @@ export interface ChatOptions {
 const DEFAULT_MODELS: Record<ProviderId, string> = {
   anthropic: "claude-3-5-sonnet-latest",
   openai: "gpt-4o-mini",
-  google: "gemini-2.0-flash",
+  google: "gemini-1.5-flash",
   deepseek: "deepseek-chat",
   nvidia: "meta-llama-3.1-405b-instruct",
 };
