@@ -1,6 +1,7 @@
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
+import { createClient } from "@/lib/supabase/server";
 import {
   getProject,
   getProjectMembers,
@@ -14,6 +15,8 @@ import {
   ProjectKnowledge,
   ProjectAgents,
 } from "@/components/projects/project-resources";
+import { ShareDialog } from "@/components/shared/share-dialog";
+import { VisibilityToggle } from "@/components/shared/visibility-toggle";
 
 const STATUS_STYLES: Record<string, string> = {
   active: "bg-green-50 text-green-700 border-green-100",
@@ -34,6 +37,11 @@ export default async function ProjectDetailPage({
 }) {
   const { locale, projectId } = await params;
   setRequestLocale(locale);
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const project = await getProject(projectId);
   if (!project) notFound();
@@ -80,6 +88,11 @@ export default async function ProjectDetailPage({
               >
                 {STATUS_LABELS[status] ?? status}
               </span>
+              <ShareDialog
+                path={`/projects/${project.id}`}
+                title={project.name}
+                description="Share this project link with teammates who already have access, or invite them below."
+              />
             </div>
             <p className="body-sm text-[#7c839b] mt-1">
               Responsable{" "}
@@ -99,6 +112,16 @@ export default async function ProjectDetailPage({
           </div>
         )}
       </header>
+
+      <section className="panel p-6">
+        <h2 className="section-heading mb-4">COMPARTIR</h2>
+        <VisibilityToggle
+          itemId={projectId}
+          itemType="project"
+          currentVisibility={project.visibility ?? "private"}
+          onlyOwner={project.owner_id !== user?.id && !permission.canManage}
+        />
+      </section>
 
       <ProjectMembers
         projectId={projectId}

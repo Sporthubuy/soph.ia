@@ -1,10 +1,15 @@
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
+import { createClient } from "@/lib/supabase/server";
 import { getKnowledgeUnit, getCurrentUserRole } from "@/lib/knowledge/actions";
+import { getKuComments } from "@/lib/comments/actions";
 import { EDITOR_ROLES } from "@/lib/knowledge/constants";
 import { renderMarkdown } from "@/lib/knowledge/markdown";
 import { ProposeButton } from "@/components/knowledge/propose-button";
+import { CommentsThread } from "@/components/shared/comments-thread";
+import { ShareDialog } from "@/components/shared/share-dialog";
+import { VisibilityToggle } from "@/components/shared/visibility-toggle";
 
 const STATUS_STYLES: Record<string, string> = {
   approved: "bg-green-50 text-green-700 border-green-100",
@@ -28,9 +33,15 @@ export default async function KnowledgeUnitPage({
   const { locale, kuId } = await params;
   setRequestLocale(locale);
 
-  const [ku, role] = await Promise.all([
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const [ku, role, comments] = await Promise.all([
     getKnowledgeUnit(kuId),
     getCurrentUserRole(),
+    getKuComments(kuId, "general"),
   ]);
   if (!ku) notFound();
 
@@ -40,8 +51,7 @@ export default async function KnowledgeUnitPage({
   const canPropose = status === "draft" && canEdit;
 
   return (
-    <div className="p-8 max-w-4xl mx-auto space-y-6">
-      {/* Breadcrumb */}
+    <div className="p-4 sm:p-8 max-w-4xl mx-auto space-y-6">
       <nav aria-label="Migas de pan" className="body-sm text-[#7c839b]">
         <Link href="/knowledge" className="hover:text-black transition-colors">
           Knowledge Units
@@ -50,11 +60,10 @@ export default async function KnowledgeUnitPage({
         <span className="text-[#45464d]">{ku.title}</span>
       </nav>
 
-      {/* Cabecera */}
       <header className="space-y-3">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <h1 className="headline-xl text-black font-bold">{ku.title}</h1>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 flex-wrap">
             <span
               className={`label-sm px-2 py-1 rounded border ${
                 STATUS_STYLES[status] ?? STATUS_STYLES.archived
@@ -62,12 +71,15 @@ export default async function KnowledgeUnitPage({
             >
               {status.charAt(0).toUpperCase() + status.slice(1)}
             </span>
+            <ShareDialog path={`/knowledge/${ku.id}`} title={ku.title} />
             {canEdit && (
               <Link
                 href={`/knowledge/${ku.id}/edit`}
                 className="label-sm px-3 py-1.5 rounded-lg border border-[#e2e8f0] text-[#45464d] hover:bg-[#f7f9fb] transition-colors flex items-center gap-1.5"
               >
-                <span className="material-symbols-outlined text-base">edit</span>
+                <span className="material-symbols-outlined text-base" aria-hidden>
+                  edit
+                </span>
                 Editar
               </Link>
             )}
@@ -99,11 +111,19 @@ export default async function KnowledgeUnitPage({
         </dl>
       </header>
 
-      {/* Contenido */}
+      <section className="panel p-6">
+        <h2 className="section-heading mb-4">COMPARTIR</h2>
+        <VisibilityToggle
+          itemId={ku.id}
+          itemType="knowledge_unit"
+          currentVisibility={ku.visibility ?? "private"}
+          onlyOwner={ku.owner_id !== user?.id && !EDITOR_ROLES.includes(role)}
+        />
+      </section>
+
       <article className="panel p-6">
         <h2 className="section-heading mb-4">CONTENIDO</h2>
         {ku.content ? (
-          // renderMarkdown escapa el HTML del contenido antes de formatear.
           <div
             className="ku-content body-md text-[#45464d] leading-relaxed"
             dangerouslySetInnerHTML={{ __html: renderMarkdown(ku.content) }}
@@ -115,7 +135,14 @@ export default async function KnowledgeUnitPage({
         )}
       </article>
 
-      {/* Hash de version: identidad inmutable de esta version */}
+      <CommentsThread
+        kuId={ku.id}
+        comments={comments}
+        currentUserId={user?.id ?? ""}
+        context="general"
+        title="DISCUSSION"
+      />
+
       <div className="panel p-4">
         <p className="label-sm text-[#7c839b] mb-1">HASH DE VERSION</p>
         <code className="body-sm text-[#45464d] break-all">{ku.hash}</code>

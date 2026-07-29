@@ -1,8 +1,10 @@
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
+import { createClient } from "@/lib/supabase/server";
 import { getAgent } from "@/lib/agents/actions";
 import { getKnowledgeUnits } from "@/lib/knowledge/actions";
+import { VisibilityToggle } from "@/components/shared/visibility-toggle";
 
 /** Estados validos del check constraint de public.agents. */
 const STATUS_STYLES: Record<string, string> = {
@@ -26,6 +28,11 @@ export default async function AgentPage({
 }) {
   const { locale, agentId } = await params;
   setRequestLocale(locale);
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   const agent = await getAgent(agentId);
   if (!agent) notFound();
@@ -91,6 +98,16 @@ export default async function AgentPage({
           )}
         </dl>
       </header>
+
+      <section className="panel p-6">
+        <h2 className="section-heading mb-4">COMPARTIR</h2>
+        <VisibilityToggle
+          itemId={agentId}
+          itemType="agent"
+          currentVisibility={agent.visibility ?? "private"}
+          onlyOwner={agent.created_by !== user?.id}
+        />
+      </section>
 
       {/* Contexto compilado: las KUs que alimentan al agente */}
       <section className="panel p-6 space-y-4">
