@@ -252,10 +252,10 @@ export const KUEditor = ({
 const TrustBadge = ({ score }: { score: number }) => {
   const color =
     score >= 70
-      ? "text-green-600 dark:text-green-400"
+      ? "text-[var(--verified)] dark:text-[var(--verified)]"
       : score >= 40
-        ? "text-yellow-600 dark:text-yellow-400"
-        : "text-red-600 dark:text-red-400";
+        ? "text-[var(--pending)] dark:text-[var(--pending)]"
+        : "text-[var(--danger)] dark:text-[var(--danger)]";
 
   return <span className={`font-medium ${color}`}>{score}/100</span>;
 };

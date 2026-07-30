@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Link, useRouter } from "@/i18n/routing";
+import { Icon } from "@/components/shared/icon";
 
 /** Refleja las columnas reales de public.agents. */
 interface Agent {
@@ -26,10 +27,10 @@ interface AgentsOverviewProps {
  * ('draft','deployed','paused','archived').
  */
 const STATUS_STYLES: Record<string, string> = {
-  deployed: "bg-green-50 text-green-700 border-green-100",
-  draft: "bg-yellow-50 text-yellow-700 border-yellow-100",
-  paused: "bg-orange-50 text-orange-700 border-orange-100",
-  archived: "bg-gray-50 text-gray-700 border-gray-100",
+  deployed: "bg-[rgb(52_211_153_/_0.12)] text-[var(--verified)] border-[rgb(52_211_153_/_0.28)]",
+  draft: "bg-[rgb(251_191_36_/_0.12)] text-[var(--pending)] border-[rgb(251_191_36_/_0.28)]",
+  paused: "bg-[rgb(251_191_36_/_0.12)] text-[var(--pending)] border-[rgb(251_191_36_/_0.28)]",
+  archived: "bg-[var(--sky-3)] text-[var(--star-2)] border-[var(--edge)]",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -40,7 +41,7 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 const getStatusColor = (status: string) =>
-  STATUS_STYLES[status] ?? "bg-gray-50 text-gray-700 border-gray-100";
+  STATUS_STYLES[status] ?? "bg-[var(--sky-3)] text-[var(--star-2)] border-[var(--edge)]";
 
 const formatStatus = (status: string) =>
   STATUS_LABELS[status] ?? status.charAt(0).toUpperCase() + status.slice(1);
@@ -99,35 +100,31 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
-        <h1 className="headline-xl text-black font-bold">Agents</h1>
+        <h1 className="headline-xl text-[var(--star-1)] font-bold">Agents</h1>
         <Link
           href="/agents/new"
-          className="bg-[#4648d4] text-white font-medium py-2.5 px-4 rounded-lg hover:bg-[#3b3db8] flex items-center gap-2 body-md transition-colors"
+          className="bg-[#5b9bff] text-[var(--azure-ink)] font-medium py-2.5 px-4 rounded-lg hover:bg-[#3f7fe0] flex items-center gap-2 body-md transition-colors"
         >
-          <span className="text-xl" aria-hidden>
-            ➕
-          </span>
+          <Icon name="plus" size={17} strokeWidth={2.2} />
           Nuevo agente
         </Link>
       </div>
 
       {/* Search */}
       <div className="relative">
-        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#7c839b]">
-          🔍
-        </span>
+        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8b95ab]"><Icon name="search" size={18} /></span>
         <input
           type="search"
           aria-label="Buscar agentes"
           placeholder="Buscar agentes por nombre, modelo o descripcion..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 border border-[#e2e8f0] rounded-lg bg-white text-[#45464d] placeholder-[#7c839b] focus:outline-none focus:ring-2 focus:ring-[#4648d4] focus:border-transparent"
+          className="w-full pl-12 pr-4 py-3 border border-[#212a3e] rounded-lg bg-[var(--sky-2)] text-[#b8c1d4] placeholder-[#8b95ab] focus:outline-none focus:ring-2 focus:ring-[#5b9bff] focus:border-transparent"
         />
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center justify-between border-b border-[#e2e8f0] flex-wrap gap-2">
+      <div className="flex items-center justify-between border-b border-[#212a3e] flex-wrap gap-2">
         <div className="flex gap-1">
           {tabs.map((tab) => (
             <button
@@ -136,12 +133,12 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
               aria-pressed={activeTab === tab.id}
               className={`px-4 py-3 border-b-2 rounded-t body-md transition-colors ${
                 activeTab === tab.id
-                  ? "border-black text-black font-medium"
-                  : "border-transparent text-[#45464d] hover:border-[#e2e8f0] hover:bg-[#f7f9fb]"
+                  ? "border-[var(--azure)] text-[var(--star-1)] font-medium"
+                  : "border-transparent text-[#b8c1d4] hover:border-[#212a3e] hover:bg-[#0a0e17]"
               }`}
             >
               {tab.label}
-              <span className="ml-2 text-[#7c839b]">{countFor(tab.id)}</span>
+              <span className="ml-2 text-[#8b95ab]">{countFor(tab.id)}</span>
             </button>
           ))}
         </div>
@@ -153,29 +150,25 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
 
         {agents.length === 0 ? (
           <div className="panel p-10 text-center space-y-3">
-            <span className="text-4xl text-[#7c839b]" aria-hidden>
-              🤖
-            </span>
-            <p className="body-md text-black font-medium">
+            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[rgb(91_155_255_/_0.12)] text-[var(--azure)]" aria-hidden><Icon name="agents" size={26} /></span>
+            <p className="body-md text-[var(--star-1)] font-medium">
               Todavia no hay agentes
             </p>
-            <p className="body-sm text-[#7c839b] max-w-md mx-auto">
+            <p className="body-sm text-[#8b95ab] max-w-md mx-auto">
               Un agente compila tus Knowledge Units aprobadas en contexto listo
               para usar con el Model Router.
             </p>
             <Link
               href="/agents/new"
-              className="inline-flex items-center gap-2 rounded-lg bg-[#4648d4] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#3b3db8]"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#5b9bff] px-4 py-2.5 text-sm font-medium text-[var(--azure-ink)] hover:bg-[#3f7fe0]"
             >
-              <span className="text-lg" aria-hidden>
-                ➕
-              </span>
+              <Icon name="plus" size={16} strokeWidth={2.2} />
               Crear primer agente
             </Link>
           </div>
         ) : visibleAgents.length === 0 ? (
           <div className="panel p-8 text-center">
-            <p className="body-md text-[#7c839b]">
+            <p className="body-md text-[#8b95ab]">
               Ningun agente coincide con el filtro.
             </p>
           </div>
@@ -191,17 +184,15 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
                 <li key={agent.id}>
                   <button
                     onClick={() => router.push(`/agents/${agent.id}`)}
-                    className="panel w-full text-left p-4 flex items-start gap-4 hover:bg-[#f7f9fb] focus:outline-none focus:ring-2 focus:ring-[#4648d4] transition-colors"
+                    className="panel w-full text-left p-4 flex items-start gap-4 hover:bg-[#0a0e17] focus:outline-none focus:ring-2 focus:ring-[#5b9bff] transition-colors"
                   >
-                    <div className="w-10 h-10 rounded-lg bg-[#e1e0ff] flex items-center justify-center flex-shrink-0">
-                      <span className="text-lg text-[#4648d4]">
-                        🤖
-                      </span>
+                    <div className="w-10 h-10 rounded-lg bg-[#16233d] flex items-center justify-center flex-shrink-0">
+                      <Icon name="agents" size={18} className="text-[#5b9bff]" />
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <h3 className="body-md font-semibold text-black">
+                        <h3 className="body-md font-semibold text-[var(--star-1)]">
                           {agent.name}
                         </h3>
                         <span
@@ -211,24 +202,24 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
                         >
                           {formatStatus(agent.status)}
                         </span>
-                        <span className="label-sm bg-[#dae2fd] text-black px-2 py-1 rounded">
+                        <span className="label-sm bg-[#16233d] text-[var(--star-1)] px-2 py-1 rounded">
                           {agent.model}
                         </span>
                       </div>
 
-                      <p className="body-sm text-[#7c839b] mb-2 line-clamp-2">
+                      <p className="body-sm text-[#8b95ab] mb-2 line-clamp-2">
                         {agent.description || "Sin descripcion"}
                       </p>
 
-                      <div className="flex items-center gap-4 body-sm text-[#7c839b] flex-wrap">
+                      <div className="flex items-center gap-4 body-sm text-[#8b95ab] flex-wrap">
                         <span>
-                          <span className="font-semibold text-[#45464d]">
+                          <span className="font-semibold text-[#b8c1d4]">
                             {kuCount}
                           </span>{" "}
                           {kuCount === 1 ? "Knowledge Unit" : "Knowledge Units"}
                         </span>
                         <span>
-                          <span className="font-semibold text-[#45464d]">
+                          <span className="font-semibold text-[#b8c1d4]">
                             {invocations.toLocaleString("es")}
                           </span>{" "}
                           {invocations === 1 ? "invocacion" : "invocaciones"}
@@ -240,9 +231,7 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
                       </div>
                     </div>
 
-                    <span className="text-[#7c839b] flex-shrink-0">
-                      ➜
-                    </span>
+                    <Icon name="chevron-right" size={16} className="text-[#8b95ab] flex-shrink-0" />
                   </button>
                 </li>
               );

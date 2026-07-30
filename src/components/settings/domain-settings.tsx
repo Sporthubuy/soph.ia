@@ -64,8 +64,8 @@ export const DomainSettings = ({
     <section className="panel p-6 space-y-4">
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
-          <h2 className="body-md font-semibold text-black">{t("domainsTitle")}</h2>
-          <p className="body-sm text-[#7c839b] mt-0.5">{t("domainsDesc")}</p>
+          <h2 className="body-md font-semibold text-[var(--star-1)]">{t("domainsTitle")}</h2>
+          <p className="body-sm text-[#8b95ab] mt-0.5">{t("domainsDesc")}</p>
         </div>
         {canManage && !showForm && (
           <Button
@@ -97,7 +97,7 @@ export const DomainSettings = ({
               type="submit"
               size="sm"
               disabled={isPending}
-              className="rounded-lg bg-[#4648d4] text-white hover:bg-[#3b3db8]"
+              className="rounded-lg bg-[#5b9bff] text-[var(--azure-ink)] hover:bg-[#3f7fe0]"
             >
               {isPending ? t("creating") : tc("create")}
             </Button>
@@ -118,28 +118,28 @@ export const DomainSettings = ({
       )}
 
       {error && (
-        <p className="text-sm text-red-600" role="alert">
+        <p className="text-sm text-[var(--danger)]" role="alert">
           {error}
         </p>
       )}
 
       {domains.length === 0 ? (
-        <p className="text-sm text-[#7c839b]">{t("noDomains")}</p>
+        <p className="text-sm text-[#8b95ab]">{t("noDomains")}</p>
       ) : (
         <div className="space-y-2">
           {domains.map((domain) => (
             <div
               key={domain.id}
-              className="flex items-center justify-between rounded-lg border border-[#e2e8f0] px-3 py-3"
+              className="flex items-center justify-between rounded-lg border border-[#212a3e] px-3 py-3"
             >
               <div className="flex items-center gap-3 min-w-0">
                 <span
-                  className="text-[#4648d4] text-lg"
+                  className="text-[#5b9bff] text-lg"
                   aria-hidden
                 >
                   account_tree
                 </span>
-                <span className="text-sm font-medium text-black truncate">
+                <span className="text-sm font-medium text-[var(--star-1)] truncate">
                   {domain.name}
                 </span>
               </div>
@@ -147,7 +147,7 @@ export const DomainSettings = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 text-xs text-[#7c839b] hover:text-red-600"
+                  className="h-8 text-xs text-[#8b95ab] hover:text-[var(--danger)]"
                   onClick={() => handleDelete(domain.id)}
                   disabled={isPending}
                 >

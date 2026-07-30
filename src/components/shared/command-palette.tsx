@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Icon, type IconName } from "@/components/shared/icon";
 
 type SearchHit = {
   id: string;
@@ -23,7 +24,7 @@ type NavAction = {
   title: string;
   subtitle: string;
   href: string;
-  icon: string;
+  icon: IconName;
   keywords: string;
 };
 
@@ -33,7 +34,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "Overview",
     subtitle: "Dashboard",
     href: "/dashboard",
-    icon: "📊",
+    icon: "overview",
     keywords: "home overview start",
   },
   {
@@ -41,7 +42,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "Projects",
     subtitle: "Go to projects",
     href: "/projects",
-    icon: "📁",
+    icon: "projects",
     keywords: "proyectos projects",
   },
   {
@@ -49,7 +50,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "Knowledge",
     subtitle: "Knowledge units",
     href: "/knowledge",
-    icon: "📖",
+    icon: "knowledge",
     keywords: "ku knowledge unidades",
   },
   {
@@ -57,7 +58,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "Graph",
     subtitle: "Knowledge graph",
     href: "/graph",
-    icon: "🔗",
+    icon: "graph",
     keywords: "grafo graph map",
   },
   {
@@ -65,7 +66,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "Agents",
     subtitle: "AI agents",
     href: "/agents",
-    icon: "🤖",
+    icon: "agents",
     keywords: "agentes agents",
   },
   {
@@ -73,7 +74,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "Review",
     subtitle: "Review center",
     href: "/review",
-    icon: "✅",
+    icon: "review",
     keywords: "review aprobar",
   },
   {
@@ -81,7 +82,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "Settings",
     subtitle: "Organization settings",
     href: "/settings",
-    icon: "⚙️",
+    icon: "settings",
     keywords: "settings config",
   },
   {
@@ -89,7 +90,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "New Knowledge Unit",
     subtitle: "Create",
     href: "/knowledge/new",
-    icon: "➕",
+    icon: "plus",
     keywords: "create new ku knowledge",
   },
   {
@@ -97,7 +98,7 @@ const NAV_ACTIONS: NavAction[] = [
     title: "New Project",
     subtitle: "Create",
     href: "/projects/new",
-    icon: "📁",
+    icon: "projects",
     keywords: "create new project",
   },
   {
@@ -105,15 +106,15 @@ const NAV_ACTIONS: NavAction[] = [
     title: "New Agent",
     subtitle: "Create",
     href: "/agents/new",
-    icon: "🤖",
+    icon: "agents",
     keywords: "create new agent",
   },
 ];
 
-const typeIcon: Record<SearchHit["type"], string> = {
-  knowledge: "📖",
-  project: "📁",
-  agent: "🤖",
+const typeIcon: Record<SearchHit["type"], IconName> = {
+  knowledge: "knowledge",
+  project: "projects",
+  agent: "agents",
 };
 
 type Item =
@@ -236,29 +237,27 @@ export const CommandPalette = ({
           <DialogDescription>Search and navigate SOPH.IA</DialogDescription>
         </DialogHeader>
 
-        <div className="flex items-center gap-2 border-b border-[#e2e8f0] px-4">
-          <span className="text-[#7c839b]" aria-hidden>
-            search
-          </span>
+        <div className="flex items-center gap-2 border-b border-[#212a3e] px-4">
+          <Icon name="search" size={18} className="text-[#8b95ab]" />
           <input
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search knowledge, projects, agents, or jump…"
-            className="flex-1 bg-transparent py-3.5 text-sm text-black placeholder:text-[#7c839b] outline-none"
+            className="flex-1 bg-transparent py-3.5 text-sm text-[var(--star-1)] placeholder:text-[#8b95ab] outline-none"
             aria-label="Command search"
           />
           {loading && (
-            <span className="label-sm text-[#7c839b]">Searching…</span>
+            <span className="label-sm text-[#8b95ab]">Searching…</span>
           )}
-          <kbd className="hidden sm:inline label-sm rounded border border-[#e2e8f0] bg-[#f7f9fb] px-1.5 py-0.5 text-[#7c839b]">
+          <kbd className="hidden sm:inline label-sm rounded border border-[#212a3e] bg-[#0a0e17] px-1.5 py-0.5 text-[#8b95ab]">
             esc
           </kbd>
         </div>
 
         <div className="max-h-[min(60vh,420px)] overflow-y-auto p-2">
           {items.length === 0 ? (
-            <p className="px-3 py-8 text-center text-sm text-[#7c839b]">
+            <p className="px-3 py-8 text-center text-sm text-[#8b95ab]">
               No matches
             </p>
           ) : (
@@ -276,20 +275,15 @@ export const CommandPalette = ({
                         onMouseEnter={() => setActive(index)}
                         onClick={() => go(a.href)}
                         className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
-                          selected ? "bg-[#e1e0ff] text-[#4648d4]" : "hover:bg-[#f7f9fb]"
+                          selected ? "bg-[#16233d] text-[#5b9bff]" : "hover:bg-[#0a0e17]"
                         }`}
                       >
-                        <span
-                          className="text-xl shrink-0"
-                          aria-hidden
-                        >
-                          {a.icon}
-                        </span>
+                        <Icon name={a.icon} size={18} className="shrink-0 text-[var(--star-3)]" />
                         <span className="min-w-0 flex-1">
-                          <span className="block text-sm font-medium text-black">
+                          <span className="block text-sm font-medium text-[var(--star-1)]">
                             {a.title}
                           </span>
-                          <span className="block text-xs text-[#7c839b]">
+                          <span className="block text-xs text-[#8b95ab]">
                             {a.subtitle}
                           </span>
                         </span>
@@ -308,20 +302,15 @@ export const CommandPalette = ({
                       onMouseEnter={() => setActive(index)}
                       onClick={() => go(h.href)}
                       className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
-                        selected ? "bg-[#e1e0ff] text-[#4648d4]" : "hover:bg-[#f7f9fb]"
+                        selected ? "bg-[#16233d] text-[#5b9bff]" : "hover:bg-[#0a0e17]"
                       }`}
                     >
-                      <span
-                        className="text-xl shrink-0"
-                        aria-hidden
-                      >
-                        {typeIcon[h.type]}
-                      </span>
+                      <Icon name={typeIcon[h.type]} size={18} className="shrink-0 text-[var(--star-3)]" />
                       <span className="min-w-0 flex-1">
-                        <span className="block text-sm font-medium text-black truncate">
+                        <span className="block text-sm font-medium text-[var(--star-1)] truncate">
                           {h.title}
                         </span>
-                        <span className="block text-xs text-[#7c839b] truncate">
+                        <span className="block text-xs text-[#8b95ab] truncate">
                           {h.subtitle}
                         </span>
                       </span>
@@ -333,7 +322,7 @@ export const CommandPalette = ({
           )}
         </div>
 
-        <div className="flex items-center gap-3 border-t border-[#e2e8f0] px-4 py-2 text-[11px] text-[#7c839b]">
+        <div className="flex items-center gap-3 border-t border-[#212a3e] px-4 py-2 text-[11px] text-[#8b95ab]">
           <span>↑↓ navigate</span>
           <span>↵ open</span>
           <span className="ml-auto">esc close</span>

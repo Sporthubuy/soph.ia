@@ -14,7 +14,21 @@ export interface ChatOptions {
   temperature?: number;
   maxTokens?: number;
   system?: string;
+  /**
+   * Per-request API key. When provided (e.g. a user's own key stored in
+   * user_ai_providers) it takes precedence over the server env fallback,
+   * so each user's agent runs on their own credentials.
+   */
+  apiKey?: string;
 }
+
+type ProviderCallOpts = {
+  model: string;
+  temperature: number;
+  maxTokens: number;
+  system?: string;
+  apiKey?: string;
+};
 
 const DEFAULT_MODELS: Record<ProviderId, string> = {
   anthropic: "claude-3-5-sonnet-latest",
@@ -58,58 +72,27 @@ export async function chat(
   const model = options.model ?? DEFAULT_MODELS[provider];
   const temperature = options.temperature ?? 0.7;
   const maxTokens = options.maxTokens ?? 1024;
-
-  if (provider === "anthropic") {
-    return chatAnthropic(messages, {
-      model,
-      temperature,
-      maxTokens,
-      system: options.system,
-    });
-  }
-  if (provider === "google") {
-    return chatGoogle(messages, {
-      model,
-      temperature,
-      maxTokens,
-      system: options.system,
-    });
-  }
-  if (provider === "deepseek") {
-    return chatDeepSeek(messages, {
-      model,
-      temperature,
-      maxTokens,
-      system: options.system,
-    });
-  }
-  if (provider === "nvidia") {
-    return chatNvidia(messages, {
-      model,
-      temperature,
-      maxTokens,
-      system: options.system,
-    });
-  }
-  return chatOpenAI(messages, {
+  const base: ProviderCallOpts = {
     model,
     temperature,
     maxTokens,
     system: options.system,
-  });
+    apiKey: options.apiKey,
+  };
+
+  if (provider === "anthropic") return chatAnthropic(messages, base);
+  if (provider === "google") return chatGoogle(messages, base);
+  if (provider === "deepseek") return chatDeepSeek(messages, base);
+  if (provider === "nvidia") return chatNvidia(messages, base);
+  return chatOpenAI(messages, base);
 }
 
 async function chatAnthropic(
   messages: ChatMessage[],
-  opts: {
-    model: string;
-    temperature: number;
-    maxTokens: number;
-    system?: string;
-  }
+  opts: ProviderCallOpts
 ) {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) throw new Error("ANTHROPIC_API_KEY not configured");
+  const apiKey = opts.apiKey || process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) throw new Error("No hay API key de Anthropic. Configurala en Settings o en el servidor.");
 
   const client = new Anthropic({ apiKey });
 
@@ -143,15 +126,10 @@ async function chatAnthropic(
 
 async function chatOpenAI(
   messages: ChatMessage[],
-  opts: {
-    model: string;
-    temperature: number;
-    maxTokens: number;
-    system?: string;
-  }
+  opts: ProviderCallOpts
 ) {
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) throw new Error("OPENAI_API_KEY not configured");
+  const apiKey = opts.apiKey || process.env.OPENAI_API_KEY;
+  if (!apiKey) throw new Error("No hay API key de OpenAI. Configurala en Settings o en el servidor.");
 
   const client = new OpenAI({ apiKey });
   const finalMessages: ChatMessage[] = opts.system
@@ -175,15 +153,10 @@ async function chatOpenAI(
 
 async function chatGoogle(
   messages: ChatMessage[],
-  opts: {
-    model: string;
-    temperature: number;
-    maxTokens: number;
-    system?: string;
-  }
+  opts: ProviderCallOpts
 ) {
-  const apiKey = process.env.GOOGLE_AI_API_KEY;
-  if (!apiKey) throw new Error("GOOGLE_AI_API_KEY not configured");
+  const apiKey = opts.apiKey || process.env.GOOGLE_AI_API_KEY;
+  if (!apiKey) throw new Error("No hay API key de Google Gemini. Configurala en Settings o en el servidor.");
 
   const { GoogleGenerativeAI } = await import("@google/generative-ai");
   const genAI = new GoogleGenerativeAI(apiKey);
@@ -231,15 +204,10 @@ async function chatGoogle(
 
 async function chatDeepSeek(
   messages: ChatMessage[],
-  opts: {
-    model: string;
-    temperature: number;
-    maxTokens: number;
-    system?: string;
-  }
+  opts: ProviderCallOpts
 ) {
-  const apiKey = process.env.DEEPSEEK_API_KEY;
-  if (!apiKey) throw new Error("DEEPSEEK_API_KEY not configured");
+  const apiKey = opts.apiKey || process.env.DEEPSEEK_API_KEY;
+  if (!apiKey) throw new Error("No hay API key de DeepSeek. Configurala en Settings o en el servidor.");
 
   const client = new OpenAI({
     apiKey,
@@ -267,15 +235,10 @@ async function chatDeepSeek(
 
 async function chatNvidia(
   messages: ChatMessage[],
-  opts: {
-    model: string;
-    temperature: number;
-    maxTokens: number;
-    system?: string;
-  }
+  opts: ProviderCallOpts
 ) {
-  const apiKey = process.env.NVIDIA_API_KEY;
-  if (!apiKey) throw new Error("NVIDIA_API_KEY not configured");
+  const apiKey = opts.apiKey || process.env.NVIDIA_API_KEY;
+  if (!apiKey) throw new Error("No hay API key de Nvidia NIM. Configurala en Settings o en el servidor.");
 
   const client = new OpenAI({
     apiKey,

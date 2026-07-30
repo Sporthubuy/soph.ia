@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { CommandPalette, useCommandPaletteHotkey } from "@/components/shared/command-palette";
+import { Icon } from "@/components/shared/icon";
 
 export const DashboardChrome = () => {
   const [open, setOpen] = useState(false);
@@ -10,17 +11,15 @@ export const DashboardChrome = () => {
 
   return (
     <>
-      <div className="sticky top-0 z-30 hidden md:flex h-12 items-center justify-between gap-3 border-b border-[#e2e8f0] bg-white/90 px-6 backdrop-blur">
+      <div className="sticky top-0 z-30 hidden h-12 items-center justify-between gap-3 border-b border-[var(--edge)] bg-[rgb(15_20_32_/_0.8)] px-6 backdrop-blur md:flex">
         <button
           type="button"
           onClick={openPalette}
-          className="flex max-w-md flex-1 items-center gap-2 rounded-lg border border-[#e2e8f0] bg-[#f7f9fb] px-3 py-1.5 text-left text-sm text-[#7c839b] transition-colors hover:border-[#c7cdd8] hover:bg-white"
+          className="flex max-w-md flex-1 items-center gap-2.5 rounded-[10px] border border-[var(--edge)] bg-[var(--sky-1)] px-3 py-1.5 text-left text-sm text-[var(--star-3)] transition-colors hover:border-[var(--edge-strong)] hover:text-[var(--star-2)]"
         >
-          <span className="text-lg" aria-hidden>
-            search
-          </span>
-          <span className="flex-1 truncate">Search knowledge, projects, agents…</span>
-          <kbd className="rounded border border-[#e2e8f0] bg-white px-1.5 py-0.5 text-[10px] font-medium text-[#7c839b]">
+          <Icon name="search" size={16} className="flex-shrink-0" />
+          <span className="flex-1 truncate">Buscar knowledge, proyectos, agents…</span>
+          <kbd className="rounded-md border border-[var(--edge)] bg-[var(--sky-3)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--star-3)]">
             ⌘K
           </kbd>
         </button>
@@ -30,12 +29,10 @@ export const DashboardChrome = () => {
       <button
         type="button"
         onClick={openPalette}
-        className="md:hidden fixed bottom-4 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-[#4648d4] text-white shadow-lg hover:bg-[#3b3db8]"
-        aria-label="Open search"
+        className="fixed bottom-4 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--azure)] text-[var(--azure-ink)] shadow-[0_8px_24px_-6px_rgb(91_155_255_/_0.6)] hover:bg-[var(--azure-bright)] md:hidden"
+        aria-label="Abrir búsqueda"
       >
-        <span className="material-symbols-outlined" aria-hidden>
-          search
-        </span>
+        <Icon name="search" size={20} strokeWidth={2} />
       </button>
 
       <CommandPalette open={open} onOpenChange={setOpen} />

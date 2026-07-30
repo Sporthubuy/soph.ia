@@ -181,7 +181,7 @@ const ReviewCard = ({
             <ShareDialog
               path={`/knowledge/${ku.id}`}
               title={ku.title}
-              triggerClassName="label-sm px-2 py-1 rounded border border-[#e2e8f0] text-[#45464d] hover:bg-[#f7f9fb] inline-flex items-center gap-1"
+              triggerClassName="label-sm px-2 py-1 rounded border border-[#212a3e] text-[#b8c1d4] hover:bg-[#0a0e17] inline-flex items-center gap-1"
             />
             <KUStatusBadge status={ku.status} />
           </div>
@@ -212,10 +212,10 @@ const ReviewCard = ({
               diff.previous.title !== diff.current.title && (
                 <div className="mb-3 text-sm">
                   <span className="text-muted-foreground">{t("titleLabel")}</span>
-                  <span className="text-red-600 line-through">
+                  <span className="text-[var(--danger)] line-through">
                     {diff.previous.title}
                   </span>{" "}
-                  <span className="text-emerald-600">
+                  <span className="text-[var(--verified)]">
                     {diff.current.title}
                   </span>
                 </div>
@@ -228,7 +228,7 @@ const ReviewCard = ({
           </p>
         ) : null}
 
-        <div className="rounded-lg border border-[#e2e8f0] bg-[#f7f9fb] p-4">
+        <div className="rounded-lg border border-[#212a3e] bg-[#0a0e17] p-4">
           <CommentsThread
             kuId={ku.id}
             comments={comments}

@@ -11,23 +11,25 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
+import { Icon, type IconName } from "@/components/shared/icon";
+import { Logo, LogoMark } from "@/components/shared/logo";
 
 type NavItem = {
   href: string;
   label: string;
-  icon: string;
+  icon: IconName;
   ready: boolean;
 };
 
 const navItems: NavItem[] = [
-  { href: "/dashboard", label: "Overview", icon: "📊", ready: true },
-  { href: "/projects", label: "Proyectos", icon: "📁", ready: true },
-  { href: "/knowledge", label: "Knowledge", icon: "📖", ready: true },
-  { href: "/graph", label: "Graph", icon: "🔗", ready: true },
-  { href: "/agents", label: "Agents", icon: "🤖", ready: true },
-  { href: "/review", label: "Review", icon: "✅", ready: true },
-  { href: "/people", label: "People", icon: "👥", ready: false },
-  { href: "/marketplace", label: "Marketplace", icon: "🏪", ready: false },
+  { href: "/dashboard", label: "Overview", icon: "overview", ready: true },
+  { href: "/projects", label: "Proyectos", icon: "projects", ready: true },
+  { href: "/knowledge", label: "Knowledge", icon: "knowledge", ready: true },
+  { href: "/graph", label: "Graph", icon: "graph", ready: true },
+  { href: "/agents", label: "Agents", icon: "agents", ready: true },
+  { href: "/review", label: "Review", icon: "review", ready: true },
+  { href: "/people", label: "People", icon: "people", ready: false },
+  { href: "/marketplace", label: "Marketplace", icon: "marketplace", ready: false },
 ];
 
 const SidebarNav = ({ onNavigate }: { onNavigate?: () => void }) => {
@@ -45,101 +47,88 @@ const SidebarNav = ({ onNavigate }: { onNavigate?: () => void }) => {
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
 
+  const navLink = (item: { href: string; label: string; icon: IconName }) => {
+    const active = isActive(item.href);
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        onClick={onNavigate}
+        aria-current={active ? "page" : undefined}
+        className={`group relative flex items-center gap-3 rounded-[10px] px-3 py-2.5 transition-all ${
+          active
+            ? "bg-[rgb(91_155_255_/_0.10)] text-[var(--azure)]"
+            : "text-[var(--star-2)] hover:bg-[var(--sky-3)] hover:text-[var(--star-1)]"
+        }`}
+      >
+        {/* connective edge — a small azure body on the active node */}
+        <span
+          aria-hidden
+          className={`absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-[var(--azure)] transition-opacity ${
+            active ? "opacity-100" : "opacity-0"
+          }`}
+        />
+        <Icon
+          name={item.icon}
+          size={19}
+          className="flex-shrink-0"
+          strokeWidth={active ? 1.9 : 1.6}
+        />
+        <span className="body-md">{item.label}</span>
+      </Link>
+    );
+  };
+
   return (
-    <div className="w-full bg-white flex flex-col h-full">
-      <div className="p-6 border-b border-[#e2e8f0]">
+    <div className="flex h-full w-full flex-col bg-[var(--sky-2)]">
+      <div className="border-b border-[var(--edge)] p-5">
         <Link
           href="/dashboard"
           onClick={onNavigate}
-          className="inline-flex items-center gap-3 hover:opacity-80 transition-opacity"
+          className="inline-flex transition-opacity hover:opacity-80"
         >
-          <div className="w-10 h-10 bg-black rounded flex items-center justify-center flex-shrink-0">
-            <span className="text-lg" aria-hidden>
-              💾
-            </span>
-          </div>
-          <div className="flex flex-col min-w-0">
-            <span className="font-bold text-black text-sm">SOPH.IA</span>
-            <span className="text-xs text-[#7c839b]">KNOWLEDGE OS</span>
-          </div>
+          <Logo markSize={38} />
         </Link>
       </div>
 
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto" aria-label="Main">
+      <nav className="flex-1 space-y-1 overflow-y-auto p-3" aria-label="Main">
         {navItems.map((item) => {
           if (!item.ready) {
             return (
               <span
                 key={item.href}
                 aria-disabled="true"
-                title="Proximamente"
-                className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#a8adbd] cursor-not-allowed select-none"
+                title="Próximamente"
+                className="flex cursor-not-allowed select-none items-center gap-3 rounded-[10px] px-3 py-2.5 text-[var(--star-4)]"
               >
-                <span className="text-xl flex-shrink-0" aria-hidden>
-                  {item.icon}
-                </span>
+                <Icon name={item.icon} size={19} className="flex-shrink-0" />
                 <span className="body-md flex-1">{item.label}</span>
-                <span className="label-sm text-[#a8adbd] border border-[#e2e8f0] rounded px-1.5 py-0.5">
+                <span className="label-xs rounded-full border border-[var(--edge)] px-2 py-0.5 text-[var(--star-4)]">
                   Pronto
                 </span>
               </span>
             );
           }
-
-          const active = isActive(item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={onNavigate}
-              aria-current={active ? "page" : undefined}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                active
-                  ? "bg-[#e1e0ff] text-[#4648d4] font-medium"
-                  : "text-[#45464d] hover:bg-[#f7f9fb]"
-              }`}
-            >
-              <span className="text-xl flex-shrink-0" aria-hidden>
-                {item.icon}
-              </span>
-              <span className="body-md">{item.label}</span>
-            </Link>
-          );
+          return navLink(item);
         })}
       </nav>
 
-      <div className="p-4 border-t border-[#e2e8f0] space-y-2">
-        <div className="flex items-center justify-between px-4 py-2">
-          <span className="label-sm text-[#7c839b]">Language</span>
+      <div className="space-y-1 border-t border-[var(--edge)] p-3">
+        <div className="flex items-center justify-between px-3 py-2">
+          <span className="label-sm text-[var(--star-3)]">Language</span>
           <LanguageSwitcher />
         </div>
 
-        <Link
-          href="/settings"
-          onClick={onNavigate}
-          aria-current={isActive("/settings") ? "page" : undefined}
-          className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-            isActive("/settings")
-              ? "bg-[#e1e0ff] text-[#4648d4] font-medium"
-              : "text-[#45464d] hover:bg-[#f7f9fb]"
-          }`}
-        >
-          <span className="text-xl" aria-hidden>
-            ⚙️
-          </span>
-          <span className="body-md">Settings</span>
-        </Link>
+        {navLink({ href: "/settings", label: "Settings", icon: "settings" })}
 
         <button
           type="button"
           onClick={handleSignOut}
           disabled={isSigningOut}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-[#45464d] hover:bg-[#f7f9fb] transition-colors text-left body-md"
+          className="flex w-full items-center gap-3 rounded-[10px] px-3 py-2.5 text-left body-md text-[var(--star-2)] transition-colors hover:bg-[var(--sky-3)] hover:text-[var(--star-1)] disabled:opacity-60"
         >
-          <span className="text-xl" aria-hidden>
-            🚪
-          </span>
-          <span>{isSigningOut ? "Signing out..." : "Sign out"}</span>
+          <Icon name="signout" size={19} className="flex-shrink-0" />
+          <span>{isSigningOut ? "Signing out…" : "Sign out"}</span>
         </button>
       </div>
     </div>
@@ -158,31 +147,29 @@ export const AppSidebar = () => {
   if (isMobile) {
     return (
       <>
-        <header className="md:hidden sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-[#e2e8f0] bg-white px-4">
+        <header className="sticky top-0 z-40 flex h-14 items-center gap-3 border-b border-[var(--edge)] bg-[var(--sky-2)] px-4 md:hidden">
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#e2e8f0] text-[#45464d] hover:bg-[#f7f9fb]"
-            aria-label="Open menu"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-[10px] border border-[var(--edge)] text-[var(--star-2)] hover:bg-[var(--sky-3)]"
+            aria-label="Abrir menú"
           >
-            <span className="material-symbols-outlined" aria-hidden>
-              menu
-            </span>
+            <Icon name="menu" size={20} />
           </button>
-          <Link href="/dashboard" className="flex items-center gap-2 min-w-0">
-            <div className="w-8 h-8 bg-black rounded flex items-center justify-center flex-shrink-0">
-              <span className="text-white text-base" aria-hidden>
-                database
-              </span>
-            </div>
-            <span className="font-bold text-black text-sm truncate">SOPH.IA</span>
+          <Link href="/dashboard" className="flex min-w-0 items-center gap-2.5">
+            <LogoMark size={30} />
+            <span className="flex items-baseline text-sm font-bold tracking-tight text-[var(--star-1)]">
+              SOPH
+              <span className="mx-[2px] inline-block h-[4px] w-[4px] rounded-full bg-[var(--azure)]" />
+              IA
+            </span>
           </Link>
         </header>
 
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetContent
             side="left"
-            className="w-72 p-0 bg-white border-r border-[#e2e8f0] sm:max-w-[18rem]"
+            className="w-72 border-r border-[var(--edge)] bg-[var(--sky-2)] p-0 sm:max-w-[18rem]"
             showCloseButton
           >
             <SheetHeader className="sr-only">
@@ -196,7 +183,7 @@ export const AppSidebar = () => {
   }
 
   return (
-    <aside className="hidden md:flex w-64 shrink-0 border-r border-[#e2e8f0] h-screen sticky top-0">
+    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 border-r border-[var(--edge)] md:flex">
       <SidebarNav />
     </aside>
   );

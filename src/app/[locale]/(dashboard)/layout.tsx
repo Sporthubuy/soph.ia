@@ -30,11 +30,11 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-[#f7f9fb]">
+    <div className="flex h-screen flex-col bg-[var(--sky-1)] md:flex-row">
       <AppSidebar />
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
         <DashboardChrome />
-        <main className="flex-1 overflow-auto">{children}</main>
+        <main className="flex-1 overflow-auto bg-[var(--sky-1)]">{children}</main>
       </div>
     </div>
   );

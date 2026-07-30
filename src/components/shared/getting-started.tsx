@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/shared/icon";
 
 export type GettingStartedProgress = {
   hasDomains: boolean;
@@ -56,37 +57,37 @@ export const GettingStartedChecklist = ({
 
   return (
     <div className="panel overflow-hidden">
-      <div className="border-b border-[#e2e8f0] bg-gradient-to-r from-[#e1e0ff]/60 to-transparent px-5 py-4">
+      <div className="border-b border-[#212a3e] bg-gradient-to-r from-[#16233d]/60 to-transparent px-5 py-4">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-[#4648d4]">
+            <p className="text-xs font-medium uppercase tracking-wider text-[#5b9bff]">
               {t("gettingStartedGuide")}
             </p>
-            <h2 className="mt-0.5 text-base font-semibold text-black">
+            <h2 className="mt-0.5 text-base font-semibold text-[var(--star-1)]">
               {welcome
                 ? t("gettingStartedWelcome")
                 : t("gettingStartedTitle")}
             </h2>
-            <p className="mt-1 text-xs text-[#7c839b]">
+            <p className="mt-1 text-xs text-[#8b95ab]">
               {complete
                 ? t("gettingStartedComplete")
                 : t("gettingStartedProgress", { done, total })}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold text-[#4648d4]">{pct}%</p>
-            <p className="text-[10px] text-[#7c839b]">{t("progress")}</p>
+            <p className="text-2xl font-bold text-[#5b9bff]">{pct}%</p>
+            <p className="text-[10px] text-[#8b95ab]">{t("progress")}</p>
           </div>
         </div>
-        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#e2e8f0]">
+        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#212a3e]">
           <div
-            className="h-full rounded-full bg-[#4648d4] transition-all"
+            className="h-full rounded-full bg-[#5b9bff] transition-all"
             style={{ width: `${pct}%` }}
           />
         </div>
       </div>
 
-      <div className="divide-y divide-[#e2e8f0]">
+      <div className="divide-y divide-[#212a3e]">
         {steps.map((step, i) => {
           const isDone =
             step.check === "optional" ? false : !!checks[step.check];
@@ -94,27 +95,27 @@ export const GettingStartedChecklist = ({
           return (
             <div
               key={step.id}
-              className="flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-[#f7f9fb]"
+              className="flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-[#0a0e17]"
             >
               <div
                 className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                   isDone
-                    ? "bg-emerald-100 text-emerald-700"
-                    : "bg-[#f1f5f9] text-[#7c839b]"
+                    ? "bg-[rgb(52_211_153_/_0.16)] text-[var(--verified)]"
+                    : "bg-[#151b2b] text-[#8b95ab]"
                 }`}
               >
-                {isDone ? "✓" : i + 1}
+                {isDone ? <Icon name="check" size={14} strokeWidth={2.6} /> : i + 1}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-black">
+                <p className="text-sm font-medium text-[var(--star-1)]">
                   {tg(step.titleKey)}
                   {isOptional && (
-                    <span className="ml-2 text-[10px] font-normal text-[#7c839b]">
+                    <span className="ml-2 text-[10px] font-normal text-[#8b95ab]">
                       {tc("optional")}
                     </span>
                   )}
                 </p>
-                <p className="text-xs text-[#7c839b]">{tg(step.descKey)}</p>
+                <p className="text-xs text-[#8b95ab]">{tg(step.descKey)}</p>
               </div>
               {!isDone && (
                 <Button

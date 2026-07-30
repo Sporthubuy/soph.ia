@@ -14,12 +14,12 @@ const ICONS = [
 ];
 
 const COLORS = [
-  { value: "#e1e0ff", label: "Violeta" },
-  { value: "#dae2fd", label: "Azul" },
-  { value: "#fff8e1", label: "Ambar" },
+  { value: "#16233d", label: "Violeta" },
+  { value: "#16233d", label: "Azul" },
+  { value: "#2a2410", label: "Ambar" },
   { value: "#dcfce7", label: "Verde" },
-  { value: "#fce7f3", label: "Rosa" },
-  { value: "#e0e3e5", label: "Gris" },
+  { value: "#241320", label: "Rosa" },
+  { value: "#151b2b", label: "Gris" },
 ];
 
 export const ProjectCreateForm = ({ locale }: { locale: string }) => {
@@ -60,17 +60,17 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
 
   return (
     <div className="p-8 max-w-3xl mx-auto space-y-6">
-      <nav aria-label="Migas de pan" className="body-sm text-[#7c839b]">
-        <Link href="/projects" className="hover:text-black transition-colors">
+      <nav aria-label="Migas de pan" className="body-sm text-[#8b95ab]">
+        <Link href="/projects" className="hover:text-[var(--star-1)] transition-colors">
           Proyectos
         </Link>
         <span className="mx-2">/</span>
-        <span className="text-[#45464d]">Nuevo proyecto</span>
+        <span className="text-[#b8c1d4]">Nuevo proyecto</span>
       </nav>
 
       <header className="space-y-1">
-        <h1 className="headline-xl text-black font-bold">Nuevo proyecto</h1>
-        <p className="body-md text-[#45464d]">
+        <h1 className="headline-xl text-[var(--star-1)] font-bold">Nuevo proyecto</h1>
+        <p className="body-md text-[#b8c1d4]">
           Un proyecto agrupa el conocimiento, la gente y los agentes que
           trabajan sobre un mismo objetivo.
         </p>
@@ -79,7 +79,7 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="panel p-6 space-y-5">
           <div className="space-y-2">
-            <label htmlFor="name" className="label-sm text-[#7c839b]">
+            <label htmlFor="name" className="label-sm text-[#8b95ab]">
               NOMBRE
             </label>
             <input
@@ -88,12 +88,12 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
               onChange={(e) => setName(e.target.value)}
               placeholder="Ej: Lanzamiento de la app 2026"
               autoFocus
-              className="w-full px-4 py-3 border border-[#e2e8f0] rounded-lg bg-white text-black placeholder-[#7c839b] focus:outline-none focus:ring-2 focus:ring-[#4648d4] focus:border-transparent"
+              className="w-full px-4 py-3 border border-[#212a3e] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#8b95ab] focus:outline-none focus:ring-2 focus:ring-[#5b9bff] focus:border-transparent"
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="description" className="label-sm text-[#7c839b]">
+            <label htmlFor="description" className="label-sm text-[#8b95ab]">
               QUE QUEREMOS LOGRAR
             </label>
             <textarea
@@ -102,12 +102,12 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describi el objetivo del proyecto, su alcance y por que existe."
               rows={5}
-              className="w-full px-4 py-3 border border-[#e2e8f0] rounded-lg bg-white text-black placeholder-[#7c839b] focus:outline-none focus:ring-2 focus:ring-[#4648d4] focus:border-transparent"
+              className="w-full px-4 py-3 border border-[#212a3e] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#8b95ab] focus:outline-none focus:ring-2 focus:ring-[#5b9bff] focus:border-transparent"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="label-sm text-[#7c839b]">ICONO</label>
+            <label className="label-sm text-[#8b95ab]">ICONO</label>
             <div className="flex flex-wrap gap-2">
               {ICONS.map((i) => (
                 <button
@@ -118,8 +118,8 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
                   aria-label={i}
                   className={`w-11 h-11 rounded-lg border flex items-center justify-center transition-colors ${
                     icon === i
-                      ? "border-[#4648d4] ring-2 ring-[#4648d4]/30"
-                      : "border-[#e2e8f0] hover:bg-[#f7f9fb]"
+                      ? "border-[#5b9bff] ring-2 ring-[#5b9bff]/30"
+                      : "border-[#212a3e] hover:bg-[#0a0e17]"
                   }`}
                   style={{ backgroundColor: color }}
                 >
@@ -130,7 +130,7 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
           </div>
 
           <div className="space-y-2">
-            <label className="label-sm text-[#7c839b]">COLOR</label>
+            <label className="label-sm text-[#8b95ab]">COLOR</label>
             <div className="flex flex-wrap gap-2">
               {COLORS.map((c) => (
                 <button
@@ -142,8 +142,8 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
                   title={c.label}
                   className={`w-11 h-11 rounded-lg border transition-colors ${
                     color === c.value
-                      ? "border-[#4648d4] ring-2 ring-[#4648d4]/30"
-                      : "border-[#e2e8f0]"
+                      ? "border-[#5b9bff] ring-2 ring-[#5b9bff]/30"
+                      : "border-[#212a3e]"
                   }`}
                   style={{ backgroundColor: c.value }}
                 />
@@ -155,14 +155,14 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
         {error && (
           <div
             role="alert"
-            className="panel border-red-200 bg-red-50 p-4 flex items-start gap-3"
+            className="panel border-[rgb(251_106_104_/_0.35)] bg-[rgb(251_106_104_/_0.12)] p-4 flex items-start gap-3"
           >
-            <span className="text-red-700">error</span>
+            <span className="text-[var(--danger)]">error</span>
             <div className="flex-1">
-              <p className="body-md font-medium text-red-900">
+              <p className="body-md font-medium text-[var(--danger)]">
                 No se pudo crear el proyecto
               </p>
-              <p className="body-sm text-red-800">{error}</p>
+              <p className="body-sm text-[var(--danger)]">{error}</p>
             </div>
           </div>
         )}
@@ -171,14 +171,14 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
           <button
             type="submit"
             disabled={isSaving}
-            className="bg-[#4648d4] text-white font-medium py-2.5 px-5 rounded-lg hover:bg-[#3a3ab0] transition-colors disabled:opacity-50 body-md"
+            className="bg-[#5b9bff] text-[var(--azure-ink)] font-medium py-2.5 px-5 rounded-lg hover:bg-[#3f7fe0] transition-colors disabled:opacity-50 body-md"
           >
             {isSaving ? "Creando..." : "Crear proyecto"}
           </button>
           <button
             type="button"
             onClick={() => router.push("/projects")}
-            className="py-2.5 px-5 rounded-lg border border-[#e2e8f0] text-[#45464d] hover:bg-[#f7f9fb] transition-colors body-md"
+            className="py-2.5 px-5 rounded-lg border border-[#212a3e] text-[#b8c1d4] hover:bg-[#0a0e17] transition-colors body-md"
           >
             Cancelar
           </button>

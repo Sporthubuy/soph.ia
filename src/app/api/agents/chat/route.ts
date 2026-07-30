@@ -15,6 +15,30 @@ interface ChatRequestBody {
 const SYSTEM_BASE =
   "Eres un agente de IA alimentado por el conocimiento verificado de una organizacion. Responde de forma clara y precisa. Cita el titulo de la Knowledge Unit de la que obtienes la informacion cuando sea relevante.";
 
+const PROVIDER_LABEL: Record<
+  "anthropic" | "openai" | "google" | "deepseek" | "nvidia",
+  string
+> = {
+  anthropic: "Anthropic Claude",
+  openai: "OpenAI",
+  google: "Google Gemini",
+  deepseek: "DeepSeek",
+  nvidia: "Nvidia NIM",
+};
+
+const hasServerKey = (
+  provider: "anthropic" | "openai" | "google" | "deepseek" | "nvidia"
+): boolean => {
+  const envByProvider: Record<typeof provider, string | undefined> = {
+    anthropic: process.env.ANTHROPIC_API_KEY,
+    openai: process.env.OPENAI_API_KEY,
+    google: process.env.GOOGLE_AI_API_KEY,
+    deepseek: process.env.DEEPSEEK_API_KEY,
+    nvidia: process.env.NVIDIA_API_KEY,
+  };
+  return Boolean(envByProvider[provider]);
+};
+
 export async function POST(request: Request) {
   let body: ChatRequestBody;
   try {
@@ -76,6 +100,30 @@ export async function POST(request: Request) {
     provider = "nvidia";
   }
 
+  // Each user runs the agent on their own credentials: pull this user's stored
+  // key for the chosen provider. RLS scopes the row to the authenticated user.
+  const { data: providerRow } = await supabase
+    .from("user_ai_providers")
+    .select("api_key, model_name")
+    .eq("user_id", user.id)
+    .eq("organization_id", organizationId)
+    .eq("provider", provider)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  const userApiKey = providerRow?.api_key ?? undefined;
+  const userModel = providerRow?.model_name ?? undefined;
+
+  // No user key and no server fallback -> tell them exactly what to do.
+  if (!userApiKey && !hasServerKey(provider)) {
+    return NextResponse.json(
+      {
+        error: `No configuraste una API key para ${PROVIDER_LABEL[provider]}. Agregala en Settings → AI Providers para usar este agente.`,
+      },
+      { status: 400 }
+    );
+  }
+
   const messages = [
     ...history.map((h) => ({ role: h.role, content: h.content })),
     {
@@ -89,6 +137,8 @@ export async function POST(request: Request) {
   try {
     const result = await chat(messages, {
       provider,
+      apiKey: userApiKey,
+      model: userModel,
       system: SYSTEM_BASE,
       temperature: 0.4,
       maxTokens: 800,

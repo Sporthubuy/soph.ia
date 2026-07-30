@@ -27,12 +27,12 @@ export const ProposeButton = ({ kuId }: { kuId: string }) => {
         type="button"
         onClick={handlePropose}
         disabled={isLoading}
-        className="bg-[#4648d4] text-white font-medium py-2 px-4 rounded-lg hover:bg-[#3a3ab0] transition-colors disabled:opacity-50 body-sm flex items-center gap-2"
+        className="bg-[#5b9bff] text-[var(--azure-ink)] font-medium py-2 px-4 rounded-lg hover:bg-[#3f7fe0] transition-colors disabled:opacity-50 body-sm flex items-center gap-2"
       >
         <span className="text-lg">forward</span>
         {isLoading ? "Proponiendo..." : "Proponer Cambio"}
       </button>
-      {error && <p className="body-sm text-red-700 max-w-xs text-right">{error}</p>}
+      {error && <p className="body-sm text-[var(--danger)] max-w-xs text-right">{error}</p>}
     </div>
   );
 };
