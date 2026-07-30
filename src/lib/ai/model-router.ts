@@ -33,7 +33,9 @@ type ProviderCallOpts = {
 const DEFAULT_MODELS: Record<ProviderId, string> = {
   anthropic: "claude-3-5-sonnet-latest",
   openai: "gpt-4o-mini",
-  google: "gemini-1.5-flash",
+  // Google retires older Gemini models aggressively (1.5 and 2.0 already gone
+  // from v1beta generateContent); track the current GA flash model.
+  google: "gemini-2.5-flash",
   deepseek: "deepseek-chat",
   nvidia: "meta-llama-3.1-405b-instruct",
 };
@@ -59,7 +61,7 @@ const listModels = (): Record<ProviderId, string[]> => ({
     "claude-3-opus-latest",
   ],
   openai: ["gpt-4o-mini", "gpt-4o", "gpt-4-turbo"],
-  google: ["gemini-2.0-flash", "gemini-2.0-flash-lite", "gemini-1.5-flash"],
+  google: ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.5-pro"],
   deepseek: ["deepseek-chat", "deepseek-reasoner"],
   nvidia: ["meta-llama-3.1-405b-instruct", "meta-llama-3.1-70b-instruct", "meta-llama-3.1-8b-instruct"],
 });
