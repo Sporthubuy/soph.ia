@@ -28,7 +28,7 @@ const navItems: NavItem[] = [
   { href: "/graph", label: "Graph", icon: "graph", ready: true },
   { href: "/agents", label: "Agents", icon: "agents", ready: true },
   { href: "/review", label: "Review", icon: "review", ready: true },
-  { href: "/people", label: "People", icon: "people", ready: false },
+  { href: "/people", label: "People", icon: "people", ready: true },
   { href: "/marketplace", label: "Marketplace", icon: "marketplace", ready: false },
 ];
 

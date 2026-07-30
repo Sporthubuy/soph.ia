@@ -106,6 +106,99 @@ export async function getOrganizationSettings() {
   };
 }
 
+export interface PersonStats {
+  kusOwned: number;
+  kusApproved: number;
+  avgTrust: number | null;
+}
+
+export interface Person {
+  id: string;
+  role: string;
+  user_id: string;
+  created_at: string;
+  profiles: { full_name: string | null; email: string } | null;
+  stats: PersonStats;
+}
+
+/**
+ * The organization's people directory: every member plus their knowledge
+ * footprint (KUs owned, approved, average trust). Article 3 — all knowledge
+ * has an owner — made visible as a who-owns-what view.
+ */
+export async function getOrganizationPeople(): Promise<{
+  people: Person[];
+  currentUserId: string;
+  userRole: MembershipRole;
+}> {
+  const ctx = await getMembershipContext();
+  if (!ctx) {
+    return { people: [], currentUserId: "", userRole: "viewer" };
+  }
+
+  const { supabase, organizationId, userId, role } = ctx;
+
+  const [membersRes, kusRes] = await Promise.all([
+    supabase
+      .from("memberships")
+      .select("id, role, user_id, created_at, profiles(full_name, email)")
+      .eq("organization_id", organizationId)
+      .order("created_at", { ascending: true }),
+    supabase
+      .from("knowledge_units")
+      .select("owner_id, status, trust_score")
+      .eq("organization_id", organizationId),
+  ]);
+
+  if (membersRes.error) console.error("Error fetching members:", membersRes.error);
+  if (kusRes.error) console.error("Error fetching KU stats:", kusRes.error);
+
+  // Aggregate knowledge footprint per owner.
+  const statsByOwner = new Map<
+    string,
+    { total: number; approved: number; trustSum: number; trustCount: number }
+  >();
+  for (const ku of kusRes.data ?? []) {
+    const ownerId = (ku as { owner_id: string | null }).owner_id;
+    if (!ownerId) continue;
+    const s =
+      statsByOwner.get(ownerId) ??
+      { total: 0, approved: 0, trustSum: 0, trustCount: 0 };
+    s.total += 1;
+    if ((ku as { status: string }).status === "approved") s.approved += 1;
+    const trust = (ku as { trust_score: number | null }).trust_score;
+    if (typeof trust === "number") {
+      s.trustSum += trust;
+      s.trustCount += 1;
+    }
+    statsByOwner.set(ownerId, s);
+  }
+
+  const people: Person[] = (membersRes.data ?? []).map((m) => {
+    const { profiles, ...rest } = m as typeof m & {
+      profiles:
+        | { full_name: string | null; email: string }
+        | { full_name: string | null; email: string }[]
+        | null;
+    };
+    const agg = statsByOwner.get((rest as { user_id: string }).user_id);
+    return {
+      ...(rest as { id: string; role: string; user_id: string; created_at: string }),
+      profiles: one(profiles),
+      stats: {
+        kusOwned: agg?.total ?? 0,
+        kusApproved: agg?.approved ?? 0,
+        avgTrust:
+          agg && agg.trustCount > 0
+            ? Math.round(agg.trustSum / agg.trustCount)
+            : null,
+      },
+    };
+  });
+
+  return { people, currentUserId: userId, userRole: role };
+}
+
 export async function updateOrganization(formData: FormData): Promise<ActionResult> {
   const ctx = await getMembershipContext();
   if (!ctx) return { error: "No autenticado." };
