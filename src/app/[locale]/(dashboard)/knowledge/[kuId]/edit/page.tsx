@@ -35,22 +35,22 @@ export default async function EditKnowledgeUnitPage({
 
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-6">
-      <nav aria-label="Migas de pan" className="body-sm text-[#7c839b]">
-        <Link href="/knowledge" className="hover:text-black transition-colors">
+      <nav aria-label="Migas de pan" className="body-sm text-[#8b95ab]">
+        <Link href="/knowledge" className="hover:text-[var(--star-1)] transition-colors">
           Knowledge Units
         </Link>
         <span className="mx-2">/</span>
         <Link
           href={`/knowledge/${kuId}`}
-          className="hover:text-black transition-colors"
+          className="hover:text-[var(--star-1)] transition-colors"
         >
           {ku.title}
         </Link>
         <span className="mx-2">/</span>
-        <span className="text-[#45464d]">Editar</span>
+        <span className="text-[#b8c1d4]">Editar</span>
       </nav>
 
-      <h1 className="headline-xl text-black font-bold">
+      <h1 className="headline-xl text-[var(--star-1)] font-bold">
         Editando · v{ku.version}
       </h1>
 

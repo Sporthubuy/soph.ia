@@ -39,7 +39,7 @@ export const ContradictionChecker = ({ proposedKuId }: { proposedKuId: string })
   };
 
   return (
-    <div className="space-y-2 rounded-md border border-amber-500/40 bg-amber-500/5 p-3">
+    <div className="space-y-2 rounded-md border border-[rgb(251_191_36_/_0.4)] bg-[rgb(251_191_36_/_0.08)] p-3">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <AlertIcon />
@@ -61,13 +61,13 @@ export const ContradictionChecker = ({ proposedKuId }: { proposedKuId: string })
 
       {results && results.length > 0 && (
         <div className="space-y-2 pt-1">
-          <p className="text-xs text-amber-700 dark:text-amber-400">
+          <p className="text-xs text-[var(--pending)] dark:text-[var(--pending)]">
             {t("contradictionsFound", { count: results.length })}
           </p>
           {results.map((c, i) => (
             <div
               key={i}
-              className="space-y-1 rounded-md border border-amber-500/30 bg-amber-500/10 p-2"
+              className="space-y-1 rounded-md border border-[rgb(251_191_36_/_0.3)] bg-[rgb(251_191_36_/_0.12)] p-2"
             >
               <div className="flex items-center justify-between gap-2">
                 <Link
@@ -87,7 +87,7 @@ export const ContradictionChecker = ({ proposedKuId }: { proposedKuId: string })
       )}
 
       {results && results.length === 0 && !error && !pending && (
-        <p className="text-xs text-emerald-600 dark:text-emerald-400">
+        <p className="text-xs text-[var(--verified)] dark:text-[var(--verified)]">
           {t("noContradictions")}
         </p>
       )}
@@ -97,7 +97,7 @@ export const ContradictionChecker = ({ proposedKuId }: { proposedKuId: string })
 
 const AlertIcon = () => (
   <svg
-    className="h-4 w-4 text-amber-600"
+    className="h-4 w-4 text-[var(--pending)]"
     fill="none"
     viewBox="0 0 24 24"
     strokeWidth={1.5}

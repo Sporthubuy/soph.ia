@@ -79,15 +79,21 @@ export async function POST(request: Request) {
       }, { status: 404 });
     }
 
+    // The dynamic `select` string defeats Supabase's row-type inference, so
+    // narrow the verified row to the shape we actually queried.
+    const ownedItem = item as unknown as {
+      organization_id: string;
+    } & Record<string, string | null>;
+
     // Verify user is member of the organization
     const { data: membership } = await serviceClient
       .from("memberships")
       .select("role")
       .eq("user_id", user.id)
-      .eq("organization_id", item.organization_id)
+      .eq("organization_id", ownedItem.organization_id)
       .maybeSingle();
 
-    const isOwner = (item as any)[ownerColumn] === user.id;
+    const isOwner = ownedItem[ownerColumn] === user.id;
     const isAdmin = membership?.role === "admin" || membership?.role === "owner";
     const isMember = !!membership;
 

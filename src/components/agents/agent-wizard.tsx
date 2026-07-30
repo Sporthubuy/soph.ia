@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/routing";
+import { Icon } from "@/components/shared/icon";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +28,16 @@ type ChatMessage = { role: "user" | "assistant"; content: string };
 
 type WizardStep = "select" | "configure" | "test" | "deploy";
 
+type WizardProvider = "anthropic" | "openai" | "gemini" | "deepseek" | "nvidia";
+
+const PROVIDER_OPTIONS: { id: WizardProvider; label: string; stored: string }[] = [
+  { id: "anthropic", label: "Anthropic Claude", stored: "anthropic" },
+  { id: "openai", label: "OpenAI GPT-4", stored: "openai" },
+  { id: "gemini", label: "Google Gemini", stored: "google" },
+  { id: "deepseek", label: "DeepSeek", stored: "deepseek" },
+  { id: "nvidia", label: "Nvidia NIM", stored: "nvidia" },
+];
+
 export const AgentWizard = ({
   organizationId,
   units,
@@ -46,8 +57,40 @@ export const AgentWizard = ({
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [systemPrompt, setSystemPrompt] = useState("");
-  const [provider, setProvider] = useState<"anthropic" | "openai" | "gemini" | "deepseek" | "nvidia">("anthropic");
+  const [provider, setProvider] = useState<WizardProvider>("anthropic");
   const [makePublic, setMakePublic] = useState(false);
+
+  // Providers the current user has configured (their own API keys). A provider
+  // becomes selectable here the moment its key is saved in Settings.
+  const [configured, setConfigured] = useState<Set<WizardProvider>>(new Set());
+  const [providersLoaded, setProvidersLoaded] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/user/ai-providers")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!active || !data?.providers) return;
+        const stored = new Set<string>(
+          data.providers
+            .filter((p: { is_active?: boolean }) => p.is_active !== false)
+            .map((p: { provider: string }) => p.provider)
+        );
+        const ready = new Set<WizardProvider>(
+          PROVIDER_OPTIONS.filter((o) => stored.has(o.stored)).map((o) => o.id)
+        );
+        setConfigured(ready);
+        const first = PROVIDER_OPTIONS.find((o) => ready.has(o.id));
+        if (first) setProvider(first.id);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (active) setProvidersLoaded(true);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [draft, setDraft] = useState("");
@@ -172,13 +215,13 @@ export const AgentWizard = ({
               <span className={`flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold ${
                 i < currentIdx ? "bg-primary text-primary-foreground" : i === currentIdx ? "bg-primary-foreground/20" : "bg-muted-foreground/20"
               }`}>
-                {i < currentIdx ? "✓" : s.num}
+                {i < currentIdx ? <Icon name="check" size={13} strokeWidth={2.6} /> : s.num}
               </span>
               <span className="hidden sm:inline">{s.label}</span>
             </button>
             {i < steps.length - 1 && (
               <span className="text-muted-foreground/40 hidden sm:inline" aria-hidden>
-                →
+                <Icon name="chevron-right" size={14} />
               </span>
             )}
           </div>
@@ -193,7 +236,7 @@ export const AgentWizard = ({
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <Input placeholder={t("searchKUs")} value={search} onChange={(e) => setSearch(e.target.value)} className="max-w-xs input-figma" />
-              <select value={domainFilter} onChange={(e) => setDomainFilter(e.target.value)} className="h-9 rounded-lg border bg-white px-3 text-sm">
+              <select value={domainFilter} onChange={(e) => setDomainFilter(e.target.value)} className="h-9 rounded-lg border bg-[var(--sky-2)] px-3 text-sm">
                 <option value="all">{t("allDomains")}</option>
                 {domains.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
               </select>
@@ -213,7 +256,7 @@ export const AgentWizard = ({
                       const checked = selected.has(ku.id);
                       return (
                         <label key={ku.id} className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-all ${
-                          checked ? "border-primary/40 bg-primary/[0.03] ring-1 ring-primary/20" : "border-transparent bg-white hover:bg-muted/50"
+                          checked ? "border-primary/40 bg-primary/[0.03] ring-1 ring-primary/20" : "border-transparent bg-[var(--sky-2)] hover:bg-muted/50"
                         }`}>
                           <input type="checkbox" checked={checked} onChange={() => toggle(ku.id)} className="mt-1" />
                           <div className="min-w-0 flex-1">
@@ -268,14 +311,38 @@ export const AgentWizard = ({
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">AI Provider</Label>
-              <select value={provider} onChange={(e) => setProvider(e.target.value as any)} className="h-9 w-full rounded-lg border bg-white px-3 text-sm">
-                <option value="anthropic">💰 Anthropic Claude</option>
-                <option value="openai">💰 OpenAI GPT-4</option>
-                <option value="gemini">🆓 Google Gemini</option>
-                <option value="deepseek">🆓 DeepSeek</option>
-                <option value="nvidia">🆓 Nvidia NIM</option>
+              <select
+                value={provider}
+                onChange={(e) => setProvider(e.target.value as WizardProvider)}
+                className="h-9 w-full rounded-lg border bg-[var(--sky-2)] px-3 text-sm disabled:opacity-50"
+                disabled={configured.size === 0}
+              >
+                {PROVIDER_OPTIONS.map((o) => {
+                  const ready = configured.has(o.id);
+                  return (
+                    <option key={o.id} value={o.id} disabled={!ready}>
+                      {o.label}
+                      {ready ? "" : " — configurar en Settings"}
+                    </option>
+                  );
+                })}
               </select>
-              <p className="text-xs text-muted-foreground">Selecciona el modelo de IA a usar. Configura tus credenciales en Settings.</p>
+              {providersLoaded && configured.size === 0 ? (
+                <p className="text-xs text-[var(--pending)]">
+                  Todavía no configuraste ninguna API key.{" "}
+                  <Link href="/settings" className="underline text-[var(--azure)]">
+                    Agregá tu key en Settings → AI Providers
+                  </Link>{" "}
+                  para habilitar un motor.
+                </p>
+              ) : (
+                <p className="text-xs text-muted-foreground">
+                  El agente usará tu propia API key de este proveedor.{" "}
+                  <Link href="/settings" className="underline">
+                    Administrar keys
+                  </Link>
+                </p>
+              )}
             </div>
           </div>
           <div className="flex gap-3">
@@ -293,11 +360,11 @@ export const AgentWizard = ({
               <Badge variant="secondary">{selected.size} KUs</Badge>
               <Badge variant="outline">{name || "Sin nombre"}</Badge>
               <Badge variant="outline">
-                {provider === "anthropic" && "💰 Anthropic"}
-                {provider === "openai" && "💰 OpenAI"}
-                {provider === "gemini" && "🆓 Gemini"}
-                {provider === "deepseek" && "🆓 DeepSeek"}
-                {provider === "nvidia" && "🆓 Nvidia"}
+                {provider === "anthropic" && "Anthropic"}
+                {provider === "openai" && "OpenAI"}
+                {provider === "gemini" && "Gemini"}
+                {provider === "deepseek" && "DeepSeek"}
+                {provider === "nvidia" && "Nvidia"}
               </Badge>
             </div>
             <div className="mb-3 h-80 overflow-auto rounded-lg border bg-muted/30 p-4 space-y-3">
@@ -306,7 +373,7 @@ export const AgentWizard = ({
               ) : (
                 messages.map((m, i) => (
                   <div key={i} className={`max-w-[80%] rounded-xl px-4 py-2.5 text-sm ${
-                    m.role === "user" ? "ml-auto bg-primary text-primary-foreground" : "bg-white border"
+                    m.role === "user" ? "ml-auto bg-primary text-primary-foreground" : "bg-[var(--sky-2)] border"
                   }`}>
                     <p className="whitespace-pre-wrap break-words">{m.content}</p>
                   </div>
@@ -331,12 +398,12 @@ export const AgentWizard = ({
         <div className="mx-auto w-full max-w-lg space-y-6">
           {deployedId ? (
             <div className="card-figma p-8 text-center animate-scale-in">
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50">
-                <svg className="h-7 w-7 text-emerald-600" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[rgb(52_211_153_/_0.12)]">
+                <svg className="h-7 w-7 text-[var(--verified)]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>
               </div>
-              <h2 className="text-xl font-semibold text-gray-900">{t("deployed")}</h2>
+              <h2 className="text-xl font-semibold text-[var(--star-1)]">{t("deployed")}</h2>
               <p className="mt-1 text-sm text-muted-foreground">{t("deployedDesc", { name })}</p>
               <div className="mt-6 flex justify-center gap-3">
                 <Button render={<Link href={`/agents/${deployedId}`} />} className="rounded-xl">{t("viewAgent")}</Button>
@@ -349,10 +416,9 @@ export const AgentWizard = ({
                 <h3 className="text-sm font-semibold">{t("finalSummary")}</h3>
                 <div className="mt-3 space-y-2 text-sm">
                   <div className="flex justify-between"><span className="text-muted-foreground">{tc("name")}</span><span className="font-medium">{name || "—"}</span></div>
-                  <div className="flex justify-between"><span className="text-muted-foreground">{t("provider")}</span><span className="font-medium">{provider} / {model}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">{t("provider")}</span><span className="font-medium capitalize">{provider}</span></div>
                   <div className="flex justify-between"><span className="text-muted-foreground">{t("kusLabel")}</span><span className="font-medium">{selected.size}</span></div>
-                  <div className="flex justify-between"><span className="text-muted-foreground">{t("temperature")}</span><span className="font-medium">{temperature}</span></div>
-                  <div className="flex justify-between"><span className="text-muted-foreground">{t("tags")}</span><span className="font-medium">{tags || "—"}</span></div>
+                  <div className="flex justify-between"><span className="text-muted-foreground">Visibility</span><span className="font-medium">{makePublic ? "Public" : "Private"}</span></div>
                 </div>
               </div>
               <Separator />

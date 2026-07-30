@@ -61,7 +61,7 @@ export const ShareDialog = ({
         onClick={() => setOpen(true)}
         className={
           triggerClassName ??
-          "label-sm px-3 py-1.5 rounded-lg border border-[#e2e8f0] text-[#45464d] hover:bg-[#f7f9fb] transition-colors inline-flex items-center gap-1.5"
+          "label-sm px-3 py-1.5 rounded-lg border border-[#212a3e] text-[#b8c1d4] hover:bg-[#0a0e17] transition-colors inline-flex items-center gap-1.5"
         }
       >
         <span className="text-base" aria-hidden>
@@ -90,13 +90,13 @@ export const ShareDialog = ({
                 <Button
                   type="button"
                   onClick={copy}
-                  className="shrink-0 rounded-lg bg-[#4648d4] text-white hover:bg-[#3b3db8]"
+                  className="shrink-0 rounded-lg bg-[#5b9bff] text-[var(--azure-ink)] hover:bg-[#3f7fe0]"
                 >
                   {copied ? "Copied" : "Copy"}
                 </Button>
               </div>
             </div>
-            <p className="text-xs text-[#7c839b]">
+            <p className="text-xs text-[#8b95ab]">
               Tip: invite teammates from Settings or Project members for full
               collaboration.
             </p>

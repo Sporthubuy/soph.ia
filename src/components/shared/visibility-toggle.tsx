@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { Icon, type IconName } from "@/components/shared/icon";
 
 interface VisibilityToggleProps {
   itemId: string;
@@ -11,12 +12,15 @@ interface VisibilityToggleProps {
   onlyOwner?: boolean;
 }
 
-const VISIBILITY_LABELS = {
-  private: { label: "Private", icon: "🔒", description: "Only organization members" },
-  public: { label: "Public", icon: "🌐", description: "Visible to everyone, in marketplace" },
+const VISIBILITY_LABELS: Record<
+  "private" | "public" | "unlisted",
+  { label: string; icon: IconName; description: string }
+> = {
+  private: { label: "Private", icon: "lock", description: "Only organization members" },
+  public: { label: "Public", icon: "globe", description: "Visible to everyone, in marketplace" },
   unlisted: {
     label: "Unlisted",
-    icon: "🔗",
+    icon: "link",
     description: "Visible to everyone but not in marketplace",
   },
 };
@@ -71,41 +75,45 @@ export function VisibilityToggle({
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <span className="text-2xl">{current.icon}</span>
+        <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[rgb(91_155_255_/_0.12)] text-[var(--azure)]">
+          <Icon name={current.icon} size={18} />
+        </span>
         <div>
-          <p className="label-md text-[#45464d]">Visibility</p>
-          <p className="body-sm text-[#7c839b]">{current.description}</p>
+          <p className="label-md text-[#b8c1d4]">Visibility</p>
+          <p className="body-sm text-[#8b95ab]">{current.description}</p>
         </div>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm">
+        <div className="bg-[rgb(251_106_104_/_0.12)] border border-[rgb(251_106_104_/_0.35)] rounded-lg p-3 text-[var(--danger)] text-sm">
           {error}
         </div>
       )}
 
       <div className="grid grid-cols-3 gap-2">
-        {(Object.entries(VISIBILITY_LABELS) as Array<[keyof typeof VISIBILITY_LABELS, any]>).map(
-          ([key, { label, icon }]) => (
-            <button
-              key={key}
-              onClick={() => handleVisibilityChange(key as any)}
-              disabled={isLoading || onlyOwner}
-              className={`p-3 rounded-lg border-2 transition-all flex flex-col items-center gap-2 cursor-pointer ${
-                visibility === key
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-[#e2e8f0] hover:border-[#cbd5e1]"
-              } ${isLoading || onlyOwner ? "opacity-50 cursor-not-allowed" : ""}`}
-            >
-              <span className="text-3xl">{icon}</span>
-              <span className="label-xs text-center text-[#45464d]">{label}</span>
-            </button>
-          )
-        )}
+        {(
+          Object.entries(VISIBILITY_LABELS) as Array<
+            [keyof typeof VISIBILITY_LABELS, (typeof VISIBILITY_LABELS)[keyof typeof VISIBILITY_LABELS]]
+          >
+        ).map(([key, { label, icon }]) => (
+          <button
+            key={key}
+            onClick={() => handleVisibilityChange(key)}
+            disabled={isLoading || onlyOwner}
+            className={`p-3 rounded-[10px] border-2 transition-all flex flex-col items-center gap-2 cursor-pointer ${
+              visibility === key
+                ? "border-[rgb(91_155_255_/_0.5)] bg-[rgb(91_155_255_/_0.12)] text-[var(--azure)]"
+                : "border-[#212a3e] text-[var(--star-3)] hover:border-[#2e3950]"
+            } ${isLoading || onlyOwner ? "opacity-50 cursor-not-allowed" : ""}`}
+          >
+            <Icon name={icon} size={22} />
+            <span className="label-xs text-center text-[#b8c1d4]">{label}</span>
+          </button>
+        ))}
       </div>
 
       {onlyOwner && (
-        <p className="text-xs text-[#7c839b]">Only the owner can change visibility</p>
+        <p className="text-xs text-[#8b95ab]">Only the owner can change visibility</p>
       )}
     </div>
   );

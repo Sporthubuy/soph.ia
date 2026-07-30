@@ -72,12 +72,12 @@ export const MemberSettings = ({
   return (
     <section className="panel p-6 space-y-4">
       <div>
-        <h2 className="body-md font-semibold text-black">{t("membersTitle")}</h2>
-        <p className="body-sm text-[#7c839b] mt-0.5">{t("membersDesc")}</p>
+        <h2 className="body-md font-semibold text-[var(--star-1)]">{t("membersTitle")}</h2>
+        <p className="body-sm text-[#8b95ab] mt-0.5">{t("membersDesc")}</p>
       </div>
 
       {error && (
-        <p className="text-sm text-red-600" role="alert">
+        <p className="text-sm text-[var(--danger)]" role="alert">
           {error}
         </p>
       )}
@@ -92,17 +92,17 @@ export const MemberSettings = ({
           return (
             <div
               key={member.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-lg border border-[#e2e8f0] px-3 py-3"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-lg border border-[#212a3e] px-3 py-3"
             >
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-black">
+                <p className="text-sm font-medium text-[var(--star-1)]">
                   {name}
                   {isSelf && (
-                    <span className="ml-2 text-xs text-[#7c839b]">(you)</span>
+                    <span className="ml-2 text-xs text-[#8b95ab]">(you)</span>
                   )}
                 </p>
                 {name !== email && email && (
-                  <p className="text-xs text-[#7c839b]">{email}</p>
+                  <p className="text-xs text-[#8b95ab]">{email}</p>
                 )}
               </div>
               <div className="flex items-center gap-2">
@@ -126,7 +126,7 @@ export const MemberSettings = ({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-8 text-xs text-[#7c839b] hover:text-red-600"
+                      className="h-8 text-xs text-[#8b95ab] hover:text-[var(--danger)]"
                       onClick={() => handleRemove(member.id)}
                       disabled={isPending}
                     >

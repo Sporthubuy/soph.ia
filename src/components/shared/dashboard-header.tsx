@@ -30,7 +30,7 @@ export function DashboardHeader({ orgName }: { orgName: string }) {
     <header className="sticky top-0 z-20 border-b bg-white/80 backdrop-blur-lg">
       <div className="flex h-14 items-center justify-between px-6">
         <div className="flex items-center gap-3">
-          <span className="text-sm font-semibold text-gray-900">{orgName}</span>
+          <span className="text-sm font-semibold text-[var(--star-1)]">{orgName}</span>
           <span className="text-muted-foreground/40">/</span>
           <span className="text-sm text-muted-foreground">{title}</span>
           {desc && (

@@ -16,17 +16,17 @@ export type KUNodeData = {
 };
 
 const statusColor: Record<KUNodeData["status"], string> = {
-  approved: "border-emerald-500/60 bg-emerald-500/10 ring-emerald-500/30",
-  proposed: "border-amber-500/60 bg-amber-500/10 ring-amber-500/30",
-  draft: "border-zinc-400/50 bg-zinc-100/40 dark:bg-zinc-800/40 ring-zinc-400/30",
-  archived: "border-red-500/60 bg-red-500/10 ring-red-500/30",
+  approved: "border-[rgb(52_211_153_/_0.5)] bg-[rgb(52_211_153_/_0.12)] ring-[rgb(52_211_153_/_0.3)]",
+  proposed: "border-[rgb(251_191_36_/_0.5)] bg-[rgb(251_191_36_/_0.12)] ring-[rgb(251_191_36_/_0.3)]",
+  draft: "border-[var(--edge-strong)] bg-[var(--sky-3)] dark:bg-[var(--sky-3)] ring-[var(--edge-strong)]",
+  archived: "border-[rgb(251_106_104_/_0.5)] bg-[rgb(251_106_104_/_0.12)] ring-[rgb(251_106_104_/_0.3)]",
 };
 
 const statusDot: Record<KUNodeData["status"], string> = {
-  approved: "bg-emerald-500",
-  proposed: "bg-amber-500",
-  draft: "bg-zinc-400",
-  archived: "bg-red-500",
+  approved: "bg-[var(--verified)]",
+  proposed: "bg-[var(--pending)]",
+  draft: "bg-[var(--star-4)]",
+  archived: "bg-[var(--danger)]",
 };
 
 function KUNodeBase({ data }: { data: KUNodeData }) {
@@ -39,7 +39,7 @@ function KUNodeBase({ data }: { data: KUNodeData }) {
       <Handle
         type="target"
         position={Position.Left}
-        className="!h-2 !w-2 !bg-zinc-400"
+        className="!h-2 !w-2 !bg-[var(--star-4)]"
       />
       <div className="mb-1 flex items-center gap-1.5">
         <span
@@ -63,7 +63,7 @@ function KUNodeBase({ data }: { data: KUNodeData }) {
       <Handle
         type="source"
         position={Position.Right}
-        className="!h-2 !w-2 !bg-zinc-400"
+        className="!h-2 !w-2 !bg-[var(--star-4)]"
       />
     </div>
   );

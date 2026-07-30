@@ -6,9 +6,9 @@ import { Badge } from "@/components/ui/badge";
 
 const lineClass: Record<DiffLine["type"], string> = {
   added:
-    "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-l-2 border-emerald-500",
+    "bg-[rgb(52_211_153_/_0.12)] text-[var(--verified)] dark:text-[var(--verified)] border-l-2 border-[rgb(52_211_153_/_0.5)]",
   removed:
-    "bg-red-500/10 text-red-700 dark:text-red-300 border-l-2 border-red-500",
+    "bg-[rgb(251_106_104_/_0.12)] text-[var(--danger)] dark:text-[var(--danger)] border-l-2 border-[rgb(251_106_104_/_0.5)]",
   unchanged: "border-l-2 border-transparent",
 };
 
@@ -33,10 +33,10 @@ export const KUDiffView = ({
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2 text-xs">
-        <Badge variant="outline" className="text-emerald-600">
+        <Badge variant="outline" className="text-[var(--verified)]">
           {t("linesAdded", { count: added })}
         </Badge>
-        <Badge variant="outline" className="text-red-600">
+        <Badge variant="outline" className="text-[var(--danger)]">
           {t("linesRemoved", { count: removed })}
         </Badge>
       </div>
