@@ -39,7 +39,7 @@ export const ContradictionChecker = ({ proposedKuId }: { proposedKuId: string })
   };
 
   return (
-    <div className="space-y-2 rounded-md border border-[rgb(251_191_36_/_0.4)] bg-[rgb(251_191_36_/_0.08)] p-3">
+    <div className="space-y-2 rounded-md border border-[rgb(245_158_11_/_0.4)] bg-[rgb(245_158_11_/_0.08)] p-3">
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <AlertIcon />
@@ -67,7 +67,7 @@ export const ContradictionChecker = ({ proposedKuId }: { proposedKuId: string })
           {results.map((c, i) => (
             <div
               key={i}
-              className="space-y-1 rounded-md border border-[rgb(251_191_36_/_0.3)] bg-[rgb(251_191_36_/_0.12)] p-2"
+              className="space-y-1 rounded-md border border-[rgb(245_158_11_/_0.3)] bg-[rgb(245_158_11_/_0.12)] p-2"
             >
               <div className="flex items-center justify-between gap-2">
                 <Link

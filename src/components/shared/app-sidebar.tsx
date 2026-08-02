@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/sheet";
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { Icon, type IconName } from "@/components/shared/icon";
-import { Logo, LogoMark } from "@/components/shared/logo";
+import { Logo, LogoMark, Wordmark } from "@/components/shared/logo";
 
 type NavItem = {
   href: string;
@@ -57,7 +57,7 @@ const SidebarNav = ({ onNavigate }: { onNavigate?: () => void }) => {
         aria-current={active ? "page" : undefined}
         className={`group relative flex items-center gap-3 rounded-[10px] px-3 py-2.5 transition-all ${
           active
-            ? "bg-[rgb(91_155_255_/_0.10)] text-[var(--azure)]"
+            ? "bg-[rgb(59_130_246_/_0.10)] text-[var(--azure)]"
             : "text-[var(--star-2)] hover:bg-[var(--sky-3)] hover:text-[var(--star-1)]"
         }`}
       >
@@ -158,11 +158,7 @@ export const AppSidebar = () => {
           </button>
           <Link href="/dashboard" className="flex min-w-0 items-center gap-2.5">
             <LogoMark size={30} />
-            <span className="flex items-baseline text-sm font-bold tracking-tight text-[var(--star-1)]">
-              SOPH
-              <span className="mx-[2px] inline-block h-[4px] w-[4px] rounded-full bg-[var(--azure)]" />
-              IA
-            </span>
+            <Wordmark className="text-[15px]" />
           </Link>
         </header>
 

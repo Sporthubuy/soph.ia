@@ -36,7 +36,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0e17] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#07090e] flex items-center justify-center px-4">
       <div className="absolute inset-0 dot-pattern opacity-20" />
 
       <div className="panel relative z-10 w-full max-w-sm p-8 space-y-6">
@@ -45,7 +45,7 @@ export default function LoginPage() {
             <LogoMark size={44} />
           </Link>
           <h1 className="headline-md text-[var(--star-1)] font-bold mt-4">Welcome back</h1>
-          <p className="body-md text-[#b8c1d4]">Sign in to SOPH.IA</p>
+          <p className="body-md text-[#94a3b8]">Sign in to SOPH.IA</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
@@ -65,7 +65,7 @@ export default function LoginPage() {
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="password" className="body-md text-[var(--star-1)]">Password</Label>
-              <Link href="/forgot-password" className="label-sm text-[#5b9bff] hover:underline">
+              <Link href="/forgot-password" className="label-sm text-[#3b82f6] hover:underline">
                 Forgot?
               </Link>
             </div>
@@ -81,7 +81,7 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <div className="p-3 rounded bg-[rgb(251_106_104_/_0.12)] border border-[rgb(251_106_104_/_0.28)]">
+            <div className="p-3 rounded bg-[rgb(239_68_68_/_0.12)] border border-[rgb(239_68_68_/_0.28)]">
               <p className="label-sm text-[var(--danger)]">{error}</p>
             </div>
           )}
@@ -95,9 +95,9 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <p className="text-center body-md text-[#b8c1d4]">
+        <p className="text-center body-md text-[#94a3b8]">
           Don&apos;t have an account?{" "}
-          <Link href="/register" className="font-semibold text-[#5b9bff] hover:underline">
+          <Link href="/register" className="font-semibold text-[#3b82f6] hover:underline">
             Create one
           </Link>
         </p>

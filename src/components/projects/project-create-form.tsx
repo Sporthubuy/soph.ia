@@ -14,12 +14,12 @@ const ICONS = [
 ];
 
 const COLORS = [
-  { value: "#16233d", label: "Violeta" },
-  { value: "#16233d", label: "Azul" },
+  { value: "#172554", label: "Violeta" },
+  { value: "#172554", label: "Azul" },
   { value: "#2a2410", label: "Ambar" },
   { value: "#dcfce7", label: "Verde" },
   { value: "#241320", label: "Rosa" },
-  { value: "#151b2b", label: "Gris" },
+  { value: "#182032", label: "Gris" },
 ];
 
 export const ProjectCreateForm = ({ locale }: { locale: string }) => {
@@ -60,17 +60,17 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
 
   return (
     <div className="p-8 max-w-3xl mx-auto space-y-6">
-      <nav aria-label="Migas de pan" className="body-sm text-[#8b95ab]">
+      <nav aria-label="Migas de pan" className="body-sm text-[#64748b]">
         <Link href="/projects" className="hover:text-[var(--star-1)] transition-colors">
           Proyectos
         </Link>
         <span className="mx-2">/</span>
-        <span className="text-[#b8c1d4]">Nuevo proyecto</span>
+        <span className="text-[#94a3b8]">Nuevo proyecto</span>
       </nav>
 
       <header className="space-y-1">
         <h1 className="headline-xl text-[var(--star-1)] font-bold">Nuevo proyecto</h1>
-        <p className="body-md text-[#b8c1d4]">
+        <p className="body-md text-[#94a3b8]">
           Un proyecto agrupa el conocimiento, la gente y los agentes que
           trabajan sobre un mismo objetivo.
         </p>
@@ -79,7 +79,7 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="panel p-6 space-y-5">
           <div className="space-y-2">
-            <label htmlFor="name" className="label-sm text-[#8b95ab]">
+            <label htmlFor="name" className="label-sm text-[#64748b]">
               NOMBRE
             </label>
             <input
@@ -88,12 +88,12 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
               onChange={(e) => setName(e.target.value)}
               placeholder="Ej: Lanzamiento de la app 2026"
               autoFocus
-              className="w-full px-4 py-3 border border-[#212a3e] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#8b95ab] focus:outline-none focus:ring-2 focus:ring-[#5b9bff] focus:border-transparent"
+              className="w-full px-4 py-3 border border-[#1e293b] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent"
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="description" className="label-sm text-[#8b95ab]">
+            <label htmlFor="description" className="label-sm text-[#64748b]">
               QUE QUEREMOS LOGRAR
             </label>
             <textarea
@@ -102,12 +102,12 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describi el objetivo del proyecto, su alcance y por que existe."
               rows={5}
-              className="w-full px-4 py-3 border border-[#212a3e] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#8b95ab] focus:outline-none focus:ring-2 focus:ring-[#5b9bff] focus:border-transparent"
+              className="w-full px-4 py-3 border border-[#1e293b] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="label-sm text-[#8b95ab]">ICONO</label>
+            <label className="label-sm text-[#64748b]">ICONO</label>
             <div className="flex flex-wrap gap-2">
               {ICONS.map((i) => (
                 <button
@@ -118,8 +118,8 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
                   aria-label={i}
                   className={`w-11 h-11 rounded-lg border flex items-center justify-center transition-colors ${
                     icon === i
-                      ? "border-[#5b9bff] ring-2 ring-[#5b9bff]/30"
-                      : "border-[#212a3e] hover:bg-[#0a0e17]"
+                      ? "border-[#3b82f6] ring-2 ring-[#3b82f6]/30"
+                      : "border-[#1e293b] hover:bg-[#07090e]"
                   }`}
                   style={{ backgroundColor: color }}
                 >
@@ -130,7 +130,7 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
           </div>
 
           <div className="space-y-2">
-            <label className="label-sm text-[#8b95ab]">COLOR</label>
+            <label className="label-sm text-[#64748b]">COLOR</label>
             <div className="flex flex-wrap gap-2">
               {COLORS.map((c) => (
                 <button
@@ -142,8 +142,8 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
                   title={c.label}
                   className={`w-11 h-11 rounded-lg border transition-colors ${
                     color === c.value
-                      ? "border-[#5b9bff] ring-2 ring-[#5b9bff]/30"
-                      : "border-[#212a3e]"
+                      ? "border-[#3b82f6] ring-2 ring-[#3b82f6]/30"
+                      : "border-[#1e293b]"
                   }`}
                   style={{ backgroundColor: c.value }}
                 />
@@ -155,7 +155,7 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
         {error && (
           <div
             role="alert"
-            className="panel border-[rgb(251_106_104_/_0.35)] bg-[rgb(251_106_104_/_0.12)] p-4 flex items-start gap-3"
+            className="panel border-[rgb(239_68_68_/_0.35)] bg-[rgb(239_68_68_/_0.12)] p-4 flex items-start gap-3"
           >
             <span className="text-[var(--danger)]">error</span>
             <div className="flex-1">
@@ -171,14 +171,14 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
           <button
             type="submit"
             disabled={isSaving}
-            className="bg-[#5b9bff] text-[var(--azure-ink)] font-medium py-2.5 px-5 rounded-lg hover:bg-[#3f7fe0] transition-colors disabled:opacity-50 body-md"
+            className="bg-[#3b82f6] text-[var(--azure-ink)] font-medium py-2.5 px-5 rounded-lg hover:bg-[#2563eb] transition-colors disabled:opacity-50 body-md"
           >
             {isSaving ? "Creando..." : "Crear proyecto"}
           </button>
           <button
             type="button"
             onClick={() => router.push("/projects")}
-            className="py-2.5 px-5 rounded-lg border border-[#212a3e] text-[#b8c1d4] hover:bg-[#0a0e17] transition-colors body-md"
+            className="py-2.5 px-5 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] transition-colors body-md"
           >
             Cancelar
           </button>

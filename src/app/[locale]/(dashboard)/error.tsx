@@ -24,20 +24,20 @@ export default function DashboardError({
           error
         </span>
         <h1 className="headline-md font-bold text-[var(--star-1)]">Something went wrong</h1>
-        <p className="body-sm text-[#8b95ab]">
+        <p className="body-sm text-[#64748b]">
           {error.message || "An unexpected error occurred. Please try again."}
         </p>
         <div className="flex flex-wrap justify-center gap-2 pt-2">
           <button
             type="button"
             onClick={reset}
-            className="rounded-lg bg-[#5b9bff] px-4 py-2.5 text-sm font-medium text-[var(--azure-ink)] hover:bg-[#3f7fe0]"
+            className="rounded-lg bg-[#3b82f6] px-4 py-2.5 text-sm font-medium text-[var(--azure-ink)] hover:bg-[#2563eb]"
           >
             Try again
           </button>
           <Link
             href="/dashboard"
-            className="rounded-lg border border-[#212a3e] bg-[var(--sky-2)] px-4 py-2.5 text-sm font-medium text-[#b8c1d4] hover:bg-[#0a0e17]"
+            className="rounded-lg border border-[#1e293b] bg-[var(--sky-2)] px-4 py-2.5 text-sm font-medium text-[#94a3b8] hover:bg-[#07090e]"
           >
             Back to dashboard
           </Link>

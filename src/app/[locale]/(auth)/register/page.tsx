@@ -60,7 +60,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0e17] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#07090e] flex items-center justify-center px-4">
       <div className="absolute inset-0 dot-pattern opacity-20" />
 
       <div className="panel relative z-10 w-full max-w-sm p-8 space-y-6">
@@ -69,11 +69,11 @@ export default function RegisterPage() {
             <LogoMark size={44} />
           </Link>
           <h1 className="headline-md text-[var(--star-1)] font-bold mt-4">Create account</h1>
-          <p className="body-md text-[#b8c1d4]">Start building knowledge</p>
+          <p className="body-md text-[#94a3b8]">Start building knowledge</p>
         </div>
 
         {invite && (
-          <div className="rounded-[10px] border border-[rgb(91_155_255_/_0.28)] bg-[rgb(91_155_255_/_0.1)] p-3 text-center">
+          <div className="rounded-[10px] border border-[rgb(59_130_246_/_0.28)] bg-[rgb(59_130_246_/_0.1)] p-3 text-center">
             <p className="label-sm text-[var(--azure)]">
               Te unís a <span className="font-semibold">{invite.organizationName}</span>{" "}
               como {invite.role}
@@ -124,7 +124,7 @@ export default function RegisterPage() {
           </div>
 
           {error && (
-            <div className="p-3 rounded bg-[rgb(251_106_104_/_0.12)] border border-[rgb(251_106_104_/_0.28)]">
+            <div className="p-3 rounded bg-[rgb(239_68_68_/_0.12)] border border-[rgb(239_68_68_/_0.28)]">
               <p className="label-sm text-[var(--danger)]">{error}</p>
             </div>
           )}
@@ -138,9 +138,9 @@ export default function RegisterPage() {
           </Button>
         </form>
 
-        <p className="text-center body-md text-[#b8c1d4]">
+        <p className="text-center body-md text-[#94a3b8]">
           Already have an account?{" "}
-          <Link href="/login" className="font-semibold text-[#5b9bff] hover:underline">
+          <Link href="/login" className="font-semibold text-[#3b82f6] hover:underline">
             Sign in
           </Link>
         </p>

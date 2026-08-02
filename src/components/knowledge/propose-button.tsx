@@ -27,7 +27,7 @@ export const ProposeButton = ({ kuId }: { kuId: string }) => {
         type="button"
         onClick={handlePropose}
         disabled={isLoading}
-        className="bg-[#5b9bff] text-[var(--azure-ink)] font-medium py-2 px-4 rounded-lg hover:bg-[#3f7fe0] transition-colors disabled:opacity-50 body-sm flex items-center gap-2"
+        className="bg-[#3b82f6] text-[var(--azure-ink)] font-medium py-2 px-4 rounded-lg hover:bg-[#2563eb] transition-colors disabled:opacity-50 body-sm flex items-center gap-2"
       >
         <span className="text-lg">forward</span>
         {isLoading ? "Proponiendo..." : "Proponer Cambio"}

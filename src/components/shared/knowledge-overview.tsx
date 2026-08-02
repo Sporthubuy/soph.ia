@@ -31,11 +31,11 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
   const getStatusColor = (status: string) => {
     switch (status) {
       case "approved":
-        return "bg-[rgb(52_211_153_/_0.12)] text-[var(--verified)] border-[rgb(52_211_153_/_0.28)]";
+        return "bg-[rgb(16_185_129_/_0.12)] text-[var(--verified)] border-[rgb(16_185_129_/_0.28)]";
       case "proposed":
-        return "bg-[rgb(91_155_255_/_0.12)] text-[var(--azure)] border-[rgb(91_155_255_/_0.28)]";
+        return "bg-[rgb(59_130_246_/_0.12)] text-[var(--azure)] border-[rgb(59_130_246_/_0.28)]";
       case "draft":
-        return "bg-[rgb(251_191_36_/_0.12)] text-[var(--pending)] border-[rgb(251_191_36_/_0.28)]";
+        return "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)] border-[rgb(245_158_11_/_0.28)]";
       case "archived":
         return "bg-[var(--sky-3)] text-[var(--star-2)] border-[var(--edge)]";
       default:
@@ -45,14 +45,14 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
 
   const getDomainColor = (domain: string) => {
     const colors: Record<string, string> = {
-      Research: "#16233d",
-      Operations: "#16233d",
+      Research: "#172554",
+      Operations: "#172554",
       Legal: "#2a2410",
       Product: "#0f2030",
-      Engineering: "#122036",
+      Engineering: "#172554",
       Marketing: "#241320",
     };
-    return colors[domain] || "#151b2b";
+    return colors[domain] || "#182032";
   };
 
   const getTrustScoreColor = (score: number) => {
@@ -119,7 +119,7 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
         <h1 className="headline-lg text-[var(--star-1)]">Knowledge Units</h1>
         <button
           onClick={() => router.push("/knowledge/new")}
-          className="flex items-center gap-2 px-4 py-3 bg-[#5b9bff] text-[var(--azure-ink)] rounded-lg hover:bg-[#3f7fe0] transition-colors font-medium body-md"
+          className="flex items-center gap-2 px-4 py-3 bg-[#3b82f6] text-[var(--azure-ink)] rounded-lg hover:bg-[#2563eb] transition-colors font-medium body-md"
         >
           <Icon name="plus" size={17} strokeWidth={2.2} />
           New Knowledge Unit
@@ -129,7 +129,7 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
       {/* Search Bar */}
       <div className="space-y-4">
         <div className="relative">
-          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8b95ab]">
+          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#64748b]">
             <Icon name="search" size={18} />
           </span>
           <input
@@ -138,13 +138,13 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
             placeholder="Buscar por titulo, dominio o contenido..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-12 pr-16 py-3 border border-[#212a3e] rounded-lg bg-[var(--sky-2)] text-[#b8c1d4] placeholder-[#8b95ab] focus:outline-none focus:ring-2 focus:ring-[#5b9bff] focus:border-transparent"
+            className="w-full pl-12 pr-16 py-3 border border-[#1e293b] rounded-lg bg-[var(--sky-2)] text-[#94a3b8] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent"
           />
           <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2">
-            <kbd className="px-2 py-1 bg-[#0a0e17] border border-[#212a3e] rounded text-xs text-[#8b95ab]">
+            <kbd className="px-2 py-1 bg-[#07090e] border border-[#1e293b] rounded text-xs text-[#64748b]">
               Cmd
             </kbd>
-            <kbd className="px-2 py-1 bg-[#0a0e17] border border-[#212a3e] rounded text-xs text-[#8b95ab]">
+            <kbd className="px-2 py-1 bg-[#07090e] border border-[#1e293b] rounded text-xs text-[#64748b]">
               K
             </kbd>
           </div>
@@ -152,7 +152,7 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
       </div>
 
       {/* Tabs and Filters */}
-      <div className="flex items-center justify-between border-b border-[#212a3e] flex-wrap gap-2">
+      <div className="flex items-center justify-between border-b border-[#1e293b] flex-wrap gap-2">
         <div className="flex gap-1 flex-wrap">
           {tabs.map((tab) => (
             <button
@@ -161,16 +161,16 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
               className={`px-4 py-3 border-b-2 rounded-t body-md transition-colors ${
                 activeTab === tab.id
                   ? "border-[var(--azure)] text-[var(--star-1)] font-medium"
-                  : "border-transparent text-[#b8c1d4] hover:border-[#212a3e] hover:bg-[#0a0e17]"
+                  : "border-transparent text-[#94a3b8] hover:border-[#1e293b] hover:bg-[#07090e]"
               }`}
             >
               {tab.label}
-              <span className="ml-2 text-[#8b95ab]">{countFor(tab.id)}</span>
+              <span className="ml-2 text-[#64748b]">{countFor(tab.id)}</span>
             </button>
           ))}
         </div>
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-2 px-3 py-2 text-[#b8c1d4] hover:bg-[#0a0e17] rounded">
+          <button className="flex items-center gap-2 px-3 py-2 text-[#94a3b8] hover:bg-[#07090e] rounded">
             <Icon name="chevron-down" size={16} />
             <span className="body-sm">Sort: Recent</span>
           </button>
@@ -183,17 +183,17 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
 
         {knowledgeUnits.length === 0 ? (
           <div className="panel p-10 text-center space-y-3">
-            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[rgb(91_155_255_/_0.12)] text-[var(--azure)]"><Icon name="knowledge" size={26} /></span>
+            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[rgb(59_130_246_/_0.12)] text-[var(--azure)]"><Icon name="knowledge" size={26} /></span>
             <p className="body-md text-[var(--star-1)] font-medium">
               Todavia no hay Knowledge Units
             </p>
-            <p className="body-sm text-[#8b95ab] max-w-md mx-auto">
+            <p className="body-sm text-[#64748b] max-w-md mx-auto">
               Una Knowledge Unit encapsula una idea, politica o regla, versionada
               y con responsable. Crea la primera para empezar.
             </p>
             <button
               onClick={() => router.push("/knowledge/new")}
-              className="mt-2 bg-[#5b9bff] text-[var(--azure-ink)] font-medium py-2.5 px-4 rounded-lg hover:bg-[#3f7fe0] transition-colors inline-flex items-center gap-2 body-md"
+              className="mt-2 bg-[#3b82f6] text-[var(--azure-ink)] font-medium py-2.5 px-4 rounded-lg hover:bg-[#2563eb] transition-colors inline-flex items-center gap-2 body-md"
             >
               <Icon name="plus" size={17} strokeWidth={2.2} />
               Crear Knowledge Unit
@@ -201,7 +201,7 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
           </div>
         ) : visibleKUs.length === 0 ? (
           <div className="panel p-8 text-center">
-            <p className="body-md text-[#8b95ab]">
+            <p className="body-md text-[#64748b]">
               Ninguna Knowledge Unit coincide con el filtro.
             </p>
           </div>
@@ -215,7 +215,7 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
                 <li key={ku.id}>
                   <button
                     onClick={() => router.push(`/knowledge/${ku.id}`)}
-                    className="panel w-full text-left p-4 flex items-start gap-4 hover:bg-[#0a0e17] focus:outline-none focus:ring-2 focus:ring-[#5b9bff] transition-colors"
+                    className="panel w-full text-left p-4 flex items-start gap-4 hover:bg-[#07090e] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] transition-colors"
                   >
                     <div
                       className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -245,20 +245,20 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
                         </span>
                       </div>
 
-                      <p className="body-sm text-[#8b95ab] mb-2 line-clamp-2">
+                      <p className="body-sm text-[#64748b] mb-2 line-clamp-2">
                         {excerpt(ku.content)}
                       </p>
 
-                      <div className="flex items-center gap-4 body-sm text-[#8b95ab] flex-wrap">
+                      <div className="flex items-center gap-4 body-sm text-[#64748b] flex-wrap">
                         <span>
                           Dominio{" "}
-                          <span className="font-semibold text-[#b8c1d4]">
+                          <span className="font-semibold text-[#94a3b8]">
                             {ku.domain || "General"}
                           </span>
                         </span>
                         <span>
                           v
-                          <span className="font-semibold text-[#b8c1d4]">
+                          <span className="font-semibold text-[#94a3b8]">
                             {ku.version ?? 1}
                           </span>
                         </span>
@@ -266,7 +266,7 @@ export const KnowledgeOverview = ({ knowledgeUnits: initialKUs }: KnowledgeOverv
                       </div>
                     </div>
 
-                    <Icon name="chevron-right" size={16} className="text-[#8b95ab] flex-shrink-0" />
+                    <Icon name="chevron-right" size={16} className="text-[#64748b] flex-shrink-0" />
                   </button>
                 </li>
               );

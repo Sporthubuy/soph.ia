@@ -87,18 +87,18 @@ const activityHref = (entityType: string, entityId: string) => {
 const getStatusColor = (status: string) => {
   const s = status.toLowerCase();
   if (s === "approved" || s === "deployed" || s === "active" || s === "running") {
-    return "bg-[rgb(52_211_153_/_0.12)] text-[var(--verified)] border-[rgb(52_211_153_/_0.28)]";
+    return "bg-[rgb(16_185_129_/_0.12)] text-[var(--verified)] border-[rgb(16_185_129_/_0.28)]";
   }
   if (s === "proposed" || s === "pending") {
-    return "bg-[rgb(251_191_36_/_0.12)] text-[var(--pending)] border-[rgb(251_191_36_/_0.28)]";
+    return "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)] border-[rgb(245_158_11_/_0.28)]";
   }
   if (s === "draft" || s === "idle") {
     return "bg-[var(--sky-3)] text-[var(--star-2)] border-[var(--edge)]";
   }
   if (s === "archived" || s === "error") {
-    return "bg-[rgb(251_106_104_/_0.12)] text-[var(--danger)] border-[rgb(251_106_104_/_0.28)]";
+    return "bg-[rgb(239_68_68_/_0.12)] text-[var(--danger)] border-[rgb(239_68_68_/_0.28)]";
   }
-  return "bg-[rgb(91_155_255_/_0.12)] text-[var(--azure)] border-[rgb(91_155_255_/_0.28)]";
+  return "bg-[rgb(59_130_246_/_0.12)] text-[var(--azure)] border-[rgb(59_130_246_/_0.28)]";
 };
 
 const getIconTile = (type: ItemType) => {
@@ -283,7 +283,7 @@ export const DashboardOverview = ({
           <div className="space-y-4">
             <div className="relative">
               <span
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8b95ab]"
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-[#64748b]"
                 aria-hidden
               ><Icon name="search" size={18} /></span>
               <input
@@ -292,20 +292,20 @@ export const DashboardOverview = ({
                 placeholder="Filter this page… (⌘K for global search)"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-12 pr-10 py-3 border border-[#212a3e] rounded-lg bg-[var(--sky-2)] text-[#b8c1d4] placeholder-[#8b95ab] focus:outline-none focus:ring-2 focus:ring-[#5b9bff] focus:border-transparent"
+                className="w-full pl-12 pr-10 py-3 border border-[#1e293b] rounded-lg bg-[var(--sky-2)] text-[#94a3b8] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent"
               />
               {search ? (
                 <button
                   type="button"
                   onClick={() => setSearch("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b95ab] hover:text-[var(--star-1)]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748b] hover:text-[var(--star-1)]"
                   aria-label="Clear search"
                 >
                   <Icon name="close" size={16} />
                 </button>
               ) : (
                 <div className="absolute right-3 top-1/2 -translate-y-1/2 hidden sm:flex gap-1 pointer-events-none">
-                  <kbd className="px-1.5 py-0.5 bg-[#0a0e17] border border-[#212a3e] rounded text-[10px] text-[#8b95ab]">
+                  <kbd className="px-1.5 py-0.5 bg-[#07090e] border border-[#1e293b] rounded text-[10px] text-[#64748b]">
                     ⌘K
                   </kbd>
                 </div>
@@ -313,7 +313,7 @@ export const DashboardOverview = ({
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[#212a3e]">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[#1e293b]">
             <div className="flex gap-1 overflow-x-auto" role="tablist" aria-label="Asset filters">
               {tabs.map((tab) => (
                 <button
@@ -325,7 +325,7 @@ export const DashboardOverview = ({
                   className={`px-4 py-3 border-b-2 rounded-t body-md transition-colors whitespace-nowrap ${
                     activeTab === tab.id
                       ? "border-[var(--azure)] text-[var(--star-1)] font-medium"
-                      : "border-transparent text-[#b8c1d4] hover:border-[#212a3e] hover:bg-[#0a0e17]"
+                      : "border-transparent text-[#94a3b8] hover:border-[#1e293b] hover:bg-[#07090e]"
                   }`}
                 >
                   {tab.label}
@@ -335,7 +335,7 @@ export const DashboardOverview = ({
             <button
               type="button"
               onClick={() => setSortMode((m) => (m === "recent" ? "name" : "recent"))}
-              className="flex items-center gap-2 px-3 py-2 text-[#b8c1d4] hover:bg-[#0a0e17] rounded self-start sm:self-auto"
+              className="flex items-center gap-2 px-3 py-2 text-[#94a3b8] hover:bg-[#07090e] rounded self-start sm:self-auto"
             >
               <Icon name="chevron-down" size={16} />
               <span className="body-sm">
@@ -348,20 +348,20 @@ export const DashboardOverview = ({
             <p className="section-heading">RECENTLY MODIFIED</p>
             <div className="space-y-2">
               {filteredItems.length === 0 ? (
-                <div className="panel p-6 text-center text-[#8b95ab] body-md">
+                <div className="panel p-6 text-center text-[#64748b] body-md">
                   {search
                     ? "No results match your search."
                     : "Nothing here yet. Create a project or knowledge unit to get started."}
                   <div className="mt-4 flex flex-wrap justify-center gap-2">
                     <Link
                       href="/projects/new"
-                      className="inline-flex items-center gap-1 rounded bg-[#5b9bff] px-3 py-2 text-sm font-medium text-[var(--azure-ink)] hover:bg-[#3f7fe0]"
+                      className="inline-flex items-center gap-1 rounded bg-[#3b82f6] px-3 py-2 text-sm font-medium text-[var(--azure-ink)] hover:bg-[#2563eb]"
                     >
                       New project
                     </Link>
                     <Link
                       href="/knowledge/new"
-                      className="inline-flex items-center gap-1 rounded border border-[#212a3e] bg-[var(--sky-2)] px-3 py-2 text-sm font-medium text-[#b8c1d4] hover:bg-[#0a0e17]"
+                      className="inline-flex items-center gap-1 rounded border border-[#1e293b] bg-[var(--sky-2)] px-3 py-2 text-sm font-medium text-[#94a3b8] hover:bg-[#07090e]"
                     >
                       New knowledge unit
                     </Link>
@@ -372,7 +372,7 @@ export const DashboardOverview = ({
                   <Link
                     key={`${item.type}-${item.id}`}
                     href={item.href}
-                    className="panel p-4 flex items-start gap-4 transition-colors hover:bg-[#0a0e17] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5b9bff]"
+                    className="panel p-4 flex items-start gap-4 transition-colors hover:bg-[#07090e] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3b82f6]"
                   >
                     <div
                       className={`${getIconTile(item.type)} w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0`}
@@ -388,11 +388,11 @@ export const DashboardOverview = ({
                           {item.status}
                         </span>
                       </div>
-                      <p className="body-sm text-[#8b95ab] truncate">{item.description}</p>
+                      <p className="body-sm text-[#64748b] truncate">{item.description}</p>
                     </div>
                     <div className="text-right flex-shrink-0 hidden sm:block">
-                      <p className="label-sm text-[#8b95ab] font-semibold">{item.metadataLabel}</p>
-                      <p className="body-sm text-[#8b95ab]">{item.metadataValue}</p>
+                      <p className="label-sm text-[#64748b] font-semibold">{item.metadataLabel}</p>
+                      <p className="body-sm text-[#64748b]">{item.metadataValue}</p>
                     </div>
                   </Link>
                 ))
@@ -404,7 +404,7 @@ export const DashboardOverview = ({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <p className="section-heading">AGENTS</p>
-                <Link href="/agents" className="label-sm text-[#5b9bff] hover:underline">
+                <Link href="/agents" className="label-sm text-[#3b82f6] hover:underline">
                   View all
                 </Link>
               </div>
@@ -414,7 +414,7 @@ export const DashboardOverview = ({
                     <Link
                       key={agent.id}
                       href={`/agents/${agent.id}`}
-                      className="panel p-4 flex items-start gap-4 hover:bg-[#0a0e17] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5b9bff]"
+                      className="panel p-4 flex items-start gap-4 hover:bg-[#07090e] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3b82f6]"
                     >
                       <div className="icon-tile-agent w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
                         <Icon name="agents" size={18} />
@@ -428,11 +428,11 @@ export const DashboardOverview = ({
                             {agent.status || "idle"}
                           </span>
                         </div>
-                        <p className="body-sm text-[#8b95ab] truncate">{agent.description}</p>
+                        <p className="body-sm text-[#64748b] truncate">{agent.description}</p>
                       </div>
                       <div className="text-right flex-shrink-0 hidden sm:block">
-                        <p className="label-sm text-[#8b95ab]">Updated</p>
-                        <p className="body-sm text-[#8b95ab]">
+                        <p className="label-sm text-[#64748b]">Updated</p>
+                        <p className="body-sm text-[#64748b]">
                           {agent.updated_at
                             ? new Date(agent.updated_at).toLocaleDateString()
                             : "Recently"}
@@ -442,7 +442,7 @@ export const DashboardOverview = ({
                   ))}
                 </div>
               ) : (
-                <div className="panel p-6 text-center text-[#8b95ab] body-md">
+                <div className="panel p-6 text-center text-[#64748b] body-md">
                   {search ? "No agents match your search." : "No agents yet."}
                 </div>
               )}
@@ -453,7 +453,7 @@ export const DashboardOverview = ({
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <p className="section-heading">KNOWLEDGE UNITS</p>
-                <Link href="/knowledge" className="label-sm text-[#5b9bff] hover:underline">
+                <Link href="/knowledge" className="label-sm text-[#3b82f6] hover:underline">
                   View all
                 </Link>
               </div>
@@ -463,7 +463,7 @@ export const DashboardOverview = ({
                     <Link
                       key={ku.id}
                       href={`/knowledge/${ku.id}`}
-                      className="panel p-4 flex items-start gap-4 hover:bg-[#0a0e17] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5b9bff]"
+                      className="panel p-4 flex items-start gap-4 hover:bg-[#07090e] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3b82f6]"
                     >
                       <div className="icon-tile-ku w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0">
                         <Icon name="knowledge" size={18} />
@@ -477,23 +477,23 @@ export const DashboardOverview = ({
                             {ku.status || "draft"}
                           </span>
                         </div>
-                        <p className="body-sm text-[#8b95ab] truncate">{ku.description}</p>
+                        <p className="body-sm text-[#64748b] truncate">{ku.description}</p>
                       </div>
                       <div className="text-right flex-shrink-0 hidden sm:block">
-                        <p className="label-sm text-[#8b95ab]">Domain</p>
-                        <p className="body-sm text-[#8b95ab]">{ku.domain || "General"}</p>
+                        <p className="label-sm text-[#64748b]">Domain</p>
+                        <p className="body-sm text-[#64748b]">{ku.domain || "General"}</p>
                       </div>
                     </Link>
                   ))}
                 </div>
               ) : (
-                <div className="panel p-6 text-center text-[#8b95ab] body-md">
+                <div className="panel p-6 text-center text-[#64748b] body-md">
                   {search ? (
                     "No knowledge units match your search."
                   ) : (
                     <>
                       No knowledge units yet.{" "}
-                      <Link href="/knowledge/new" className="text-[#5b9bff] hover:underline">
+                      <Link href="/knowledge/new" className="text-[#3b82f6] hover:underline">
                         Create one
                       </Link>
                     </>
@@ -508,37 +508,37 @@ export const DashboardOverview = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               <Link
                 href="/knowledge/new"
-                className="panel p-4 hover:bg-[#0a0e17] transition-colors flex items-center gap-3"
+                className="panel p-4 hover:bg-[#07090e] transition-colors flex items-center gap-3"
               >
-                <Icon name="plus" size={18} className="text-[#5b9bff]" />
+                <Icon name="plus" size={18} className="text-[#3b82f6]" />
                 <span className="body-md font-medium text-[var(--star-1)]">New KU</span>
               </Link>
               <Link
                 href="/projects/new"
-                className="panel p-4 hover:bg-[#0a0e17] transition-colors flex items-center gap-3"
+                className="panel p-4 hover:bg-[#07090e] transition-colors flex items-center gap-3"
               >
-                <Icon name="projects" size={18} className="text-[#5b9bff]" />
+                <Icon name="projects" size={18} className="text-[#3b82f6]" />
                 <span className="body-md font-medium text-[var(--star-1)]">New project</span>
               </Link>
               <Link
                 href="/graph"
-                className="panel p-4 hover:bg-[#0a0e17] transition-colors flex items-center gap-3"
+                className="panel p-4 hover:bg-[#07090e] transition-colors flex items-center gap-3"
               >
-                <Icon name="graph" size={18} className="text-[#5b9bff]" />
+                <Icon name="graph" size={18} className="text-[#3b82f6]" />
                 <span className="body-md font-medium text-[var(--star-1)]">Knowledge graph</span>
               </Link>
               <Link
                 href="/agents/new"
-                className="panel p-4 hover:bg-[#0a0e17] transition-colors flex items-center gap-3"
+                className="panel p-4 hover:bg-[#07090e] transition-colors flex items-center gap-3"
               >
-                <Icon name="agents" size={18} className="text-[#5b9bff]" />
+                <Icon name="agents" size={18} className="text-[#3b82f6]" />
                 <span className="body-md font-medium text-[var(--star-1)]">New agent</span>
               </Link>
               <Link
                 href="/review"
-                className="panel p-4 hover:bg-[#0a0e17] transition-colors flex items-center gap-3"
+                className="panel p-4 hover:bg-[#07090e] transition-colors flex items-center gap-3"
               >
-                <Icon name="review" size={18} className="text-[#5b9bff]" />
+                <Icon name="review" size={18} className="text-[#3b82f6]" />
                 <span className="body-md font-medium text-[var(--star-1)]">Review queue</span>
               </Link>
             </div>
@@ -551,18 +551,18 @@ export const DashboardOverview = ({
 
             <div className="space-y-4">
               {activityItems.length === 0 ? (
-                <p className="body-sm text-[#8b95ab]">
+                <p className="body-sm text-[#64748b]">
                   Start creating projects or knowledge units to see activity here.
                 </p>
               ) : (
                 visibleActivity.map((activity) => (
                   <div
                     key={activity.id}
-                    className="pb-4 border-b border-[#212a3e] last:border-b-0 last:pb-0"
+                    className="pb-4 border-b border-[#1e293b] last:border-b-0 last:pb-0"
                   >
                     <div className="flex items-start gap-3">
                       <div
-                        className="w-8 h-8 rounded-full bg-[#16233d] text-[#5b9bff] flex items-center justify-center text-xs font-semibold flex-shrink-0"
+                        className="w-8 h-8 rounded-full bg-[#172554] text-[#3b82f6] flex items-center justify-center text-xs font-semibold flex-shrink-0"
                         aria-hidden
                       >
                         {activity.initials}
@@ -570,15 +570,15 @@ export const DashboardOverview = ({
                       <div className="flex-1 min-w-0">
                         <p className="body-sm">
                           <span className="font-semibold text-[var(--star-1)]">{activity.author}</span>{" "}
-                          <span className="text-[#8b95ab]">{activity.action}</span>
+                          <span className="text-[#64748b]">{activity.action}</span>
                         </p>
                         {activity.time && (
-                          <p className="label-sm text-[#8b95ab] mt-1">{activity.time}</p>
+                          <p className="label-sm text-[#64748b] mt-1">{activity.time}</p>
                         )}
                         {activity.href && (
                           <Link
                             href={activity.href}
-                            className="label-sm text-[#5b9bff] hover:underline mt-1 inline-block"
+                            className="label-sm text-[#3b82f6] hover:underline mt-1 inline-block"
                           >
                             View details
                           </Link>
@@ -594,7 +594,7 @@ export const DashboardOverview = ({
               <button
                 type="button"
                 onClick={() => setShowAllActivity((v) => !v)}
-                className="w-full py-2 text-center text-[#5b9bff] hover:bg-[#0a0e17] rounded body-sm font-medium transition-colors"
+                className="w-full py-2 text-center text-[#3b82f6] hover:bg-[#07090e] rounded body-sm font-medium transition-colors"
               >
                 {showAllActivity ? "Show less" : "See full activity log"}
               </button>

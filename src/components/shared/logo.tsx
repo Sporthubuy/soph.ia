@@ -1,8 +1,8 @@
 /**
- * SOPH.IA constellation mark — a knowledge node-cluster: satellite bodies
- * connected to a luminous azure core. Pure geometry (nodes + edges), the
- * brand's whole idea in one glyph. The wordmark carries an azure node for
- * the "." separator so the mark and the name speak the same language.
+ * SOPH.IA logo. The isotype below is a PLACEHOLDER hexagonal "S" mesh — swap
+ * the inner paths for the official traced isotype once the clean SVG lands in
+ * public/. The wordmark follows the brand: lowercase "soph.ia" with ".ia"
+ * emphasized in the electric-blue accent.
  */
 
 export const LogoMark = ({
@@ -20,24 +20,40 @@ export const LogoMark = ({
     className={className}
     aria-hidden="true"
   >
-    {/* edges */}
-    <g stroke="var(--azure)" strokeWidth="1.4" strokeLinecap="round" opacity="0.55">
-      <path d="M16 15.5 9 8.5" />
-      <path d="M16 15.5 22.5 9.5" />
-      <path d="M16 15.5 8.5 22.5" />
-      <path d="M16 15.5 22 23" />
-    </g>
-    {/* satellite bodies */}
-    <g fill="var(--sky-2)" stroke="var(--star-3)" strokeWidth="1.4">
-      <circle cx="9" cy="8.5" r="2.1" />
-      <circle cx="22.5" cy="9.5" r="2.1" />
-      <circle cx="8.5" cy="22.5" r="2.1" />
-      <circle cx="22" cy="23" r="2.1" />
-    </g>
-    {/* luminous core */}
-    <circle cx="16" cy="15.5" r="3.4" fill="var(--azure)" />
-    <circle cx="16" cy="15.5" r="3.4" fill="none" stroke="var(--azure)" strokeWidth="1.5" opacity="0.35" />
+    {/* hexagon frame */}
+    <path
+      d="M16 2.6 27.6 9.3v13.4L16 29.4 4.4 22.7V9.3L16 2.6Z"
+      stroke="var(--star-1)"
+      strokeWidth="1.6"
+      strokeLinejoin="round"
+    />
+    {/* angular S mesh (placeholder for the official isotype) */}
+    <path
+      d="M21 10.5 11.5 10.5 11.5 15.8 20.5 15.8 20.5 21.5 11 21.5"
+      stroke="var(--azure)"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M11.5 10.5 20.5 15.8 11.5 15.8 20.5 21.5"
+      stroke="var(--cyan)"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      opacity="0.7"
+    />
   </svg>
+);
+
+export const Wordmark = ({ className }: { className?: string }) => (
+  <span
+    className={`inline-flex items-baseline tracking-tight text-[var(--star-1)] ${className ?? ""}`}
+  >
+    <span className="font-medium">soph</span>
+    <span className="font-extrabold text-[var(--azure)]">.</span>
+    <span className="font-extrabold">ia</span>
+  </span>
 );
 
 export const Logo = ({
@@ -49,17 +65,10 @@ export const Logo = ({
   className?: string;
   subtitle?: boolean;
 }) => (
-  <span className={`inline-flex items-center gap-3 ${className ?? ""}`}>
+  <span className={`inline-flex items-center gap-2.5 ${className ?? ""}`}>
     <LogoMark size={markSize} />
     <span className="flex flex-col leading-none">
-      <span className="flex items-baseline font-bold tracking-tight text-[15px] text-[var(--star-1)]">
-        SOPH
-        <span
-          className="mx-[3px] inline-block h-[5px] w-[5px] rounded-full bg-[var(--azure)] align-middle"
-          style={{ boxShadow: "0 0 6px 0 rgb(91 155 255 / 0.7)" }}
-        />
-        IA
-      </span>
+      <Wordmark className="text-[17px]" />
       {subtitle && (
         <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--star-3)]">
           Knowledge OS

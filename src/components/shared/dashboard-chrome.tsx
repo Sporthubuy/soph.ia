@@ -29,7 +29,7 @@ export const DashboardChrome = () => {
       <button
         type="button"
         onClick={openPalette}
-        className="fixed bottom-4 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--azure)] text-[var(--azure-ink)] shadow-[0_8px_24px_-6px_rgb(91_155_255_/_0.6)] hover:bg-[var(--azure-bright)] md:hidden"
+        className="fixed bottom-4 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-[var(--azure)] text-[var(--azure-ink)] shadow-[0_8px_24px_-6px_rgb(59_130_246_/_0.6)] hover:bg-[var(--azure-bright)] md:hidden"
         aria-label="Abrir búsqueda"
       >
         <Icon name="search" size={20} strokeWidth={2} />

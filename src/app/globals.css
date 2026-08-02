@@ -4,44 +4,47 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ═══════════════════════════════════════════════════════════════════
-   SOPH.IA — Constellation design system (graph-native, dark, operate)
-   Knowledge as a navigable night sky: nodes are bodies with state,
-   edges are the lines between them, azure is the connective light.
+   SOPH.IA — Design System (dark-first, electric blue + cyan)
+   Per DESIGN_SYSTEM.md. Token names are kept from the previous system so
+   the whole app re-skins by value; --azure now maps to brand electric blue.
    ═══════════════════════════════════════════════════════════════════ */
 
 :root {
-  --font-sans: var(--font-hanken), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 
-  /* Ground — cool midnight ink */
-  --sky-0: #080b12; /* deepest — page void */
-  --sky-1: #0a0e17; /* app canvas */
-  --sky-2: #0f1420; /* surface: panels, cards, chrome */
-  --sky-3: #151b2b; /* raised: inputs, hover, tiles */
-  --sky-4: #1b2233; /* higher: popovers, active tiles */
+  /* Backgrounds & surfaces */
+  --sky-0: #050609; /* deepest void */
+  --sky-1: #07090e; /* app canvas (bg-canvas) */
+  --sky-2: #0f1420; /* surface: panels, cards, chrome (surface-1) */
+  --sky-3: #182032; /* raised: inputs, hover, tiles (surface-2) */
+  --sky-4: #1e293b; /* higher: popovers, active tiles */
+  --glass: rgb(15 20 32 / 0.65); /* glassmorphism surface */
 
-  /* Hairlines — the edges between bodies */
-  --edge: #212a3e;
-  --edge-strong: #2e3950;
+  /* Borders & dividers */
+  --edge: #1e293b;        /* border-subtle */
+  --edge-strong: #334155; /* border-bright */
 
-  /* Light emitted by text */
-  --star-1: #e8edf7; /* primary */
-  --star-2: #b8c1d4; /* body / secondary */
-  --star-3: #8b95ab; /* muted */
-  --star-4: #5b6478; /* faint / disabled */
+  /* Typography colors */
+  --star-1: #f8fafc; /* text-primary (slate-50) */
+  --star-2: #94a3b8; /* text-secondary (slate-400) */
+  --star-3: #64748b; /* text-muted (slate-500) */
+  --star-4: #475569; /* faint / disabled (slate-600) */
 
-  /* Connective light — the signature accent */
-  --azure: #5b9bff;
-  --azure-bright: #82b4ff;
-  --azure-deep: #3f7fe0;
-  --azure-ink: #08101f; /* text on azure fills */
+  /* Brand accents — electric blue + cyan */
+  --azure: #3b82f6;        /* brand-primary (blue-500) */
+  --azure-bright: #60a5fa; /* blue-400 */
+  --azure-deep: #2563eb;   /* brand-primary-hover (blue-600) */
+  --azure-ink: #ffffff;    /* text on brand fills */
+  --cyan: #06b6d4;         /* AI node accent / connection line */
+  --indigo: #6366f1;       /* node secondary accent */
 
-  /* Status — the color of a body's glow */
-  --verified: #34d399;
-  --pending: #fbbf24;
-  --draft: #93a4c4;
-  --archived: #5b6478;
-  --danger: #fb6a68;
+  /* Semantic status */
+  --verified: #10b981;  /* emerald-500 */
+  --pending: #f59e0b;   /* amber-500 */
+  --draft: #94a3b8;
+  --archived: #475569;
+  --danger: #ef4444;    /* red-500 */
 }
 
 @theme inline {
@@ -187,24 +190,45 @@
   }
 }
 
-/* ── Constellation surfaces ────────────────────────────────────────── */
+/* ── Surfaces ──────────────────────────────────────────────────────── */
 
-/* A body in the graph: hairline elevation, no double-shadow ghosting. */
+/* Glassmorphic knowledge card per DESIGN_SYSTEM.md §4. */
 @utility panel {
-  background: var(--sky-2);
-  border: 1px solid var(--edge);
-  border-radius: 14px;
-  transition: border-color 0.16s ease, background 0.16s ease, transform 0.16s ease;
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgb(30 41 59 / 0.8);
+  border-radius: 16px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.16s ease;
 }
 
 @utility panel-hover {
   @media (hover: hover) {
     &:hover {
-      border-color: var(--edge-strong);
-      background: var(--sky-3);
+      border-color: rgb(59 130 246 / 0.4);
+      box-shadow: 0 10px 30px -12px rgb(59 130 246 / 0.15);
       transform: translateY(-1px);
     }
   }
+}
+
+/* Brand primary: electric-blue → cyan gradient with glow. */
+@utility btn-gradient {
+  background-image: linear-gradient(to right, #2563eb, #0891b2);
+  color: #ffffff;
+  box-shadow: 0 0 20px rgb(59 130 246 / 0.35);
+  transition: box-shadow 0.2s ease, filter 0.2s ease;
+  &:hover {
+    box-shadow: 0 0 28px rgb(59 130 246 / 0.5);
+    filter: brightness(1.06);
+  }
+}
+
+@utility brand-gradient-text {
+  background-image: linear-gradient(to right, #60a5fa, #22d3ee);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 @utility block-row {

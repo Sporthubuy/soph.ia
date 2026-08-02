@@ -9,9 +9,9 @@ import { Icon } from "@/components/shared/icon";
 
 /** Estados validos del check constraint de public.agents. */
 const STATUS_STYLES: Record<string, string> = {
-  deployed: "bg-[rgb(52_211_153_/_0.12)] text-[var(--verified)] border-[rgb(52_211_153_/_0.28)]",
-  draft: "bg-[rgb(251_191_36_/_0.12)] text-[var(--pending)] border-[rgb(251_191_36_/_0.28)]",
-  paused: "bg-[rgb(251_191_36_/_0.12)] text-[var(--pending)] border-[rgb(251_191_36_/_0.28)]",
+  deployed: "bg-[rgb(16_185_129_/_0.12)] text-[var(--verified)] border-[rgb(16_185_129_/_0.28)]",
+  draft: "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)] border-[rgb(245_158_11_/_0.28)]",
+  paused: "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)] border-[rgb(245_158_11_/_0.28)]",
   archived: "bg-[var(--sky-3)] text-[var(--star-2)] border-[var(--edge)]",
 };
 
@@ -47,12 +47,12 @@ export default async function AgentPage({
 
   return (
     <div className="p-8 max-w-4xl mx-auto space-y-6">
-      <nav aria-label="Migas de pan" className="body-sm text-[#8b95ab]">
+      <nav aria-label="Migas de pan" className="body-sm text-[#64748b]">
         <Link href="/agents" className="hover:text-[var(--star-1)] transition-colors">
           Agents
         </Link>
         <span className="mx-2">/</span>
-        <span className="text-[#b8c1d4]">{agent.name}</span>
+        <span className="text-[#94a3b8]">{agent.name}</span>
       </nav>
 
       <header className="space-y-3">
@@ -69,30 +69,30 @@ export default async function AgentPage({
         </div>
 
         {agent.description && (
-          <p className="body-md text-[#b8c1d4]">{agent.description}</p>
+          <p className="body-md text-[#94a3b8]">{agent.description}</p>
         )}
 
-        <dl className="flex items-center gap-6 flex-wrap body-sm text-[#8b95ab]">
+        <dl className="flex items-center gap-6 flex-wrap body-sm text-[#64748b]">
           <div className="flex items-center gap-2">
             <dt>Proveedor</dt>
-            <dd className="font-semibold text-[#b8c1d4]">
+            <dd className="font-semibold text-[#94a3b8]">
               {agent.provider ?? "-"}
             </dd>
           </div>
           <div className="flex items-center gap-2">
             <dt>Modelo</dt>
-            <dd className="font-semibold text-[#b8c1d4]">{agent.model}</dd>
+            <dd className="font-semibold text-[#94a3b8]">{agent.model}</dd>
           </div>
           <div className="flex items-center gap-2">
             <dt>Invocaciones</dt>
-            <dd className="font-semibold text-[#b8c1d4]">
+            <dd className="font-semibold text-[#94a3b8]">
               {(agent.invocations ?? 0).toLocaleString(locale)}
             </dd>
           </div>
           {agent.last_invoked_at && (
             <div className="flex items-center gap-2">
               <dt>Ultimo uso</dt>
-              <dd className="font-semibold text-[#b8c1d4]">
+              <dd className="font-semibold text-[#94a3b8]">
                 {new Date(agent.last_invoked_at).toLocaleDateString(locale)}
               </dd>
             </div>
@@ -119,7 +119,7 @@ export default async function AgentPage({
         </h2>
 
         {linkedKUs.length === 0 ? (
-          <p className="body-md text-[#8b95ab]">
+          <p className="body-md text-[#64748b]">
             Este agente todavia no tiene Knowledge Units asignadas.
           </p>
         ) : (
@@ -128,13 +128,13 @@ export default async function AgentPage({
               <li key={ku.id}>
                 <Link
                   href={`/knowledge/${ku.id}`}
-                  className="flex items-center gap-3 p-3 rounded-lg border border-[#212a3e] hover:bg-[#0a0e17] transition-colors"
+                  className="flex items-center gap-3 p-3 rounded-lg border border-[#1e293b] hover:bg-[#07090e] transition-colors"
                 >
-                  <span className="text-[#5b9bff]">
+                  <span className="text-[#3b82f6]">
                     <Icon name="knowledge" size={18} />
                   </span>
                   <span className="body-md text-[var(--star-1)] flex-1">{ku.title}</span>
-                  <span className="body-sm text-[#8b95ab]">{ku.domain}</span>
+                  <span className="body-sm text-[#64748b]">{ku.domain}</span>
                 </Link>
               </li>
             ))}
@@ -145,7 +145,7 @@ export default async function AgentPage({
       {agent.system_prompt && (
         <section className="panel p-6">
           <h2 className="section-heading mb-4">SYSTEM PROMPT</h2>
-          <pre className="body-sm text-[#b8c1d4] whitespace-pre-wrap font-mono leading-relaxed">
+          <pre className="body-sm text-[#94a3b8] whitespace-pre-wrap font-mono leading-relaxed">
             {agent.system_prompt}
           </pre>
         </section>

@@ -27,9 +27,9 @@ interface AgentsOverviewProps {
  * ('draft','deployed','paused','archived').
  */
 const STATUS_STYLES: Record<string, string> = {
-  deployed: "bg-[rgb(52_211_153_/_0.12)] text-[var(--verified)] border-[rgb(52_211_153_/_0.28)]",
-  draft: "bg-[rgb(251_191_36_/_0.12)] text-[var(--pending)] border-[rgb(251_191_36_/_0.28)]",
-  paused: "bg-[rgb(251_191_36_/_0.12)] text-[var(--pending)] border-[rgb(251_191_36_/_0.28)]",
+  deployed: "bg-[rgb(16_185_129_/_0.12)] text-[var(--verified)] border-[rgb(16_185_129_/_0.28)]",
+  draft: "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)] border-[rgb(245_158_11_/_0.28)]",
+  paused: "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)] border-[rgb(245_158_11_/_0.28)]",
   archived: "bg-[var(--sky-3)] text-[var(--star-2)] border-[var(--edge)]",
 };
 
@@ -103,7 +103,7 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
         <h1 className="headline-xl text-[var(--star-1)] font-bold">Agents</h1>
         <Link
           href="/agents/new"
-          className="bg-[#5b9bff] text-[var(--azure-ink)] font-medium py-2.5 px-4 rounded-lg hover:bg-[#3f7fe0] flex items-center gap-2 body-md transition-colors"
+          className="bg-[#3b82f6] text-[var(--azure-ink)] font-medium py-2.5 px-4 rounded-lg hover:bg-[#2563eb] flex items-center gap-2 body-md transition-colors"
         >
           <Icon name="plus" size={17} strokeWidth={2.2} />
           Nuevo agente
@@ -112,19 +112,19 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
 
       {/* Search */}
       <div className="relative">
-        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#8b95ab]"><Icon name="search" size={18} /></span>
+        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#64748b]"><Icon name="search" size={18} /></span>
         <input
           type="search"
           aria-label="Buscar agentes"
           placeholder="Buscar agentes por nombre, modelo o descripcion..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 border border-[#212a3e] rounded-lg bg-[var(--sky-2)] text-[#b8c1d4] placeholder-[#8b95ab] focus:outline-none focus:ring-2 focus:ring-[#5b9bff] focus:border-transparent"
+          className="w-full pl-12 pr-4 py-3 border border-[#1e293b] rounded-lg bg-[var(--sky-2)] text-[#94a3b8] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent"
         />
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center justify-between border-b border-[#212a3e] flex-wrap gap-2">
+      <div className="flex items-center justify-between border-b border-[#1e293b] flex-wrap gap-2">
         <div className="flex gap-1">
           {tabs.map((tab) => (
             <button
@@ -134,11 +134,11 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
               className={`px-4 py-3 border-b-2 rounded-t body-md transition-colors ${
                 activeTab === tab.id
                   ? "border-[var(--azure)] text-[var(--star-1)] font-medium"
-                  : "border-transparent text-[#b8c1d4] hover:border-[#212a3e] hover:bg-[#0a0e17]"
+                  : "border-transparent text-[#94a3b8] hover:border-[#1e293b] hover:bg-[#07090e]"
               }`}
             >
               {tab.label}
-              <span className="ml-2 text-[#8b95ab]">{countFor(tab.id)}</span>
+              <span className="ml-2 text-[#64748b]">{countFor(tab.id)}</span>
             </button>
           ))}
         </div>
@@ -150,17 +150,17 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
 
         {agents.length === 0 ? (
           <div className="panel p-10 text-center space-y-3">
-            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[rgb(91_155_255_/_0.12)] text-[var(--azure)]" aria-hidden><Icon name="agents" size={26} /></span>
+            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[rgb(59_130_246_/_0.12)] text-[var(--azure)]" aria-hidden><Icon name="agents" size={26} /></span>
             <p className="body-md text-[var(--star-1)] font-medium">
               Todavia no hay agentes
             </p>
-            <p className="body-sm text-[#8b95ab] max-w-md mx-auto">
+            <p className="body-sm text-[#64748b] max-w-md mx-auto">
               Un agente compila tus Knowledge Units aprobadas en contexto listo
               para usar con el Model Router.
             </p>
             <Link
               href="/agents/new"
-              className="inline-flex items-center gap-2 rounded-lg bg-[#5b9bff] px-4 py-2.5 text-sm font-medium text-[var(--azure-ink)] hover:bg-[#3f7fe0]"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#3b82f6] px-4 py-2.5 text-sm font-medium text-[var(--azure-ink)] hover:bg-[#2563eb]"
             >
               <Icon name="plus" size={16} strokeWidth={2.2} />
               Crear primer agente
@@ -168,7 +168,7 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
           </div>
         ) : visibleAgents.length === 0 ? (
           <div className="panel p-8 text-center">
-            <p className="body-md text-[#8b95ab]">
+            <p className="body-md text-[#64748b]">
               Ningun agente coincide con el filtro.
             </p>
           </div>
@@ -184,10 +184,10 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
                 <li key={agent.id}>
                   <button
                     onClick={() => router.push(`/agents/${agent.id}`)}
-                    className="panel w-full text-left p-4 flex items-start gap-4 hover:bg-[#0a0e17] focus:outline-none focus:ring-2 focus:ring-[#5b9bff] transition-colors"
+                    className="panel w-full text-left p-4 flex items-start gap-4 hover:bg-[#07090e] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] transition-colors"
                   >
-                    <div className="w-10 h-10 rounded-lg bg-[#16233d] flex items-center justify-center flex-shrink-0">
-                      <Icon name="agents" size={18} className="text-[#5b9bff]" />
+                    <div className="w-10 h-10 rounded-lg bg-[#172554] flex items-center justify-center flex-shrink-0">
+                      <Icon name="agents" size={18} className="text-[#3b82f6]" />
                     </div>
 
                     <div className="flex-1 min-w-0">
@@ -202,24 +202,24 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
                         >
                           {formatStatus(agent.status)}
                         </span>
-                        <span className="label-sm bg-[#16233d] text-[var(--star-1)] px-2 py-1 rounded">
+                        <span className="label-sm bg-[#172554] text-[var(--star-1)] px-2 py-1 rounded">
                           {agent.model}
                         </span>
                       </div>
 
-                      <p className="body-sm text-[#8b95ab] mb-2 line-clamp-2">
+                      <p className="body-sm text-[#64748b] mb-2 line-clamp-2">
                         {agent.description || "Sin descripcion"}
                       </p>
 
-                      <div className="flex items-center gap-4 body-sm text-[#8b95ab] flex-wrap">
+                      <div className="flex items-center gap-4 body-sm text-[#64748b] flex-wrap">
                         <span>
-                          <span className="font-semibold text-[#b8c1d4]">
+                          <span className="font-semibold text-[#94a3b8]">
                             {kuCount}
                           </span>{" "}
                           {kuCount === 1 ? "Knowledge Unit" : "Knowledge Units"}
                         </span>
                         <span>
-                          <span className="font-semibold text-[#b8c1d4]">
+                          <span className="font-semibold text-[#94a3b8]">
                             {invocations.toLocaleString("es")}
                           </span>{" "}
                           {invocations === 1 ? "invocacion" : "invocaciones"}
@@ -231,7 +231,7 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
                       </div>
                     </div>
 
-                    <Icon name="chevron-right" size={16} className="text-[#8b95ab] flex-shrink-0" />
+                    <Icon name="chevron-right" size={16} className="text-[#64748b] flex-shrink-0" />
                   </button>
                 </li>
               );

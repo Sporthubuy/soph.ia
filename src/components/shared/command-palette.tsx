@@ -237,27 +237,27 @@ export const CommandPalette = ({
           <DialogDescription>Search and navigate SOPH.IA</DialogDescription>
         </DialogHeader>
 
-        <div className="flex items-center gap-2 border-b border-[#212a3e] px-4">
-          <Icon name="search" size={18} className="text-[#8b95ab]" />
+        <div className="flex items-center gap-2 border-b border-[#1e293b] px-4">
+          <Icon name="search" size={18} className="text-[#64748b]" />
           <input
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search knowledge, projects, agents, or jump…"
-            className="flex-1 bg-transparent py-3.5 text-sm text-[var(--star-1)] placeholder:text-[#8b95ab] outline-none"
+            className="flex-1 bg-transparent py-3.5 text-sm text-[var(--star-1)] placeholder:text-[#64748b] outline-none"
             aria-label="Command search"
           />
           {loading && (
-            <span className="label-sm text-[#8b95ab]">Searching…</span>
+            <span className="label-sm text-[#64748b]">Searching…</span>
           )}
-          <kbd className="hidden sm:inline label-sm rounded border border-[#212a3e] bg-[#0a0e17] px-1.5 py-0.5 text-[#8b95ab]">
+          <kbd className="hidden sm:inline label-sm rounded border border-[#1e293b] bg-[#07090e] px-1.5 py-0.5 text-[#64748b]">
             esc
           </kbd>
         </div>
 
         <div className="max-h-[min(60vh,420px)] overflow-y-auto p-2">
           {items.length === 0 ? (
-            <p className="px-3 py-8 text-center text-sm text-[#8b95ab]">
+            <p className="px-3 py-8 text-center text-sm text-[#64748b]">
               No matches
             </p>
           ) : (
@@ -275,7 +275,7 @@ export const CommandPalette = ({
                         onMouseEnter={() => setActive(index)}
                         onClick={() => go(a.href)}
                         className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
-                          selected ? "bg-[#16233d] text-[#5b9bff]" : "hover:bg-[#0a0e17]"
+                          selected ? "bg-[#172554] text-[#3b82f6]" : "hover:bg-[#07090e]"
                         }`}
                       >
                         <Icon name={a.icon} size={18} className="shrink-0 text-[var(--star-3)]" />
@@ -283,7 +283,7 @@ export const CommandPalette = ({
                           <span className="block text-sm font-medium text-[var(--star-1)]">
                             {a.title}
                           </span>
-                          <span className="block text-xs text-[#8b95ab]">
+                          <span className="block text-xs text-[#64748b]">
                             {a.subtitle}
                           </span>
                         </span>
@@ -302,7 +302,7 @@ export const CommandPalette = ({
                       onMouseEnter={() => setActive(index)}
                       onClick={() => go(h.href)}
                       className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${
-                        selected ? "bg-[#16233d] text-[#5b9bff]" : "hover:bg-[#0a0e17]"
+                        selected ? "bg-[#172554] text-[#3b82f6]" : "hover:bg-[#07090e]"
                       }`}
                     >
                       <Icon name={typeIcon[h.type]} size={18} className="shrink-0 text-[var(--star-3)]" />
@@ -310,7 +310,7 @@ export const CommandPalette = ({
                         <span className="block text-sm font-medium text-[var(--star-1)] truncate">
                           {h.title}
                         </span>
-                        <span className="block text-xs text-[#8b95ab] truncate">
+                        <span className="block text-xs text-[#64748b] truncate">
                           {h.subtitle}
                         </span>
                       </span>
@@ -322,7 +322,7 @@ export const CommandPalette = ({
           )}
         </div>
 
-        <div className="flex items-center gap-3 border-t border-[#212a3e] px-4 py-2 text-[11px] text-[#8b95ab]">
+        <div className="flex items-center gap-3 border-t border-[#1e293b] px-4 py-2 text-[11px] text-[#64748b]">
           <span>↑↓ navigate</span>
           <span>↵ open</span>
           <span className="ml-auto">esc close</span>

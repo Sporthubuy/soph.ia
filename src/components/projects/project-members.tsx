@@ -109,9 +109,9 @@ export const ProjectMembers = ({
           return (
             <li
               key={m.id}
-              className="flex items-center gap-3 p-3 rounded-lg border border-[#212a3e] flex-wrap"
+              className="flex items-center gap-3 p-3 rounded-lg border border-[#1e293b] flex-wrap"
             >
-              <div className="w-9 h-9 rounded-full bg-[#16233d] text-[#5b9bff] flex items-center justify-center label-sm font-semibold flex-shrink-0">
+              <div className="w-9 h-9 rounded-full bg-[#172554] text-[#3b82f6] flex items-center justify-center label-sm font-semibold flex-shrink-0">
                 {initials(m.profiles?.full_name ?? null, mail)}
               </div>
 
@@ -119,13 +119,13 @@ export const ProjectMembers = ({
                 <p className="body-md text-[var(--star-1)] font-medium truncate">
                   {name}
                   {isOwner && (
-                    <span className="ml-2 label-sm text-[#8b95ab] font-normal">
+                    <span className="ml-2 label-sm text-[#64748b] font-normal">
                       Responsable
                     </span>
                   )}
                 </p>
                 {mail && name !== mail && (
-                  <p className="body-sm text-[#8b95ab] truncate">{mail}</p>
+                  <p className="body-sm text-[#64748b] truncate">{mail}</p>
                 )}
               </div>
 
@@ -140,7 +140,7 @@ export const ProjectMembers = ({
                       )
                     }
                     aria-label={`Rol de ${name}`}
-                    className="body-sm border border-[#212a3e] rounded-lg px-2 py-1.5 bg-[var(--sky-2)] text-[#b8c1d4] focus:outline-none focus:ring-2 focus:ring-[#5b9bff]"
+                    className="body-sm border border-[#1e293b] rounded-lg px-2 py-1.5 bg-[var(--sky-2)] text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
                   >
                     {ROLES.map((r) => (
                       <option key={r.value} value={r.value}>
@@ -155,13 +155,13 @@ export const ProjectMembers = ({
                       run(() => removeProjectMember(projectId, m.id))
                     }
                     aria-label={`Quitar a ${name}`}
-                    className="label-sm px-2 py-1.5 rounded-lg border border-[#212a3e] text-[#b8c1d4] hover:bg-[#0a0e17] transition-colors disabled:opacity-50"
+                    className="label-sm px-2 py-1.5 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] transition-colors disabled:opacity-50"
                   >
                     Quitar
                   </button>
                 </div>
               ) : (
-                <span className="label-sm px-2 py-1 rounded border border-[#212a3e] text-[#b8c1d4]">
+                <span className="label-sm px-2 py-1 rounded border border-[#1e293b] text-[#94a3b8]">
                   {roleLabel(m.role)}
                 </span>
               )}
@@ -173,21 +173,21 @@ export const ProjectMembers = ({
       {/* Invitaciones pendientes */}
       {invitations.length > 0 && (
         <div className="space-y-2">
-          <p className="label-sm text-[#8b95ab]">PENDIENTES DE REGISTRARSE</p>
+          <p className="label-sm text-[#64748b]">PENDIENTES DE REGISTRARSE</p>
           <ul className="space-y-2">
             {invitations.map((inv) => (
               <li
                 key={inv.id}
-                className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-[#212a3e] flex-wrap"
+                className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-[#1e293b] flex-wrap"
               >
-                <div className="w-9 h-9 rounded-full bg-[#0a0e17] text-[#8b95ab] flex items-center justify-center flex-shrink-0">
+                <div className="w-9 h-9 rounded-full bg-[#07090e] text-[#64748b] flex items-center justify-center flex-shrink-0">
                   <span className="text-lg">
                     schedule
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="body-md text-[#b8c1d4] truncate">{inv.email}</p>
-                  <p className="body-sm text-[#8b95ab]">
+                  <p className="body-md text-[#94a3b8] truncate">{inv.email}</p>
+                  <p className="body-sm text-[#64748b]">
                     Se sumara como {roleLabel(inv.role)} al registrarse
                   </p>
                 </div>
@@ -198,7 +198,7 @@ export const ProjectMembers = ({
                     onClick={() =>
                       run(() => cancelProjectInvitation(projectId, inv.id))
                     }
-                    className="label-sm px-2 py-1.5 rounded-lg border border-[#212a3e] text-[#b8c1d4] hover:bg-[#0a0e17] transition-colors disabled:opacity-50"
+                    className="label-sm px-2 py-1.5 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] transition-colors disabled:opacity-50"
                   >
                     Cancelar
                   </button>
@@ -212,7 +212,7 @@ export const ProjectMembers = ({
       {/* Invitar */}
       {canManage && (
         <form onSubmit={handleInvite} className="space-y-2 pt-1">
-          <label htmlFor="invite-email" className="label-sm text-[#8b95ab]">
+          <label htmlFor="invite-email" className="label-sm text-[#64748b]">
             INVITAR POR EMAIL
           </label>
           <div className="flex gap-2 flex-wrap">
@@ -222,13 +222,13 @@ export const ProjectMembers = ({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="persona@empresa.com"
-              className="flex-1 min-w-[14rem] px-4 py-2.5 border border-[#212a3e] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#8b95ab] focus:outline-none focus:ring-2 focus:ring-[#5b9bff] focus:border-transparent body-sm"
+              className="flex-1 min-w-[14rem] px-4 py-2.5 border border-[#1e293b] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent body-sm"
             />
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}
               aria-label="Permiso del invitado"
-              className="body-sm border border-[#212a3e] rounded-lg px-3 py-2.5 bg-[var(--sky-2)] text-[#b8c1d4] focus:outline-none focus:ring-2 focus:ring-[#5b9bff]"
+              className="body-sm border border-[#1e293b] rounded-lg px-3 py-2.5 bg-[var(--sky-2)] text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
             >
               {ROLES.map((r) => (
                 <option key={r.value} value={r.value}>
@@ -239,12 +239,12 @@ export const ProjectMembers = ({
             <button
               type="submit"
               disabled={isPending || !email.trim()}
-              className="bg-[#5b9bff] text-[var(--azure-ink)] font-medium py-2.5 px-4 rounded-lg hover:bg-[#3f7fe0] transition-colors disabled:opacity-50 body-sm"
+              className="bg-[#3b82f6] text-[var(--azure-ink)] font-medium py-2.5 px-4 rounded-lg hover:bg-[#2563eb] transition-colors disabled:opacity-50 body-sm"
             >
               {isPending ? "Invitando..." : "Invitar"}
             </button>
           </div>
-          <p className="body-sm text-[#8b95ab]">
+          <p className="body-sm text-[#64748b]">
             {ROLES.find((r) => r.value === role)?.hint}. Si esa persona todavia
             no tiene cuenta, queda pendiente y entra sola al registrarse. Invitar
             tambien le da acceso de lectura a la organizacion.

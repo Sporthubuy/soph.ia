@@ -181,7 +181,7 @@ const ReviewCard = ({
             <ShareDialog
               path={`/knowledge/${ku.id}`}
               title={ku.title}
-              triggerClassName="label-sm px-2 py-1 rounded border border-[#212a3e] text-[#b8c1d4] hover:bg-[#0a0e17] inline-flex items-center gap-1"
+              triggerClassName="label-sm px-2 py-1 rounded border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] inline-flex items-center gap-1"
             />
             <KUStatusBadge status={ku.status} />
           </div>
@@ -228,7 +228,7 @@ const ReviewCard = ({
           </p>
         ) : null}
 
-        <div className="rounded-lg border border-[#212a3e] bg-[#0a0e17] p-4">
+        <div className="rounded-lg border border-[#1e293b] bg-[#07090e] p-4">
           <CommentsThread
             kuId={ku.id}
             comments={comments}

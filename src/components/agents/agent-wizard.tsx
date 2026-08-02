@@ -398,7 +398,7 @@ export const AgentWizard = ({
         <div className="mx-auto w-full max-w-lg space-y-6">
           {deployedId ? (
             <div className="card-figma p-8 text-center animate-scale-in">
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[rgb(52_211_153_/_0.12)]">
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-[rgb(16_185_129_/_0.12)]">
                 <svg className="h-7 w-7 text-[var(--verified)]" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                 </svg>

@@ -23,9 +23,9 @@ const ROLE_LABEL: Record<string, string> = {
 };
 
 const ROLE_STYLE: Record<string, string> = {
-  owner: "bg-[rgb(91_155_255_/_0.14)] text-[var(--azure)]",
-  admin: "bg-[rgb(91_155_255_/_0.14)] text-[var(--azure)]",
-  editor: "bg-[rgb(52_211_153_/_0.14)] text-[var(--verified)]",
+  owner: "bg-[rgb(59_130_246_/_0.14)] text-[var(--azure)]",
+  admin: "bg-[rgb(59_130_246_/_0.14)] text-[var(--azure)]",
+  editor: "bg-[rgb(16_185_129_/_0.14)] text-[var(--verified)]",
   viewer: "bg-[var(--sky-3)] text-[var(--star-3)]",
 };
 
@@ -108,7 +108,7 @@ export const PeopleDirectory = ({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar por nombre o email…"
-          className="w-full rounded-[10px] border border-[var(--edge)] bg-[var(--sky-2)] py-2.5 pl-10 pr-3 text-sm text-[var(--star-1)] placeholder-[var(--star-4)] focus:border-[var(--azure)] focus:outline-none focus:ring-2 focus:ring-[rgb(91_155_255_/_0.16)]"
+          className="w-full rounded-[10px] border border-[var(--edge)] bg-[var(--sky-2)] py-2.5 pl-10 pr-3 text-sm text-[var(--star-1)] placeholder-[var(--star-4)] focus:border-[var(--azure)] focus:outline-none focus:ring-2 focus:ring-[rgb(59_130_246_/_0.16)]"
         />
       </div>
 
@@ -133,8 +133,8 @@ export const PeopleDirectory = ({
               <div className="flex items-start gap-3">
                 {/* node-avatar */}
                 <span
-                  className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[12px] bg-[rgb(91_155_255_/_0.14)] font-mono text-sm font-semibold text-[var(--azure)]"
-                  style={{ boxShadow: "0 0 0 3px rgb(91 155 255 / 0.06)" }}
+                  className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[12px] bg-[rgb(59_130_246_/_0.14)] font-mono text-sm font-semibold text-[var(--azure)]"
+                  style={{ boxShadow: "0 0 0 3px rgb(59 130 246 / 0.06)" }}
                 >
                   {initials(person.profiles?.full_name ?? "", email)}
                 </span>

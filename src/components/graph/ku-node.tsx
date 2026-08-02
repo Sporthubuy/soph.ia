@@ -16,10 +16,10 @@ export type KUNodeData = {
 };
 
 const statusColor: Record<KUNodeData["status"], string> = {
-  approved: "border-[rgb(52_211_153_/_0.5)] bg-[rgb(52_211_153_/_0.12)] ring-[rgb(52_211_153_/_0.3)]",
-  proposed: "border-[rgb(251_191_36_/_0.5)] bg-[rgb(251_191_36_/_0.12)] ring-[rgb(251_191_36_/_0.3)]",
+  approved: "border-[rgb(16_185_129_/_0.5)] bg-[rgb(16_185_129_/_0.12)] ring-[rgb(16_185_129_/_0.3)]",
+  proposed: "border-[rgb(245_158_11_/_0.5)] bg-[rgb(245_158_11_/_0.12)] ring-[rgb(245_158_11_/_0.3)]",
   draft: "border-[var(--edge-strong)] bg-[var(--sky-3)] dark:bg-[var(--sky-3)] ring-[var(--edge-strong)]",
-  archived: "border-[rgb(251_106_104_/_0.5)] bg-[rgb(251_106_104_/_0.12)] ring-[rgb(251_106_104_/_0.3)]",
+  archived: "border-[rgb(239_68_68_/_0.5)] bg-[rgb(239_68_68_/_0.12)] ring-[rgb(239_68_68_/_0.3)]",
 };
 
 const statusDot: Record<KUNodeData["status"], string> = {

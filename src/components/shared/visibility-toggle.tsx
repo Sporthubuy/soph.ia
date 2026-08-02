@@ -75,17 +75,17 @@ export function VisibilityToggle({
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[rgb(91_155_255_/_0.12)] text-[var(--azure)]">
+        <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[rgb(59_130_246_/_0.12)] text-[var(--azure)]">
           <Icon name={current.icon} size={18} />
         </span>
         <div>
-          <p className="label-md text-[#b8c1d4]">Visibility</p>
-          <p className="body-sm text-[#8b95ab]">{current.description}</p>
+          <p className="label-md text-[#94a3b8]">Visibility</p>
+          <p className="body-sm text-[#64748b]">{current.description}</p>
         </div>
       </div>
 
       {error && (
-        <div className="bg-[rgb(251_106_104_/_0.12)] border border-[rgb(251_106_104_/_0.35)] rounded-lg p-3 text-[var(--danger)] text-sm">
+        <div className="bg-[rgb(239_68_68_/_0.12)] border border-[rgb(239_68_68_/_0.35)] rounded-lg p-3 text-[var(--danger)] text-sm">
           {error}
         </div>
       )}
@@ -102,18 +102,18 @@ export function VisibilityToggle({
             disabled={isLoading || onlyOwner}
             className={`p-3 rounded-[10px] border-2 transition-all flex flex-col items-center gap-2 cursor-pointer ${
               visibility === key
-                ? "border-[rgb(91_155_255_/_0.5)] bg-[rgb(91_155_255_/_0.12)] text-[var(--azure)]"
-                : "border-[#212a3e] text-[var(--star-3)] hover:border-[#2e3950]"
+                ? "border-[rgb(59_130_246_/_0.5)] bg-[rgb(59_130_246_/_0.12)] text-[var(--azure)]"
+                : "border-[#1e293b] text-[var(--star-3)] hover:border-[#334155]"
             } ${isLoading || onlyOwner ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             <Icon name={icon} size={22} />
-            <span className="label-xs text-center text-[#b8c1d4]">{label}</span>
+            <span className="label-xs text-center text-[#94a3b8]">{label}</span>
           </button>
         ))}
       </div>
 
       {onlyOwner && (
-        <p className="text-xs text-[#8b95ab]">Only the owner can change visibility</p>
+        <p className="text-xs text-[#64748b]">Only the owner can change visibility</p>
       )}
     </div>
   );

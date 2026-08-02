@@ -86,13 +86,13 @@ export const CommentsThread = ({
       <div className="flex items-center justify-between gap-2">
         <h2 className={compact ? "text-sm font-semibold text-[var(--star-1)]" : "section-heading"}>
           {title}
-          <span className="ml-2 font-normal text-[#8b95ab]">{comments.length}</span>
+          <span className="ml-2 font-normal text-[#64748b]">{comments.length}</span>
         </h2>
       </div>
 
       <div className={`space-y-3 ${compact ? "max-h-56 overflow-y-auto" : ""}`}>
         {comments.length === 0 ? (
-          <p className="body-sm text-[#8b95ab]">
+          <p className="body-sm text-[#64748b]">
             No comments yet. Start the conversation.
           </p>
         ) : (
@@ -102,27 +102,27 @@ export const CommentsThread = ({
             return (
               <div key={c.id} className="flex items-start gap-3">
                 <div
-                  className="w-8 h-8 rounded-full bg-[#16233d] text-[#5b9bff] flex items-center justify-center text-xs font-semibold flex-shrink-0"
+                  className="w-8 h-8 rounded-full bg-[#172554] text-[#3b82f6] flex items-center justify-center text-xs font-semibold flex-shrink-0"
                   aria-hidden
                 >
                   {initials(c.profiles?.full_name, c.profiles?.email)}
                 </div>
-                <div className="flex-1 min-w-0 rounded-lg border border-[#212a3e] bg-[var(--sky-2)] px-3 py-2">
+                <div className="flex-1 min-w-0 rounded-lg border border-[#1e293b] bg-[var(--sky-2)] px-3 py-2">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-sm font-semibold text-[var(--star-1)]">{name}</span>
-                    <span className="text-xs text-[#8b95ab]">{timeAgo(c.created_at)}</span>
+                    <span className="text-xs text-[#64748b]">{timeAgo(c.created_at)}</span>
                     {canDelete && (
                       <button
                         type="button"
                         onClick={() => remove(c.id)}
                         disabled={isPending}
-                        className="ml-auto text-xs text-[#8b95ab] hover:text-[var(--danger)]"
+                        className="ml-auto text-xs text-[#64748b] hover:text-[var(--danger)]"
                       >
                         Delete
                       </button>
                     )}
                   </div>
-                  <p className="mt-1 text-sm text-[#b8c1d4] whitespace-pre-wrap break-words">
+                  <p className="mt-1 text-sm text-[#94a3b8] whitespace-pre-wrap break-words">
                     {c.body}
                   </p>
                 </div>
@@ -157,13 +157,13 @@ export const CommentsThread = ({
           </p>
         )}
         <div className="flex items-center justify-between gap-2">
-          <p className="label-sm text-[#8b95ab]">⌘/Ctrl + Enter to send</p>
+          <p className="label-sm text-[#64748b]">⌘/Ctrl + Enter to send</p>
           <Button
             type="button"
             size="sm"
             onClick={submit}
             disabled={isPending || !body.trim()}
-            className="rounded-lg bg-[#5b9bff] text-[var(--azure-ink)] hover:bg-[#3f7fe0]"
+            className="rounded-lg bg-[#3b82f6] text-[var(--azure-ink)] hover:bg-[#2563eb]"
           >
             {isPending ? "Sending…" : "Comment"}
           </Button>

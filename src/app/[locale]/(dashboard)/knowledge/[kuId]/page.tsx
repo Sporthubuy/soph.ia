@@ -13,9 +13,9 @@ import { VisibilityToggle } from "@/components/shared/visibility-toggle";
 import { Icon } from "@/components/shared/icon";
 
 const STATUS_STYLES: Record<string, string> = {
-  approved: "bg-[rgb(52_211_153_/_0.12)] text-[var(--verified)] border-[rgb(52_211_153_/_0.28)]",
-  proposed: "bg-[rgb(91_155_255_/_0.12)] text-[var(--azure)] border-[rgb(91_155_255_/_0.28)]",
-  draft: "bg-[rgb(251_191_36_/_0.12)] text-[var(--pending)] border-[rgb(251_191_36_/_0.28)]",
+  approved: "bg-[rgb(16_185_129_/_0.12)] text-[var(--verified)] border-[rgb(16_185_129_/_0.28)]",
+  proposed: "bg-[rgb(59_130_246_/_0.12)] text-[var(--azure)] border-[rgb(59_130_246_/_0.28)]",
+  draft: "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)] border-[rgb(245_158_11_/_0.28)]",
   archived: "bg-[var(--sky-3)] text-[var(--star-2)] border-[var(--edge)]",
 };
 
@@ -53,12 +53,12 @@ export default async function KnowledgeUnitPage({
 
   return (
     <div className="p-4 sm:p-8 max-w-4xl mx-auto space-y-6">
-      <nav aria-label="Migas de pan" className="body-sm text-[#8b95ab]">
+      <nav aria-label="Migas de pan" className="body-sm text-[#64748b]">
         <Link href="/knowledge" className="hover:text-[var(--star-1)] transition-colors">
           Knowledge Units
         </Link>
         <span className="mx-2">/</span>
-        <span className="text-[#b8c1d4]">{ku.title}</span>
+        <span className="text-[#94a3b8]">{ku.title}</span>
       </nav>
 
       <header className="space-y-3">
@@ -76,7 +76,7 @@ export default async function KnowledgeUnitPage({
             {canEdit && (
               <Link
                 href={`/knowledge/${ku.id}/edit`}
-                className="label-sm px-3 py-1.5 rounded-lg border border-[#212a3e] text-[#b8c1d4] hover:bg-[#0a0e17] transition-colors flex items-center gap-1.5"
+                className="label-sm px-3 py-1.5 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] transition-colors flex items-center gap-1.5"
               >
                 <Icon name="edit" size={15} />
                 Editar
@@ -86,14 +86,14 @@ export default async function KnowledgeUnitPage({
           </div>
         </div>
 
-        <dl className="flex items-center gap-6 flex-wrap body-sm text-[#8b95ab]">
+        <dl className="flex items-center gap-6 flex-wrap body-sm text-[#64748b]">
           <div className="flex items-center gap-2">
             <dt>Dominio</dt>
-            <dd className="font-semibold text-[#b8c1d4]">{ku.domain}</dd>
+            <dd className="font-semibold text-[#94a3b8]">{ku.domain}</dd>
           </div>
           <div className="flex items-center gap-2">
             <dt>Version</dt>
-            <dd className="font-semibold text-[#b8c1d4]">v{ku.version ?? 1}</dd>
+            <dd className="font-semibold text-[#94a3b8]">v{ku.version ?? 1}</dd>
           </div>
           <div className="flex items-center gap-2">
             <dt>Trust Score</dt>
@@ -102,7 +102,7 @@ export default async function KnowledgeUnitPage({
           {ku.updated_at && (
             <div className="flex items-center gap-2">
               <dt>Actualizada</dt>
-              <dd className="font-semibold text-[#b8c1d4]">
+              <dd className="font-semibold text-[#94a3b8]">
                 {new Date(ku.updated_at).toLocaleDateString(locale)}
               </dd>
             </div>
@@ -125,11 +125,11 @@ export default async function KnowledgeUnitPage({
         <h2 className="section-heading mb-4">CONTENIDO</h2>
         {ku.content ? (
           <div
-            className="ku-content body-md text-[#b8c1d4] leading-relaxed"
+            className="ku-content body-md text-[#94a3b8] leading-relaxed"
             dangerouslySetInnerHTML={{ __html: renderMarkdown(ku.content) }}
           />
         ) : (
-          <p className="body-md text-[#8b95ab]">
+          <p className="body-md text-[#64748b]">
             Esta Knowledge Unit todavia no tiene contenido.
           </p>
         )}
@@ -144,8 +144,8 @@ export default async function KnowledgeUnitPage({
       />
 
       <div className="panel p-4">
-        <p className="label-sm text-[#8b95ab] mb-1">HASH DE VERSION</p>
-        <code className="body-sm text-[#b8c1d4] break-all">{ku.hash}</code>
+        <p className="label-sm text-[#64748b] mb-1">HASH DE VERSION</p>
+        <code className="body-sm text-[#94a3b8] break-all">{ku.hash}</code>
       </div>
     </div>
   );

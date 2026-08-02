@@ -43,16 +43,16 @@ interface AgentCandidate {
 }
 
 const KU_STATUS_STYLES: Record<string, string> = {
-  approved: "bg-[rgb(52_211_153_/_0.12)] text-[var(--verified)] border-[rgb(52_211_153_/_0.28)]",
-  proposed: "bg-[rgb(91_155_255_/_0.12)] text-[var(--azure)] border-[rgb(91_155_255_/_0.28)]",
-  draft: "bg-[rgb(251_191_36_/_0.12)] text-[var(--pending)] border-[rgb(251_191_36_/_0.28)]",
+  approved: "bg-[rgb(16_185_129_/_0.12)] text-[var(--verified)] border-[rgb(16_185_129_/_0.28)]",
+  proposed: "bg-[rgb(59_130_246_/_0.12)] text-[var(--azure)] border-[rgb(59_130_246_/_0.28)]",
+  draft: "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)] border-[rgb(245_158_11_/_0.28)]",
   archived: "bg-[var(--sky-3)] text-[var(--star-2)] border-[var(--edge)]",
 };
 
 const AGENT_STATUS_STYLES: Record<string, string> = {
-  deployed: "bg-[rgb(52_211_153_/_0.12)] text-[var(--verified)] border-[rgb(52_211_153_/_0.28)]",
-  draft: "bg-[rgb(251_191_36_/_0.12)] text-[var(--pending)] border-[rgb(251_191_36_/_0.28)]",
-  paused: "bg-[rgb(251_191_36_/_0.12)] text-[var(--pending)] border-[rgb(251_191_36_/_0.28)]",
+  deployed: "bg-[rgb(16_185_129_/_0.12)] text-[var(--verified)] border-[rgb(16_185_129_/_0.28)]",
+  draft: "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)] border-[rgb(245_158_11_/_0.28)]",
+  paused: "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)] border-[rgb(245_158_11_/_0.28)]",
   archived: "bg-[var(--sky-3)] text-[var(--star-2)] border-[var(--edge)]",
 };
 
@@ -104,21 +104,21 @@ export const ProjectKnowledge = ({
       </h2>
 
       {knowledgeUnits.length === 0 ? (
-        <p className="body-md text-[#8b95ab]">
+        <p className="body-md text-[#64748b]">
           Este proyecto todavia no tiene conocimiento asociado.
         </p>
       ) : (
         <div className="space-y-4">
           {domains.map((domain) => (
             <div key={domain} className="space-y-2">
-              <p className="label-sm text-[#8b95ab]">{domain.toUpperCase()}</p>
+              <p className="label-sm text-[#64748b]">{domain.toUpperCase()}</p>
               <ul className="space-y-2">
                 {byDomain[domain].map((ku) => (
                   <li
                     key={ku.linkId}
-                    className="flex items-center gap-3 p-3 rounded-lg border border-[#212a3e] flex-wrap"
+                    className="flex items-center gap-3 p-3 rounded-lg border border-[#1e293b] flex-wrap"
                   >
-                    <Icon name="knowledge" size={18} className="text-[#5b9bff]" />
+                    <Icon name="knowledge" size={18} className="text-[#3b82f6]" />
                     <Link
                       href={`/knowledge/${ku.id}`}
                       className="body-md text-[var(--star-1)] flex-1 min-w-0 truncate hover:underline"
@@ -132,7 +132,7 @@ export const ProjectKnowledge = ({
                     >
                       {ku.status.charAt(0).toUpperCase() + ku.status.slice(1)}
                     </span>
-                    <span className="body-sm text-[#8b95ab]">
+                    <span className="body-sm text-[#64748b]">
                       Trust {ku.trust_score ?? 0}%
                     </span>
                     {canManage && (
@@ -145,7 +145,7 @@ export const ProjectKnowledge = ({
                           )
                         }
                         aria-label={`Quitar ${ku.title} del proyecto`}
-                        className="label-sm px-2 py-1.5 rounded-lg border border-[#212a3e] text-[#b8c1d4] hover:bg-[#0a0e17] transition-colors disabled:opacity-50"
+                        className="label-sm px-2 py-1.5 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] transition-colors disabled:opacity-50"
                       >
                         Quitar
                       </button>
@@ -201,7 +201,7 @@ export const ProjectAgents = ({
       </h2>
 
       {agents.length === 0 ? (
-        <p className="body-md text-[#8b95ab]">
+        <p className="body-md text-[#64748b]">
           Este proyecto todavia no integra ningun agente.
         </p>
       ) : (
@@ -209,9 +209,9 @@ export const ProjectAgents = ({
           {agents.map((agent) => (
             <li
               key={agent.linkId}
-              className="flex items-center gap-3 p-3 rounded-lg border border-[#212a3e] flex-wrap"
+              className="flex items-center gap-3 p-3 rounded-lg border border-[#1e293b] flex-wrap"
             >
-              <Icon name="agents" size={18} className="text-[#5b9bff]" />
+              <Icon name="agents" size={18} className="text-[#3b82f6]" />
               <div className="flex-1 min-w-0">
                 <Link
                   href={`/agents/${agent.id}`}
@@ -219,7 +219,7 @@ export const ProjectAgents = ({
                 >
                   {agent.name}
                 </Link>
-                <p className="body-sm text-[#8b95ab] truncate">{agent.model}</p>
+                <p className="body-sm text-[#64748b] truncate">{agent.model}</p>
               </div>
               <span
                 className={`label-sm px-2 py-1 rounded border ${
@@ -236,7 +236,7 @@ export const ProjectAgents = ({
                     run(() => removeAgentFromProject(projectId, agent.linkId))
                   }
                   aria-label={`Quitar ${agent.name} del proyecto`}
-                  className="label-sm px-2 py-1.5 rounded-lg border border-[#212a3e] text-[#b8c1d4] hover:bg-[#0a0e17] transition-colors disabled:opacity-50"
+                  className="label-sm px-2 py-1.5 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] transition-colors disabled:opacity-50"
                 >
                   Quitar
                 </button>
@@ -305,8 +305,8 @@ const KnowledgeUnitAdder = ({ projectId, candidates, isPending, run }: Knowledge
   if (candidates.length === 0) {
     return (
       <div className="space-y-2 pt-1">
-        <label className="label-sm text-[#8b95ab]">AGREGAR KNOWLEDGE UNIT</label>
-        <p className="body-sm text-[#8b95ab]">
+        <label className="label-sm text-[#64748b]">AGREGAR KNOWLEDGE UNIT</label>
+        <p className="body-sm text-[#64748b]">
           No quedan Knowledge Units disponibles para agregar.
         </p>
       </div>
@@ -315,15 +315,15 @@ const KnowledgeUnitAdder = ({ projectId, candidates, isPending, run }: Knowledge
 
   return (
     <div className="space-y-2 pt-1">
-      <label className="label-sm text-[#8b95ab]">AGREGAR KNOWLEDGE UNIT</label>
+      <label className="label-sm text-[#64748b]">AGREGAR KNOWLEDGE UNIT</label>
       <input
         type="text"
         placeholder="Buscar Knowledge Unit..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full body-sm border border-[#212a3e] rounded-lg px-3 py-2.5 bg-[var(--sky-2)] text-[#b8c1d4] placeholder-[#8b95ab] focus:outline-none focus:ring-2 focus:ring-[#5b9bff]"
+        className="w-full body-sm border border-[#1e293b] rounded-lg px-3 py-2.5 bg-[var(--sky-2)] text-[#94a3b8] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
       />
-      <div className="space-y-2 max-h-64 overflow-y-auto border border-[#212a3e] rounded-lg p-3 bg-[#0a0e17]">
+      <div className="space-y-2 max-h-64 overflow-y-auto border border-[#1e293b] rounded-lg p-3 bg-[#07090e]">
         {filtered.slice(0, 5).map((ku) => (
           <label key={ku.id} className="flex items-center gap-2 cursor-pointer hover:bg-[var(--sky-2)] p-2 rounded transition-colors">
             <input
@@ -331,16 +331,16 @@ const KnowledgeUnitAdder = ({ projectId, candidates, isPending, run }: Knowledge
               checked={selectedIds.has(ku.id)}
               onChange={() => handleToggle(ku.id)}
               disabled={isPending}
-              className="w-4 h-4 rounded border-[#212a3e] text-[#5b9bff] focus:ring-[#5b9bff]"
+              className="w-4 h-4 rounded border-[#1e293b] text-[#3b82f6] focus:ring-[#3b82f6]"
             />
             <span className="flex-1 min-w-0">
               <p className="body-sm text-[var(--star-1)] truncate">{ku.title}</p>
-              <p className="label-xs text-[#8b95ab]">{ku.domain}</p>
+              <p className="label-xs text-[#64748b]">{ku.domain}</p>
             </span>
           </label>
         ))}
         {filtered.length > 5 && (
-          <p className="label-xs text-[#8b95ab] text-center py-2">
+          <p className="label-xs text-[#64748b] text-center py-2">
             Mostrando 5 de {filtered.length} resultados
           </p>
         )}
@@ -349,7 +349,7 @@ const KnowledgeUnitAdder = ({ projectId, candidates, isPending, run }: Knowledge
         type="button"
         disabled={isPending || selectedIds.size === 0}
         onClick={handleAddSelected}
-        className="w-full body-sm px-3 py-2.5 rounded-lg bg-[#5b9bff] text-[var(--azure-ink)] font-medium hover:bg-[#3f7fe0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full body-sm px-3 py-2.5 rounded-lg bg-[#3b82f6] text-[var(--azure-ink)] font-medium hover:bg-[#2563eb] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         Agregar seleccionadas ({selectedIds.size})
       </button>
@@ -401,8 +401,8 @@ const AgentAdder = ({ projectId, candidates, isPending, run }: AgentAdderProps) 
   if (candidates.length === 0) {
     return (
       <div className="space-y-2 pt-1">
-        <label className="label-sm text-[#8b95ab]">INTEGRAR AGENTE</label>
-        <p className="body-sm text-[#8b95ab]">
+        <label className="label-sm text-[#64748b]">INTEGRAR AGENTE</label>
+        <p className="body-sm text-[#64748b]">
           No quedan agentes disponibles para integrar.
         </p>
       </div>
@@ -411,15 +411,15 @@ const AgentAdder = ({ projectId, candidates, isPending, run }: AgentAdderProps) 
 
   return (
     <div className="space-y-2 pt-1">
-      <label className="label-sm text-[#8b95ab]">INTEGRAR AGENTE</label>
+      <label className="label-sm text-[#64748b]">INTEGRAR AGENTE</label>
       <input
         type="text"
         placeholder="Buscar agente..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full body-sm border border-[#212a3e] rounded-lg px-3 py-2.5 bg-[var(--sky-2)] text-[#b8c1d4] placeholder-[#8b95ab] focus:outline-none focus:ring-2 focus:ring-[#5b9bff]"
+        className="w-full body-sm border border-[#1e293b] rounded-lg px-3 py-2.5 bg-[var(--sky-2)] text-[#94a3b8] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
       />
-      <div className="space-y-2 max-h-64 overflow-y-auto border border-[#212a3e] rounded-lg p-3 bg-[#0a0e17]">
+      <div className="space-y-2 max-h-64 overflow-y-auto border border-[#1e293b] rounded-lg p-3 bg-[#07090e]">
         {filtered.slice(0, 5).map((agent) => (
           <label key={agent.id} className="flex items-center gap-2 cursor-pointer hover:bg-[var(--sky-2)] p-2 rounded transition-colors">
             <input
@@ -427,7 +427,7 @@ const AgentAdder = ({ projectId, candidates, isPending, run }: AgentAdderProps) 
               checked={selectedIds.has(agent.id)}
               onChange={() => handleToggle(agent.id)}
               disabled={isPending}
-              className="w-4 h-4 rounded border-[#212a3e] text-[#5b9bff] focus:ring-[#5b9bff]"
+              className="w-4 h-4 rounded border-[#1e293b] text-[#3b82f6] focus:ring-[#3b82f6]"
             />
             <span className="flex-1 min-w-0">
               <p className="body-sm text-[var(--star-1)]">{agent.name}</p>
@@ -435,7 +435,7 @@ const AgentAdder = ({ projectId, candidates, isPending, run }: AgentAdderProps) 
           </label>
         ))}
         {filtered.length > 5 && (
-          <p className="label-xs text-[#8b95ab] text-center py-2">
+          <p className="label-xs text-[#64748b] text-center py-2">
             Mostrando 5 de {filtered.length} resultados
           </p>
         )}
@@ -444,7 +444,7 @@ const AgentAdder = ({ projectId, candidates, isPending, run }: AgentAdderProps) 
         type="button"
         disabled={isPending || selectedIds.size === 0}
         onClick={handleAddSelected}
-        className="w-full body-sm px-3 py-2.5 rounded-lg bg-[#5b9bff] text-[var(--azure-ink)] font-medium hover:bg-[#3f7fe0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full body-sm px-3 py-2.5 rounded-lg bg-[#3b82f6] text-[var(--azure-ink)] font-medium hover:bg-[#2563eb] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         Agregar seleccionados ({selectedIds.size})
       </button>

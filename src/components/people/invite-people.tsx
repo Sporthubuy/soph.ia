@@ -96,7 +96,7 @@ export const InvitePeople = ({
             if (e.key === "Enter" && email.trim() && !isPending) invite();
           }}
           placeholder="email@empresa.com"
-          className="flex-1 rounded-[10px] border border-[var(--edge)] bg-[var(--sky-3)] px-3 py-2.5 text-sm text-[var(--star-1)] placeholder-[var(--star-4)] focus:border-[var(--azure)] focus:outline-none focus:ring-2 focus:ring-[rgb(91_155_255_/_0.16)]"
+          className="flex-1 rounded-[10px] border border-[var(--edge)] bg-[var(--sky-3)] px-3 py-2.5 text-sm text-[var(--star-1)] placeholder-[var(--star-4)] focus:border-[var(--azure)] focus:outline-none focus:ring-2 focus:ring-[rgb(59_130_246_/_0.16)]"
         />
         <select
           value={role}

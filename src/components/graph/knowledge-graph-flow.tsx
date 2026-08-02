@@ -42,10 +42,10 @@ const STATUS: Record<
   string,
   { color: string; ring: string; label: string; mini: string }
 > = {
-  approved: { color: "var(--verified)", ring: "rgb(52 211 153 / 0.5)", label: "verified", mini: "#34d399" },
-  proposed: { color: "var(--pending)", ring: "rgb(251 191 36 / 0.5)", label: "proposed", mini: "#fbbf24" },
+  approved: { color: "var(--verified)", ring: "rgb(16 185 129 / 0.5)", label: "verified", mini: "#10b981" },
+  proposed: { color: "var(--pending)", ring: "rgb(245 158 11 / 0.5)", label: "proposed", mini: "#f59e0b" },
   draft: { color: "var(--star-3)", ring: "var(--edge-strong)", label: "draft", mini: "#93a4c4" },
-  archived: { color: "var(--star-4)", ring: "var(--edge)", label: "archived", mini: "#5b6478" },
+  archived: { color: "var(--star-4)", ring: "var(--edge)", label: "archived", mini: "#475569" },
 };
 
 const KUNode = ({
@@ -162,7 +162,7 @@ export const KnowledgeGraphFlow = ({
         source: dep.source_ku_id,
         target: dep.target_ku_id,
         animated: true,
-        style: { stroke: "rgb(91 155 255 / 0.55)", strokeWidth: 1.5 },
+        style: { stroke: "rgb(59 130 246 / 0.55)", strokeWidth: 1.5 },
       }));
   }, [dependencies, filteredKUIds]);
 
@@ -249,13 +249,13 @@ export const KnowledgeGraphFlow = ({
             variant={BackgroundVariant.Dots}
             gap={22}
             size={1}
-            color="rgb(120 140 190 / 0.18)"
+            color="rgb(100 116 139 / 0.18)"
           />
           <Controls className="!border !border-[var(--edge)] !bg-[var(--sky-2)] !shadow-none [&_button]:!border-[var(--edge)] [&_button]:!bg-[var(--sky-3)] [&_button]:!fill-[var(--star-2)] [&_button:hover]:!bg-[var(--sky-4)]" />
           <MiniMap
             className="!bg-[var(--sky-2)]"
             style={{ border: "1px solid var(--edge)", borderRadius: 12 }}
-            nodeColor={(node) => STATUS[node.data?.status as string]?.mini ?? "#5b6478"}
+            nodeColor={(node) => STATUS[node.data?.status as string]?.mini ?? "#475569"}
             nodeStrokeWidth={0}
             maskColor="rgb(8 11 18 / 0.7)"
           />

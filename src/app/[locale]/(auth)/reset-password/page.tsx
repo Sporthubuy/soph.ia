@@ -50,7 +50,7 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0e17] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[#07090e] flex items-center justify-center px-4">
       <div className="absolute inset-0 dot-pattern opacity-20" />
 
       <div className="panel relative z-10 w-full max-w-sm p-8 space-y-6">
@@ -62,7 +62,7 @@ export default function ResetPasswordPage() {
             <LogoMark size={44} />
           </Link>
           <h1 className="headline-md text-[var(--star-1)] font-bold mt-4">Set new password</h1>
-          <p className="body-md text-[#b8c1d4]">Choose a new password for your account</p>
+          <p className="body-md text-[#94a3b8]">Choose a new password for your account</p>
         </div>
 
         <form onSubmit={handleUpdate} className="space-y-4">
@@ -99,13 +99,13 @@ export default function ResetPasswordPage() {
           </div>
 
           {error && (
-            <div className="p-3 rounded bg-[rgb(251_106_104_/_0.12)] border border-[rgb(251_106_104_/_0.28)]" role="alert">
+            <div className="p-3 rounded bg-[rgb(239_68_68_/_0.12)] border border-[rgb(239_68_68_/_0.28)]" role="alert">
               <p className="label-sm text-[var(--danger)]">{error}</p>
             </div>
           )}
 
           {success && (
-            <div className="p-3 rounded bg-[rgb(52_211_153_/_0.12)] border border-[rgb(52_211_153_/_0.28)]" role="status">
+            <div className="p-3 rounded bg-[rgb(16_185_129_/_0.12)] border border-[rgb(16_185_129_/_0.28)]" role="status">
               <p className="label-sm text-[var(--verified)]">Password updated. Redirecting…</p>
             </div>
           )}
@@ -119,8 +119,8 @@ export default function ResetPasswordPage() {
           </Button>
         </form>
 
-        <p className="text-center body-md text-[#b8c1d4]">
-          <Link href="/login" className="font-semibold text-[#5b9bff] hover:underline">
+        <p className="text-center body-md text-[#94a3b8]">
+          <Link href="/login" className="font-semibold text-[#3b82f6] hover:underline">
             Back to sign in
           </Link>
         </p>

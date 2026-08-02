@@ -57,10 +57,10 @@ export const GettingStartedChecklist = ({
 
   return (
     <div className="panel overflow-hidden">
-      <div className="border-b border-[#212a3e] bg-gradient-to-r from-[#16233d]/60 to-transparent px-5 py-4">
+      <div className="border-b border-[#1e293b] bg-gradient-to-r from-[#172554]/60 to-transparent px-5 py-4">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-medium uppercase tracking-wider text-[#5b9bff]">
+            <p className="text-xs font-medium uppercase tracking-wider text-[#3b82f6]">
               {t("gettingStartedGuide")}
             </p>
             <h2 className="mt-0.5 text-base font-semibold text-[var(--star-1)]">
@@ -68,26 +68,26 @@ export const GettingStartedChecklist = ({
                 ? t("gettingStartedWelcome")
                 : t("gettingStartedTitle")}
             </h2>
-            <p className="mt-1 text-xs text-[#8b95ab]">
+            <p className="mt-1 text-xs text-[#64748b]">
               {complete
                 ? t("gettingStartedComplete")
                 : t("gettingStartedProgress", { done, total })}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold text-[#5b9bff]">{pct}%</p>
-            <p className="text-[10px] text-[#8b95ab]">{t("progress")}</p>
+            <p className="text-2xl font-bold text-[#3b82f6]">{pct}%</p>
+            <p className="text-[10px] text-[#64748b]">{t("progress")}</p>
           </div>
         </div>
-        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#212a3e]">
+        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#1e293b]">
           <div
-            className="h-full rounded-full bg-[#5b9bff] transition-all"
+            className="h-full rounded-full bg-[#3b82f6] transition-all"
             style={{ width: `${pct}%` }}
           />
         </div>
       </div>
 
-      <div className="divide-y divide-[#212a3e]">
+      <div className="divide-y divide-[#1e293b]">
         {steps.map((step, i) => {
           const isDone =
             step.check === "optional" ? false : !!checks[step.check];
@@ -95,13 +95,13 @@ export const GettingStartedChecklist = ({
           return (
             <div
               key={step.id}
-              className="flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-[#0a0e17]"
+              className="flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-[#07090e]"
             >
               <div
                 className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                   isDone
-                    ? "bg-[rgb(52_211_153_/_0.16)] text-[var(--verified)]"
-                    : "bg-[#151b2b] text-[#8b95ab]"
+                    ? "bg-[rgb(16_185_129_/_0.16)] text-[var(--verified)]"
+                    : "bg-[#182032] text-[#64748b]"
                 }`}
               >
                 {isDone ? <Icon name="check" size={14} strokeWidth={2.6} /> : i + 1}
@@ -110,12 +110,12 @@ export const GettingStartedChecklist = ({
                 <p className="text-sm font-medium text-[var(--star-1)]">
                   {tg(step.titleKey)}
                   {isOptional && (
-                    <span className="ml-2 text-[10px] font-normal text-[#8b95ab]">
+                    <span className="ml-2 text-[10px] font-normal text-[#64748b]">
                       {tc("optional")}
                     </span>
                   )}
                 </p>
-                <p className="text-xs text-[#8b95ab]">{tg(step.descKey)}</p>
+                <p className="text-xs text-[#64748b]">{tg(step.descKey)}</p>
               </div>
               {!isDone && (
                 <Button

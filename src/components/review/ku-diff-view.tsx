@@ -6,9 +6,9 @@ import { Badge } from "@/components/ui/badge";
 
 const lineClass: Record<DiffLine["type"], string> = {
   added:
-    "bg-[rgb(52_211_153_/_0.12)] text-[var(--verified)] dark:text-[var(--verified)] border-l-2 border-[rgb(52_211_153_/_0.5)]",
+    "bg-[rgb(16_185_129_/_0.12)] text-[var(--verified)] dark:text-[var(--verified)] border-l-2 border-[rgb(16_185_129_/_0.5)]",
   removed:
-    "bg-[rgb(251_106_104_/_0.12)] text-[var(--danger)] dark:text-[var(--danger)] border-l-2 border-[rgb(251_106_104_/_0.5)]",
+    "bg-[rgb(239_68_68_/_0.12)] text-[var(--danger)] dark:text-[var(--danger)] border-l-2 border-[rgb(239_68_68_/_0.5)]",
   unchanged: "border-l-2 border-transparent",
 };
 

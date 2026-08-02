@@ -119,7 +119,7 @@ export const AIProviderSettings = () => {
     <section className="panel p-6 space-y-6">
       <div className="space-y-1">
         <h2 className="section-heading">AI PROVIDERS</h2>
-        <p className="body-sm text-[#8b95ab]">
+        <p className="body-sm text-[#64748b]">
           Configura tus credenciales para usar diferentes modelos de IA en tus agentes
         </p>
       </div>
@@ -128,7 +128,7 @@ export const AIProviderSettings = () => {
         {PROVIDERS.map((provider) => {
           const saved = savedProviders.find((p) => p.provider === provider.id);
           return (
-            <div key={provider.id} className="border border-[#212a3e] rounded-lg p-4 space-y-3">
+            <div key={provider.id} className="border border-[#1e293b] rounded-lg p-4 space-y-3">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-3">
@@ -137,14 +137,14 @@ export const AIProviderSettings = () => {
                     </span>
                     <div>
                       <p className="body-md font-medium text-[var(--star-1)]">{provider.name}</p>
-                      <p className="label-xs text-[#8b95ab]">{provider.desc}</p>
+                      <p className="label-xs text-[#64748b]">{provider.desc}</p>
                     </div>
                   </div>
                 </div>
                 <span className={`label-xs px-2 py-1 rounded ${
                   provider.type === "Pago"
-                    ? "bg-[rgb(251_191_36_/_0.12)] text-[var(--pending)]"
-                    : "bg-[rgb(52_211_153_/_0.12)] text-[var(--verified)]"
+                    ? "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)]"
+                    : "bg-[rgb(16_185_129_/_0.12)] text-[var(--verified)]"
                 }`}>
                   {provider.type}
                 </span>
@@ -152,7 +152,7 @@ export const AIProviderSettings = () => {
 
               {saved ? (
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between rounded-lg bg-[rgb(52_211_153_/_0.12)] p-3">
+                  <div className="flex items-center justify-between rounded-lg bg-[rgb(16_185_129_/_0.12)] p-3">
                     <p className="label-sm text-[var(--verified)] flex items-center gap-1.5">
                       <Icon name="check" size={14} strokeWidth={2.4} /> Configurado
                     </p>
@@ -164,7 +164,7 @@ export const AIProviderSettings = () => {
                     size="sm"
                     variant="outline"
                     onClick={() => handleDelete(saved.id, provider.id)}
-                    className="rounded-lg w-full text-[var(--danger)] hover:bg-[rgb(251_106_104_/_0.12)]"
+                    className="rounded-lg w-full text-[var(--danger)] hover:bg-[rgb(239_68_68_/_0.12)]"
                   >
                     Remover configuración
                   </Button>
@@ -172,7 +172,7 @@ export const AIProviderSettings = () => {
               ) : (
                 <div className="space-y-2">
                   <div>
-                    <Label className="text-xs text-[#8b95ab]">
+                    <Label className="text-xs text-[#64748b]">
                       {provider.id === "anthropic" && "Anthropic API Key"}
                       {provider.id === "openai" && "OpenAI API Key"}
                       {provider.id === "google" && "Google AI API Key"}
@@ -191,7 +191,7 @@ export const AIProviderSettings = () => {
                     />
                   </div>
                   <div>
-                    <Label className="text-xs text-[#8b95ab]">
+                    <Label className="text-xs text-[#64748b]">
                       Modelo (opcional)
                     </Label>
                     <Input
@@ -220,7 +220,7 @@ export const AIProviderSettings = () => {
         })}
       </div>
 
-      <div className="rounded-lg bg-[rgb(91_155_255_/_0.12)] border border-[rgb(91_155_255_/_0.28)] p-4 space-y-2">
+      <div className="rounded-lg bg-[rgb(59_130_246_/_0.12)] border border-[rgb(59_130_246_/_0.28)] p-4 space-y-2">
         <p className="label-sm font-medium text-[var(--azure)]">Cómo funciona</p>
         <p className="body-sm text-[var(--azure)]">
           Las API keys se guardan de forma segura en tu cuenta. Cuando creas un agente y seleccionas un provider,

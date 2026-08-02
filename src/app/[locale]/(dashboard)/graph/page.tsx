@@ -26,7 +26,7 @@ export default async function GraphPage({
       <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
         <div className="space-y-1">
           <h1 className="headline-xl text-[var(--star-1)] font-bold">{t("pageTitle")}</h1>
-          <p className="body-md text-[#b8c1d4]">{t("graphDesc")}</p>
+          <p className="body-md text-[#94a3b8]">{t("graphDesc")}</p>
         </div>
         <Link
           href="/knowledge/new"
@@ -39,34 +39,34 @@ export default async function GraphPage({
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="panel p-4">
-          <p className="label-sm text-[#8b95ab]">{t("statKUs")}</p>
+          <p className="label-sm text-[#64748b]">{t("statKUs")}</p>
           <p className="headline-md font-bold text-[var(--star-1)] mt-1">{kus.length}</p>
         </div>
         <div className="panel p-4">
-          <p className="label-sm text-[#8b95ab]">{t("statVerified")}</p>
+          <p className="label-sm text-[#64748b]">{t("statVerified")}</p>
           <p className="headline-md font-bold text-[var(--verified)] mt-1">{approved}</p>
-          <p className="label-sm text-[#8b95ab] mt-0.5">{t("statVerifiedSub", { percent: kus.length > 0 ? Math.round((approved / kus.length) * 100) : 0 })}</p>
+          <p className="label-sm text-[#64748b] mt-0.5">{t("statVerifiedSub", { percent: kus.length > 0 ? Math.round((approved / kus.length) * 100) : 0 })}</p>
         </div>
         <div className="panel p-4">
-          <p className="label-sm text-[#8b95ab]">{t("statPending")}</p>
+          <p className="label-sm text-[#64748b]">{t("statPending")}</p>
           <p className="headline-md font-bold text-[var(--pending)] mt-1">{proposed}</p>
         </div>
         <div className="panel p-4">
-          <p className="label-sm text-[#8b95ab]">{t("statDomains")}</p>
+          <p className="label-sm text-[#64748b]">{t("statDomains")}</p>
           <p className="headline-md font-bold text-[var(--star-1)] mt-1">{domains.length}</p>
         </div>
       </div>
 
       {kus.length === 0 ? (
         <div className="panel p-12 text-center space-y-4">
-          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[rgb(91_155_255_/_0.12)] text-[var(--azure)]" aria-hidden>
+          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[rgb(59_130_246_/_0.12)] text-[var(--azure)]" aria-hidden>
             <Icon name="graph" size={28} />
           </span>
           <p className="body-md text-[var(--star-1)] font-medium">{t("emptyTitle")}</p>
-          <p className="body-sm text-[#8b95ab] max-w-md mx-auto">{t("emptyDesc")}</p>
+          <p className="body-sm text-[#64748b] max-w-md mx-auto">{t("emptyDesc")}</p>
           <Link
             href="/knowledge/new"
-            className="inline-flex items-center gap-2 rounded-lg bg-[#5b9bff] px-4 py-2.5 text-sm font-medium text-[var(--azure-ink)] hover:bg-[#3f7fe0]"
+            className="inline-flex items-center gap-2 rounded-lg bg-[#3b82f6] px-4 py-2.5 text-sm font-medium text-[var(--azure-ink)] hover:bg-[#2563eb]"
           >
             Create first knowledge unit
           </Link>
@@ -76,9 +76,9 @@ export default async function GraphPage({
           <section className="space-y-3">
             <div>
               <h2 className="section-heading">{t("graphTitle")}</h2>
-              <p className="body-sm text-[#8b95ab]">{t("graphDesc")}</p>
+              <p className="body-sm text-[#64748b]">{t("graphDesc")}</p>
             </div>
-            <div className="w-full h-[600px] rounded-lg border border-[#212a3e]">
+            <div className="w-full h-[600px] rounded-lg border border-[#1e293b]">
               <KnowledgeGraphFlow
                 kus={kus}
                 dependencies={dependencies}
@@ -91,7 +91,7 @@ export default async function GraphPage({
             <section className="panel p-6 space-y-3">
               <div>
                 <h2 className="section-heading">{t("semanticTitle")}</h2>
-                <p className="body-sm text-[#8b95ab]">{t("semanticDesc")}</p>
+                <p className="body-sm text-[#64748b]">{t("semanticDesc")}</p>
               </div>
               <SemanticSearch organizationId={organizationId} />
             </section>
