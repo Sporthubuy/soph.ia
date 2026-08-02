@@ -12,7 +12,7 @@ export function generateStaticParams() {
 }
 
 export const metadata: Metadata = {
-  title: "SOPH.IA — The Knowledge Operating System for AI",
+  title: "soph.ia — The Knowledge Operating System for AI",
   description:
     "Construye, versiona y gobierna el conocimiento de tu organizacion para alimentar agentes de IA.",
 };
