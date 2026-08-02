@@ -116,8 +116,27 @@
     background-clip: padding-box;
   }
 
+  /* Landing animations */
+  @keyframes edge-flow {
+    to { stroke-dashoffset: -24; }
+  }
+  @keyframes node-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
+  }
+  @keyframes glow-drift {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.5; }
+    50% { transform: translate3d(3%, -3%, 0) scale(1.06); opacity: 0.8; }
+  }
+  .anim-edge { stroke-dasharray: 4 8; animation: edge-flow 1.2s linear infinite; }
+  .anim-node { animation: node-pulse 2.4s ease-in-out infinite; }
+  .anim-glow { animation: glow-drift 9s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) {
+    .anim-edge, .anim-node, .anim-glow { animation: none; }
+  }
+
   ::selection {
-    background: rgb(91 155 255 / 0.28);
+    background: rgb(59 130 246 / 0.28);
     color: var(--star-1);
   }
 
