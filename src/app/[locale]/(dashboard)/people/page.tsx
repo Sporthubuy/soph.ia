@@ -1,6 +1,10 @@
 import { setRequestLocale } from "next-intl/server";
-import { getOrganizationPeople } from "@/lib/organization/actions";
+import {
+  getOrganizationPeople,
+  getPendingInvitations,
+} from "@/lib/organization/actions";
 import { PeopleDirectory } from "@/components/people/people-directory";
+import { InvitePeople } from "@/components/people/invite-people";
 
 export default async function PeoplePage({
   params,
@@ -11,6 +15,8 @@ export default async function PeoplePage({
   setRequestLocale(locale);
 
   const { people, currentUserId, userRole } = await getOrganizationPeople();
+  const canManage = ["owner", "admin"].includes(userRole);
+  const invitations = canManage ? await getPendingInvitations() : [];
 
   const admins = people.filter((p) =>
     ["owner", "admin"].includes(p.role)
@@ -43,6 +49,8 @@ export default async function PeoplePage({
           </div>
         ))}
       </div>
+
+      {canManage && <InvitePeople invitations={invitations} />}
 
       <PeopleDirectory
         people={people}

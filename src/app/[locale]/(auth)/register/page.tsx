@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useRouter } from "@/i18n/routing";
 import { useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
@@ -17,6 +17,25 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [invite, setInvite] = useState<{
+    organizationName: string;
+    role: string;
+  } | null>(null);
+
+  // If arriving from an invite link, prefill + lock the email so the signup
+  // trigger routes the new user into the inviting organization.
+  useEffect(() => {
+    const token = new URLSearchParams(window.location.search).get("invite");
+    if (!token) return;
+    fetch(`/api/invitations/lookup?token=${encodeURIComponent(token)}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data?.email) return;
+        setEmail(data.email);
+        setInvite({ organizationName: data.organizationName, role: data.role });
+      })
+      .catch(() => {});
+  }, []);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,6 +72,15 @@ export default function RegisterPage() {
           <p className="body-md text-[#b8c1d4]">Start building knowledge</p>
         </div>
 
+        {invite && (
+          <div className="rounded-[10px] border border-[rgb(91_155_255_/_0.28)] bg-[rgb(91_155_255_/_0.1)] p-3 text-center">
+            <p className="label-sm text-[var(--azure)]">
+              Te unís a <span className="font-semibold">{invite.organizationName}</span>{" "}
+              como {invite.role}
+            </p>
+          </div>
+        )}
+
         <form onSubmit={handleRegister} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="fullName" className="body-md text-[var(--star-1)]">Full Name</Label>
@@ -76,7 +104,8 @@ export default function RegisterPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="input-workspace w-full"
+              readOnly={!!invite}
+              className={`input-workspace w-full ${invite ? "opacity-70" : ""}`}
             />
           </div>
 

@@ -1,5 +1,6 @@
 "use server";
 
+import { randomBytes } from "crypto";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getCurrentOrganizationId } from "@/lib/organization/get-org";
@@ -197,6 +198,112 @@ export async function getOrganizationPeople(): Promise<{
   });
 
   return { people, currentUserId: userId, userRole: role };
+}
+
+export interface Invitation {
+  id: string;
+  email: string;
+  role: string;
+  token: string;
+  status: string;
+  created_at: string;
+  expires_at: string;
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** Owner/admin invites an email into the org. Returns the invite token. */
+export async function createInvitation(
+  email: string,
+  role: string
+): Promise<ActionResult & { token?: string }> {
+  const ctx = await getMembershipContext();
+  if (!ctx) return { error: "No autenticado." };
+  if (!["owner", "admin"].includes(ctx.role)) {
+    return { error: "Solo owners y admins pueden invitar." };
+  }
+
+  const normalized = email.trim().toLowerCase();
+  if (!EMAIL_RE.test(normalized)) return { error: "Email inválido." };
+  if (!["admin", "editor", "viewer"].includes(role)) {
+    return { error: "Rol inválido." };
+  }
+
+  // Already a member?
+  const { data: existingProfile } = await ctx.supabase
+    .from("profiles")
+    .select("id")
+    .eq("email", normalized)
+    .maybeSingle();
+  if (existingProfile) {
+    const { data: existingMember } = await ctx.supabase
+      .from("memberships")
+      .select("id")
+      .eq("user_id", existingProfile.id)
+      .eq("organization_id", ctx.organizationId)
+      .maybeSingle();
+    if (existingMember) return { error: "Esa persona ya es miembro." };
+  }
+
+  // Replace any prior pending invite for the same email in this org.
+  await ctx.supabase
+    .from("invitations")
+    .update({ status: "revoked" })
+    .eq("organization_id", ctx.organizationId)
+    .eq("email", normalized)
+    .eq("status", "pending");
+
+  const token = randomBytes(24).toString("base64url");
+  const { error } = await ctx.supabase.from("invitations").insert({
+    organization_id: ctx.organizationId,
+    email: normalized,
+    role,
+    token,
+    invited_by: ctx.userId,
+  });
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/[locale]/people", "page");
+  return { success: true, token };
+}
+
+export async function getPendingInvitations(): Promise<Invitation[]> {
+  const ctx = await getMembershipContext();
+  if (!ctx) return [];
+
+  const { data, error } = await ctx.supabase
+    .from("invitations")
+    .select("id, email, role, token, status, created_at, expires_at")
+    .eq("organization_id", ctx.organizationId)
+    .eq("status", "pending")
+    .gt("expires_at", new Date().toISOString())
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching invitations:", error);
+    return [];
+  }
+  return (data ?? []) as Invitation[];
+}
+
+export async function revokeInvitation(id: string): Promise<ActionResult> {
+  const ctx = await getMembershipContext();
+  if (!ctx) return { error: "No autenticado." };
+  if (!["owner", "admin"].includes(ctx.role)) {
+    return { error: "Solo owners y admins pueden revocar invitaciones." };
+  }
+
+  const { error } = await ctx.supabase
+    .from("invitations")
+    .update({ status: "revoked" })
+    .eq("id", id)
+    .eq("organization_id", ctx.organizationId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/[locale]/people", "page");
+  return { success: true };
 }
 
 export async function updateOrganization(formData: FormData): Promise<ActionResult> {
