@@ -1,7 +1,4 @@
-import { Icon } from "@/components/shared/icon";
-import { Link } from "next/link";
-
-export default async function AdminUsersPage() {
+export default function AdminUsersPage() {
   // TODO: Fetch real users from database
   const users = [
     { id: 1, name: "John Doe", email: "john@example.com", role: "Admin", status: "active", joinDate: "2025-01-15" },
@@ -21,23 +18,18 @@ export default async function AdminUsersPage() {
             Manage platform users and permissions
           </p>
         </div>
-        <Link
+        <a
           href="/admin/users/new"
           className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#3b82f6] text-white font-medium hover:bg-[#2563eb] transition-colors"
         >
-          <Icon name="plus" size={18} />
-          Add User
-        </Link>
+          ➕ Add User
+        </a>
       </div>
 
       {/* Filters and Search */}
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-md">
-          <Icon
-            name="search"
-            size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]"
-          />
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]">🔍</span>
           <input
             type="search"
             placeholder="Search users..."
@@ -91,10 +83,10 @@ export default async function AdminUsersPage() {
                   <td className="px-6 py-3 text-sm">
                     <div className="flex items-center gap-2">
                       <button className="p-1 text-[#64748b] hover:text-[#3b82f6] hover:bg-[#1e293b] rounded transition-colors">
-                        <Icon name="edit" size={16} />
+                        ✏️
                       </button>
                       <button className="p-1 text-[#64748b] hover:text-red-400 hover:bg-[#1e293b] rounded transition-colors">
-                        <Icon name="delete" size={16} />
+                        🗑️
                       </button>
                     </div>
                   </td>
