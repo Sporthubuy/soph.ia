@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "@/i18n/routing";
 import { Icon } from "@/components/shared/icon";
+import { StatusBadge } from "@/components/shared/status-badge";
 
 interface ProjectItem {
   id: string;
@@ -16,18 +17,6 @@ interface ProjectItem {
   kuCount: number;
   agentCount: number;
 }
-
-const STATUS_STYLES: Record<string, string> = {
-  active: "bg-[rgb(16_185_129_/_0.12)] text-[var(--verified)] border-[rgb(16_185_129_/_0.28)]",
-  paused: "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)] border-[rgb(245_158_11_/_0.28)]",
-  archived: "bg-[var(--sky-3)] text-[var(--star-2)] border-[var(--edge)]",
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  active: "Activo",
-  paused: "En pausa",
-  archived: "Archivado",
-};
 
 const formatUpdatedAt = (value?: string | null) => {
   if (!value) return null;
@@ -113,63 +102,48 @@ export const ProjectsList = ({ projects }: { projects: ProjectItem[] }) => {
           </p>
         </div>
       ) : (
-        <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {visible.map((project) => {
             const updated = formatUpdatedAt(project.updated_at);
+            const color = project.color || "#3b82f6";
             return (
               <li key={project.id}>
                 <button
                   onClick={() => router.push(`/projects/${project.id}`)}
-                  className="panel w-full h-full text-left p-5 flex flex-col gap-3 hover:bg-[#07090e] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] transition-colors"
+                  className="group w-full rounded-xl px-3 py-4 text-center transition-colors hover:bg-[var(--sky-2)] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div
-                      className="w-11 h-11 rounded-lg flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: project.color || "#172554" }}
-                    >
-                      <Icon name="projects" size={20} className="text-[var(--azure-ink)]" />
-                    </div>
-                    <span
-                      className={`label-sm px-2 py-1 rounded border ${
-                        STATUS_STYLES[project.status] ?? STATUS_STYLES.archived
-                      }`}
-                    >
-                      {STATUS_LABELS[project.status] ?? project.status}
-                    </span>
+                  <div className="relative mx-auto mb-3 flex h-20 w-24 items-center justify-center">
+                    <Icon
+                      name="folder"
+                      size={64}
+                      strokeWidth={1.5}
+                      fill={color}
+                      className="text-[color:var(--star-4)] transition-transform duration-200 group-hover:scale-[1.04]"
+                    />
+                    <Icon
+                      name="folder-open"
+                      size={64}
+                      strokeWidth={1.5}
+                      fill={color}
+                      className="absolute inset-0 mx-auto my-auto hidden text-[color:var(--star-4)] group-hover:block"
+                    />
+                    {project.status === "active" && (
+                      <div className="absolute right-1 top-1">
+                        <StatusBadge variant="success" size="sm" label="" className="px-1" />
+                      </div>
+                    )}
                   </div>
 
-                  <div className="flex-1 min-w-0">
-                    <h3 className="body-md font-semibold text-[var(--star-1)]">
-                      {project.name}
-                    </h3>
-                    <p className="body-sm text-[#64748b] mt-1 line-clamp-2">
-                      {project.description || "Sin descripcion"}
-                    </p>
-                  </div>
-
-                  <dl className="flex items-center gap-4 body-sm text-[#64748b] flex-wrap">
-                    <div className="flex items-center gap-1">
-                      <Icon name="people" size={15} />
-                      <dd className="font-semibold text-[#94a3b8]">
-                        {project.memberCount}
-                      </dd>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Icon name="knowledge" size={15} />
-                      <dd className="font-semibold text-[#94a3b8]">
-                        {project.kuCount}
-                      </dd>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Icon name="agents" size={15} />
-                      <dd className="font-semibold text-[#94a3b8]">
-                        {project.agentCount}
-                      </dd>
-                    </div>
-                  </dl>
-
+                  <h3 className="truncate body-md font-semibold text-[var(--star-1)] group-hover:underline">
+                    {project.name}
+                  </h3>
+                  <p className="body-sm text-[#64748b]">
+                    {project.kuCount} KU · {project.agentCount} agentes
+                  </p>
                   {updated && (
-                    <p className="body-sm text-[#64748b]">Actualizado {updated}</p>
+                    <p className="body-sm text-[#64748b]">
+                      {updated}
+                    </p>
                   )}
                 </button>
               </li>

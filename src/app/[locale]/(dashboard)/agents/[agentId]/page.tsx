@@ -6,21 +6,8 @@ import { getAgent } from "@/lib/agents/actions";
 import { getKnowledgeUnits } from "@/lib/knowledge/actions";
 import { VisibilityToggle } from "@/components/shared/visibility-toggle";
 import { Icon } from "@/components/shared/icon";
+import { StatusBadge } from "@/components/shared/status-badge";
 
-/** Estados validos del check constraint de public.agents. */
-const STATUS_STYLES: Record<string, string> = {
-  deployed: "bg-[rgb(16_185_129_/_0.12)] text-[var(--verified)] border-[rgb(16_185_129_/_0.28)]",
-  draft: "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)] border-[rgb(245_158_11_/_0.28)]",
-  paused: "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)] border-[rgb(245_158_11_/_0.28)]",
-  archived: "bg-[var(--sky-3)] text-[var(--star-2)] border-[var(--edge)]",
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  deployed: "Desplegado",
-  draft: "Borrador",
-  paused: "En pausa",
-  archived: "Archivado",
-};
 
 export default async function AgentPage({
   params,
@@ -58,14 +45,7 @@ export default async function AgentPage({
       <header className="space-y-3">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <h1 className="headline-xl text-[var(--star-1)] font-bold">{agent.name}</h1>
-          <span
-            className={`label-sm px-2 py-1 rounded border ${
-              STATUS_STYLES[status] ?? STATUS_STYLES.archived
-            }`}
-          >
-            {STATUS_LABELS[status] ??
-              status.charAt(0).toUpperCase() + status.slice(1)}
-          </span>
+          <StatusBadge status={status} size="sm" />
         </div>
 
         {agent.description && (

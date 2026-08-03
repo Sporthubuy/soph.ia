@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/shared/logo";
+import { StatusBadge } from "@/components/shared/status-badge";
 import {
   ShieldCheck,
   GitBranch,
@@ -164,7 +165,7 @@ export default function LandingPage() {
               </span>
             </div>
 
-            <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight text-[var(--star-1)] md:text-6xl">
+            <h1 className="font-display text-4xl font-extrabold leading-[1.1] tracking-tight text-[var(--star-1)] md:text-6xl">
               The Infrastructure Where Human Knowledge Becomes{" "}
               <span className="brand-gradient-text">AI Intelligence</span>
             </h1>
@@ -200,7 +201,7 @@ export default function LandingPage() {
         <section className="px-6 py-20">
           <div className="mx-auto max-w-5xl space-y-12">
             <div className="mx-auto max-w-2xl text-center">
-              <h2 className="text-2xl font-bold tracking-tight text-[var(--star-1)] md:text-4xl">
+              <h2 className="font-display text-2xl font-bold tracking-tight text-[var(--star-1)] md:text-4xl">
                 Not a chatbot. The system beneath your agents.
               </h2>
               <p className="mt-3 text-base text-[var(--star-2)]">
@@ -238,7 +239,7 @@ export default function LandingPage() {
           <div className="mx-auto grid max-w-5xl items-center gap-8 lg:grid-cols-2">
             <div className="space-y-4">
               <p className="section-heading text-[var(--azure)]">Agent Compiler</p>
-              <h2 className="text-2xl font-bold tracking-tight text-[var(--star-1)] md:text-3xl">
+              <h2 className="font-display text-2xl font-bold tracking-tight text-[var(--star-1)] md:text-3xl">
                 Answers with verified sources, not hallucinations.
               </h2>
               <p className="text-base leading-relaxed text-[var(--star-2)]">
@@ -272,9 +273,8 @@ export default function LandingPage() {
                 <span className="text-sm font-medium text-[var(--star-1)]">
                   Support Agent
                 </span>
-                <span className="ml-auto flex items-center gap-1.5 rounded-full bg-[rgb(16_185_129_/_0.12)] px-2 py-0.5 text-[11px] font-medium text-[var(--verified)]">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[var(--verified)]" />
-                  deployed
+                <span className="ml-auto">
+                  <StatusBadge variant="success" label="Deployed" size="sm" />
                 </span>
               </div>
               <div className="space-y-3 text-sm">
@@ -307,7 +307,7 @@ export default function LandingPage() {
             aria-hidden
           />
           <div className="relative mx-auto max-w-xl space-y-6 text-center">
-            <h2 className="text-3xl font-extrabold tracking-tight text-[var(--star-1)] md:text-4xl">
+            <h2 className="font-display text-3xl font-extrabold tracking-tight text-[var(--star-1)] md:text-4xl">
               Ready to compile knowledge into{" "}
               <span className="brand-gradient-text">intelligence</span>?
             </h2>

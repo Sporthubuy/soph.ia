@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Link, useRouter } from "@/i18n/routing";
 import { Icon } from "@/components/shared/icon";
+import { StatusBadge } from "@/components/shared/status-badge";
 
 /** Refleja las columnas reales de public.agents. */
 interface Agent {
@@ -22,29 +23,6 @@ interface AgentsOverviewProps {
   agents: Agent[];
 }
 
-/**
- * Estados validos segun el check constraint de public.agents:
- * ('draft','deployed','paused','archived').
- */
-const STATUS_STYLES: Record<string, string> = {
-  deployed: "bg-[rgb(16_185_129_/_0.12)] text-[var(--verified)] border-[rgb(16_185_129_/_0.28)]",
-  draft: "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)] border-[rgb(245_158_11_/_0.28)]",
-  paused: "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)] border-[rgb(245_158_11_/_0.28)]",
-  archived: "bg-[var(--sky-3)] text-[var(--star-2)] border-[var(--edge)]",
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  deployed: "Desplegado",
-  draft: "Borrador",
-  paused: "En pausa",
-  archived: "Archivado",
-};
-
-const getStatusColor = (status: string) =>
-  STATUS_STYLES[status] ?? "bg-[var(--sky-3)] text-[var(--star-2)] border-[var(--edge)]";
-
-const formatStatus = (status: string) =>
-  STATUS_LABELS[status] ?? status.charAt(0).toUpperCase() + status.slice(1);
 
 const formatUpdatedAt = (value?: string | null) => {
   if (!value) return null;
@@ -195,13 +173,7 @@ export const AgentsOverview = ({ agents }: AgentsOverviewProps) => {
                         <h3 className="body-md font-semibold text-[var(--star-1)]">
                           {agent.name}
                         </h3>
-                        <span
-                          className={`label-sm px-2 py-1 rounded border ${getStatusColor(
-                            agent.status
-                          )}`}
-                        >
-                          {formatStatus(agent.status)}
-                        </span>
+                        <StatusBadge status={agent.status} size="sm" />
                         <span className="label-sm bg-[#172554] text-[var(--star-1)] px-2 py-1 rounded">
                           {agent.model}
                         </span>

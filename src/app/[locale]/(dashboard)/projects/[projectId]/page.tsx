@@ -1,8 +1,8 @@
 import { setRequestLocale } from "next-intl/server";
 import { Icon } from "@/components/shared/icon";
+import { StatusBadge } from "@/components/shared/status-badge";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
-import { createClient } from "@/lib/supabase/server";
 import {
   getProject,
   getProjectMembers,
@@ -10,26 +10,17 @@ import {
   getProjectAgents,
   getProjectLinkCandidates,
   getProjectPermission,
+  getProjectFolders,
 } from "@/lib/projects/actions";
-import { ProjectMembers } from "@/components/projects/project-members";
+import { ProjectPeoplePopover } from "@/components/projects/project-people-popover";
 import {
   ProjectKnowledge,
   ProjectAgents,
 } from "@/components/projects/project-resources";
+import { ProjectObjective } from "@/components/projects/project-objective";
+import { ProjectVisibilityLock } from "@/components/projects/project-visibility-lock";
 import { ShareDialog } from "@/components/shared/share-dialog";
-import { VisibilityToggle } from "@/components/shared/visibility-toggle";
 
-const STATUS_STYLES: Record<string, string> = {
-  active: "bg-[rgb(16_185_129_/_0.12)] text-[var(--verified)] border-[rgb(16_185_129_/_0.28)]",
-  paused: "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)] border-[rgb(245_158_11_/_0.28)]",
-  archived: "bg-[var(--sky-3)] text-[var(--star-2)] border-[var(--edge)]",
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  active: "Activo",
-  paused: "En pausa",
-  archived: "Archivado",
-};
 
 export default async function ProjectDetailPage({
   params,
@@ -39,111 +30,101 @@ export default async function ProjectDetailPage({
   const { locale, projectId } = await params;
   setRequestLocale(locale);
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
   const project = await getProject(projectId);
   if (!project) notFound();
 
-  const [{ members, invitations }, knowledgeUnits, agents, candidates, permission] =
+  const [{ members, invitations }, knowledgeUnits, agents, candidates, permission, folders] =
     await Promise.all([
       getProjectMembers(projectId),
       getProjectKnowledgeUnits(projectId),
       getProjectAgents(projectId),
       getProjectLinkCandidates(projectId),
       getProjectPermission(projectId),
+      getProjectFolders(projectId),
     ]);
 
   const status = project.status as string;
+  const visibility = (project.visibility ?? "private") as
+    | "private"
+    | "public"
+    | "unlisted";
 
   return (
-    <div className="p-8 max-w-5xl mx-auto space-y-6">
-      <nav aria-label="Migas de pan" className="body-sm text-[#64748b]">
-        <Link href="/projects" className="hover:text-[var(--star-1)] transition-colors">
-          Proyectos
-        </Link>
-        <span className="mx-2">/</span>
-        <span className="text-[#94a3b8]">{project.name}</span>
-      </nav>
-
-      <header className="space-y-3">
-        <div className="flex items-start gap-4 flex-wrap">
-          <div
-            className="w-14 h-14 rounded-lg flex items-center justify-center flex-shrink-0"
-            style={{ backgroundColor: project.color || "#172554" }}
-          >
-            <Icon name="projects" size={26} className="text-[var(--azure-ink)]" />
-          </div>
-
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="headline-xl text-[var(--star-1)] font-bold">{project.name}</h1>
-              <span
-                className={`label-sm px-2 py-1 rounded border ${
-                  STATUS_STYLES[status] ?? STATUS_STYLES.archived
-                }`}
-              >
-                {STATUS_LABELS[status] ?? status}
-              </span>
-              <ShareDialog
-                path={`/projects/${project.id}`}
-                title={project.name}
-                description="Share this project link with teammates who already have access, or invite them below."
-              />
-            </div>
-            <p className="body-sm text-[#64748b] mt-1">
-              Responsable{" "}
-              <span className="font-semibold text-[#94a3b8]">
-                {project.owner?.full_name ?? project.owner?.email ?? "—"}
-              </span>
-            </p>
-          </div>
+    <div className="flex h-full flex-col overflow-hidden">
+      <header className="flex shrink-0 items-center gap-3 border-b border-[var(--edge)] bg-[var(--sky-1)] px-6 py-3">
+        <div
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
+          style={{ backgroundColor: project.color || "#172554" }}
+        >
+          <Icon name="projects" size={19} className="text-[var(--azure-ink)]" />
         </div>
 
-        {project.description && (
-          <div className="panel p-6">
-            <h2 className="section-heading mb-3">OBJETIVO</h2>
-            <p className="body-md text-[#94a3b8] whitespace-pre-wrap">
-              {project.description}
-            </p>
-          </div>
-        )}
+        <nav aria-label="Migas de pan" className="min-w-0 body-md text-[#64748b]">
+          <Link href="/projects" className="hover:text-[var(--star-1)] transition-colors">
+            Proyectos
+          </Link>
+          <span className="mx-2">/</span>
+          <span className="font-semibold text-[var(--star-1)]">{project.name}</span>
+        </nav>
+
+        <div className="flex items-center gap-2">
+          <ProjectPeoplePopover
+            projectId={projectId}
+            ownerId={project.owner_id}
+            members={members}
+            invitations={invitations}
+            canManage={permission.canManage}
+          />
+          <ProjectVisibilityLock
+            projectId={project.id}
+            visibility={visibility}
+            canManage={permission.canManage}
+          />
+          <ShareDialog
+            path={`/projects/${project.id}`}
+            title={project.name}
+            description="Comparti el link del proyecto con quienes ya tienen acceso, o invitalos abajo."
+            triggerIcon="link"
+            triggerOnlyIcon
+            triggerClassName="flex h-8 w-8 items-center justify-center rounded-lg border border-[#1e293b] bg-[var(--sky-2)] text-[#94a3b8] hover:bg-[#07090e] transition-colors"
+          />
+          <StatusBadge status={status} size="sm" className="ml-1" />
+        </div>
+
+        <div className="flex-1" />
+
+        <p className="body-sm text-[#64748b] truncate">
+          Responsable{" "}
+          <span className="font-semibold text-[#94a3b8]">
+            {project.owner?.full_name ?? project.owner?.email ?? "—"}
+          </span>
+        </p>
       </header>
 
-      <section className="panel p-6">
-        <h2 className="section-heading mb-4">COMPARTIR</h2>
-        <VisibilityToggle
-          itemId={projectId}
-          itemType="project"
-          currentVisibility={project.visibility ?? "private"}
-          organizationId={project.organization_id}
-          onlyOwner={project.owner_id !== user?.id && !permission.canManage}
+      <div className="flex min-h-0 flex-1">
+        <aside className="flex w-[400px] shrink-0 flex-col gap-4 overflow-y-auto border-r border-[var(--edge)] p-4">
+          <ProjectObjective
+            projectId={project.id}
+            description={project.description ?? ""}
+            canManage={permission.canManage}
+          />
+
+          <ProjectAgents
+            projectId={projectId}
+            agents={agents}
+            candidates={candidates.agents}
+            canManage={permission.canManage}
+          />
+        </aside>
+
+        <ProjectKnowledge
+          projectId={projectId}
+          knowledgeUnits={knowledgeUnits}
+          candidates={candidates.knowledgeUnits}
+          canManage={permission.canManage}
+          folders={folders}
         />
-      </section>
-
-      <ProjectMembers
-        projectId={projectId}
-        ownerId={project.owner_id}
-        members={members}
-        invitations={invitations}
-        canManage={permission.canManage}
-      />
-
-      <ProjectKnowledge
-        projectId={projectId}
-        knowledgeUnits={knowledgeUnits}
-        candidates={candidates.knowledgeUnits}
-        canManage={permission.canManage}
-      />
-
-      <ProjectAgents
-        projectId={projectId}
-        agents={agents}
-        candidates={candidates.agents}
-        canManage={permission.canManage}
-      />
+      </div>
     </div>
   );
 }

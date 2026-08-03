@@ -11,13 +11,8 @@ import { CommentsThread } from "@/components/shared/comments-thread";
 import { ShareDialog } from "@/components/shared/share-dialog";
 import { VisibilityToggle } from "@/components/shared/visibility-toggle";
 import { Icon } from "@/components/shared/icon";
+import { StatusBadge } from "@/components/shared/status-badge";
 
-const STATUS_STYLES: Record<string, string> = {
-  approved: "bg-[rgb(16_185_129_/_0.12)] text-[var(--verified)] border-[rgb(16_185_129_/_0.28)]",
-  proposed: "bg-[rgb(59_130_246_/_0.12)] text-[var(--azure)] border-[rgb(59_130_246_/_0.28)]",
-  draft: "bg-[rgb(245_158_11_/_0.12)] text-[var(--pending)] border-[rgb(245_158_11_/_0.28)]",
-  archived: "bg-[var(--sky-3)] text-[var(--star-2)] border-[var(--edge)]",
-};
 
 const trustColor = (score: number) => {
   if (score >= 90) return "text-[var(--verified)]";
@@ -65,13 +60,7 @@ export default async function KnowledgeUnitPage({
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <h1 className="headline-xl text-[var(--star-1)] font-bold">{ku.title}</h1>
           <div className="flex items-center gap-2 flex-wrap">
-            <span
-              className={`label-sm px-2 py-1 rounded border ${
-                STATUS_STYLES[status] ?? STATUS_STYLES.archived
-              }`}
-            >
-              {status.charAt(0).toUpperCase() + status.slice(1)}
-            </span>
+            <StatusBadge status={status} size="sm" />
             <ShareDialog path={`/knowledge/${ku.id}`} title={ku.title} />
             {canEdit && (
               <Link
