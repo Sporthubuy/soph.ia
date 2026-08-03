@@ -30,9 +30,10 @@ export async function GET(request: NextRequest) {
       query = query.eq("status", status);
     }
 
-    if (domain && domain !== "all") {
-      query = query.eq("domain", domain);
-    }
+    // Domain filtering would require joining with domains table
+    // if (domain && domain !== "all") {
+    //   query = query.eq("domain_id", domain);
+    // }
 
     const { data, count, error } = await query
       .order("created_at", { ascending: false })
