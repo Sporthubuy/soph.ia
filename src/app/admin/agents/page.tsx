@@ -32,6 +32,12 @@ interface ApiResponse {
   offset: number;
 }
 
+interface KnowledgeUnit {
+  id: string;
+  title: string;
+  status: string;
+}
+
 const MODEL_OPTIONS = [
   "Claude 3.5 Sonnet",
   "Claude 3 Opus",
@@ -45,6 +51,8 @@ export default function AgentsPage() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [knowledgeUnits, setKnowledgeUnits] = useState<KnowledgeUnit[]>([]);
+  const [selectedKUs, setSelectedKUs] = useState<string[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -55,6 +63,7 @@ export default function AgentsPage() {
 
   useEffect(() => {
     fetchAgents();
+    fetchKnowledgeUnits();
   }, []);
 
   const fetchAgents = async () => {
@@ -70,13 +79,26 @@ export default function AgentsPage() {
     }
   };
 
+  const fetchKnowledgeUnits = async () => {
+    try {
+      const response = await fetch("/api/admin/knowledge?limit=100&offset=0");
+      const result = await response.json();
+      setKnowledgeUnits(result.data || []);
+    } catch (error) {
+      console.error("Error fetching knowledge units:", error);
+    }
+  };
+
   const handleCreateAgent = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const response = await fetch("/api/admin/agents", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          knowledge_unit_ids: selectedKUs,
+        }),
       });
 
       if (response.ok) {
@@ -87,6 +109,7 @@ export default function AgentsPage() {
           system_prompt: "",
           temperature: 0.4,
         });
+        setSelectedKUs([]);
         setShowForm(false);
         fetchAgents();
       }
@@ -243,6 +266,48 @@ export default function AgentsPage() {
                 }
                 className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
               />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+                Knowledge Units (Optional)
+              </label>
+              <div className="space-y-2 max-h-48 overflow-y-auto border border-[#1e293b] rounded-lg p-3 bg-[#07090e]">
+                {knowledgeUnits.length === 0 ? (
+                  <p className="text-sm text-[#64748b]">No knowledge units available</p>
+                ) : (
+                  knowledgeUnits.map((ku) => (
+                    <label
+                      key={ku.id}
+                      className="flex items-center gap-2 cursor-pointer hover:bg-[#1e293b]/50 p-2 rounded"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedKUs.includes(ku.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedKUs([...selectedKUs, ku.id]);
+                          } else {
+                            setSelectedKUs(
+                              selectedKUs.filter((id) => id !== ku.id)
+                            );
+                          }
+                        }}
+                        className="w-4 h-4 rounded"
+                      />
+                      <span className="text-sm text-[#94a3b8]">{ku.title}</span>
+                      <span className="text-xs text-[#64748b] ml-auto">
+                        {ku.status}
+                      </span>
+                    </label>
+                  ))
+                )}
+              </div>
+              {selectedKUs.length > 0 && (
+                <p className="text-xs text-[#64748b] mt-2">
+                  {selectedKUs.length} knowledge unit(s) selected
+                </p>
+              )}
             </div>
 
             <button
