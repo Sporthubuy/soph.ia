@@ -2,7 +2,12 @@ import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
-import { getKnowledgeUnit, getCurrentUserRole } from "@/lib/knowledge/actions";
+import {
+  getKnowledgeUnit,
+  getCurrentUserRole,
+  getKuMembers,
+  getKuInvitations,
+} from "@/lib/knowledge/actions";
 import { getKuComments } from "@/lib/comments/actions";
 import { EDITOR_ROLES } from "@/lib/knowledge/constants";
 import { renderMarkdown } from "@/lib/knowledge/markdown";
@@ -10,6 +15,7 @@ import { ProposeButton } from "@/components/knowledge/propose-button";
 import { CommentsThread } from "@/components/shared/comments-thread";
 import { ShareDialog } from "@/components/shared/share-dialog";
 import { VisibilityToggle } from "@/components/shared/visibility-toggle";
+import { KuPeoplePopover } from "@/components/knowledge/ku-people-popover";
 import { Icon } from "@/components/shared/icon";
 import { StatusBadge } from "@/components/shared/status-badge";
 
@@ -34,16 +40,26 @@ export default async function KnowledgeUnitPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [ku, role, comments] = await Promise.all([
+  const [ku, role, comments, members, invitations] = await Promise.all([
     getKnowledgeUnit(kuId),
     getCurrentUserRole(),
     getKuComments(kuId, "general"),
+    getKuMembers(kuId),
+    getKuInvitations(kuId),
   ]);
   if (!ku) notFound();
 
   const trust = ku.trust_score ?? 0;
   const status = ku.status as string;
-  const canEdit = EDITOR_ROLES.includes(role);
+
+  // Permisos: owner o EDITOR_ROLES a nivel org o editor de KU
+  const isOwner = ku.owner_id === user?.id;
+  const isOrgEditor = EDITOR_ROLES.includes(role);
+  const isKuEditor = members.some(
+    (m) => m.user_id === user?.id && m.role === "editor"
+  );
+  const canEdit = isOwner || isOrgEditor || isKuEditor;
+  const canManage = isOwner; // Solo owner puede manejar colaboradores
   const canPropose = status === "draft" && canEdit;
 
   return (
@@ -61,6 +77,13 @@ export default async function KnowledgeUnitPage({
           <h1 className="headline-xl text-[var(--star-1)] font-bold">{ku.title}</h1>
           <div className="flex items-center gap-2 flex-wrap">
             <StatusBadge status={status} size="sm" />
+            <KuPeoplePopover
+              kuId={ku.id}
+              ownerId={ku.owner_id}
+              members={members}
+              invitations={invitations}
+              canManage={canManage}
+            />
             <ShareDialog path={`/knowledge/${ku.id}`} title={ku.title} />
             {canEdit && (
               <Link

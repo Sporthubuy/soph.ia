@@ -195,7 +195,7 @@ type EditGuard =
 
 // Tipo de retorno explicito: sin el, TS no siempre angosta correctamente
 // `guard` en los callers que hacen `if ("error" in guard) return guard`.
-async function assertCanEdit(): Promise<EditGuard> {
+async function assertCanEdit(kuId?: string): Promise<EditGuard> {
   const supabase = await createClient();
 
   const {
@@ -212,7 +212,21 @@ async function assertCanEdit(): Promise<EditGuard> {
 
   if (!membership) return { error: "El usuario no pertenece a ninguna organizacion." };
 
-  if (!EDITOR_ROLES.includes(membership.role)) {
+  const isOrgEditor = EDITOR_ROLES.includes(membership.role);
+
+  // Si no es editor a nivel org, verificar si es editor de esta KU específica
+  if (!isOrgEditor && kuId) {
+    const { data: kuMember } = await supabase
+      .from("ku_members")
+      .select("role")
+      .eq("ku_id", kuId)
+      .eq("user_id", user.id)
+      .single();
+
+    if (!kuMember || kuMember.role !== "editor") {
+      return { error: "No tenes permisos para editar esta Knowledge Unit." };
+    }
+  } else if (!isOrgEditor && !kuId) {
     return { error: "No tenes permisos para editar Knowledge Units." };
   }
 
@@ -538,12 +552,11 @@ export async function getKnowledgeUnitForEdit(id: string) {
  * ku_versions, nunca se sobrescribe la anterior.
  */
 export async function updateKnowledgeUnit(formData: FormData): Promise<ActionResult> {
-  const guard = await assertCanEdit();
+  const kuId = formData.get("kuId") as string;
+  const guard = await assertCanEdit(kuId);
   if ("error" in guard) return guard;
 
   const { supabase, userId, organizationId } = guard;
-
-  const kuId = formData.get("kuId") as string;
   const title = (formData.get("title") as string)?.trim();
   const content = (formData.get("content") as string) ?? "";
   const changeMessage = (formData.get("changeMessage") as string)?.trim() || null;
@@ -846,5 +859,229 @@ export async function compileAgentContext(organizationId: string, selectedKuIds:
       context: "Error compiling knowledge base",
       units: [],
     };
+  }
+}
+
+/** Obtener miembros colaboradores de una Knowledge Unit. */
+export async function getKuMembers(kuId: string) {
+  const supabase = await createClient();
+
+  try {
+    const { data, error } = await supabase
+      .from("ku_members")
+      .select("id, role, user_id, profiles:user_id(full_name, email)")
+      .eq("ku_id", kuId)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    return data || [];
+  } catch (error) {
+    console.error("Error getting KU members:", error);
+    return [];
+  }
+}
+
+/** Obtener invitaciones pendientes para una Knowledge Unit. */
+export async function getKuInvitations(kuId: string) {
+  const supabase = await createClient();
+
+  try {
+    const { data, error } = await supabase
+      .from("ku_invitations")
+      .select("id, email, role")
+      .eq("ku_id", kuId)
+      .is("accepted_at", null)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    return data || [];
+  } catch (error) {
+    console.error("Error getting KU invitations:", error);
+    return [];
+  }
+}
+
+/** Invitar a colaborador a Knowledge Unit. */
+export async function inviteToKnowledgeUnit(
+  kuId: string,
+  email: string,
+  role: string
+): Promise<ActionResult> {
+  const supabase = await createClient();
+
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: "No autenticado" };
+
+    const { data: ku, error: kuError } = await supabase
+      .from("knowledge_units")
+      .select("id, owner_id")
+      .eq("id", kuId)
+      .single();
+
+    if (kuError || !ku) return { error: "Knowledge Unit no encontrada" };
+    if (ku.owner_id !== user.id) return { error: "No tenes permiso para invitar" };
+
+    const { error } = await supabase
+      .from("ku_invitations")
+      .insert({
+        ku_id: kuId,
+        email: email.toLowerCase().trim(),
+        role,
+        invited_by: user.id,
+      });
+
+    if (error) {
+      if (error.code === "23505") return { error: "Este email ya fue invitado" };
+      throw error;
+    }
+
+    revalidatePath("/knowledge/[kuId]", "page");
+    return { success: true };
+  } catch (error) {
+    console.error("Error inviting to KU:", error);
+    return { error: "Error al invitar colaborador" };
+  }
+}
+
+/** Actualizar rol de miembro colaborador. */
+export async function updateKuMemberRole(
+  kuId: string,
+  memberId: string,
+  role: string
+): Promise<ActionResult> {
+  const supabase = await createClient();
+
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: "No autenticado" };
+
+    const { data: ku } = await supabase
+      .from("knowledge_units")
+      .select("owner_id")
+      .eq("id", kuId)
+      .single();
+
+    if (ku?.owner_id !== user.id) return { error: "No tenes permiso" };
+
+    const { error } = await supabase
+      .from("ku_members")
+      .update({ role })
+      .eq("id", memberId)
+      .eq("ku_id", kuId);
+
+    if (error) throw error;
+
+    revalidatePath("/knowledge/[kuId]", "page");
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating KU member role:", error);
+    return { error: "Error al actualizar rol" };
+  }
+}
+
+/** Remover colaborador de Knowledge Unit. */
+export async function removeKuMember(
+  kuId: string,
+  memberId: string
+): Promise<ActionResult> {
+  const supabase = await createClient();
+
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: "No autenticado" };
+
+    const { data: ku } = await supabase
+      .from("knowledge_units")
+      .select("owner_id")
+      .eq("id", kuId)
+      .single();
+
+    if (ku?.owner_id !== user.id) return { error: "No tenes permiso" };
+
+    const { error } = await supabase
+      .from("ku_members")
+      .delete()
+      .eq("id", memberId)
+      .eq("ku_id", kuId);
+
+    if (error) throw error;
+
+    revalidatePath("/knowledge/[kuId]", "page");
+    return { success: true };
+  } catch (error) {
+    console.error("Error removing KU member:", error);
+    return { error: "Error al remover colaborador" };
+  }
+}
+
+/** Cancelar invitación a Knowledge Unit. */
+export async function cancelKuInvitation(
+  kuId: string,
+  invitationId: string
+): Promise<ActionResult> {
+  const supabase = await createClient();
+
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: "No autenticado" };
+
+    const { data: ku } = await supabase
+      .from("knowledge_units")
+      .select("owner_id")
+      .eq("id", kuId)
+      .single();
+
+    if (ku?.owner_id !== user.id) return { error: "No tenes permiso" };
+
+    const { error } = await supabase
+      .from("ku_invitations")
+      .delete()
+      .eq("id", invitationId)
+      .eq("ku_id", kuId);
+
+    if (error) throw error;
+
+    revalidatePath("/knowledge/[kuId]", "page");
+    return { success: true };
+  } catch (error) {
+    console.error("Error canceling KU invitation:", error);
+    return { error: "Error al cancelar invitación" };
+  }
+}
+
+/** Cambiar visibilidad de Knowledge Unit. */
+export async function setKuVisibility(
+  kuId: string,
+  visibility: "private" | "public"
+): Promise<ActionResult> {
+  const supabase = await createClient();
+
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: "No autenticado" };
+
+    const { data: ku } = await supabase
+      .from("knowledge_units")
+      .select("owner_id")
+      .eq("id", kuId)
+      .single();
+
+    if (ku?.owner_id !== user.id) return { error: "No tenes permiso" };
+
+    const { error } = await supabase
+      .from("knowledge_units")
+      .update({ visibility })
+      .eq("id", kuId);
+
+    if (error) throw error;
+
+    revalidatePath("/knowledge/[kuId]", "page");
+    return { success: true };
+  } catch (error) {
+    console.error("Error setting KU visibility:", error);
+    return { error: "Error al cambiar visibilidad" };
   }
 }
