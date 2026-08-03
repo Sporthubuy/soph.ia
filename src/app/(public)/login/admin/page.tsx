@@ -29,6 +29,8 @@ export default function AdminLoginPage() {
         return;
       }
 
+      // Wait a moment for the session to be established
+      await new Promise(resolve => setTimeout(resolve, 500));
       router.push("/admin");
     } catch (err) {
       setError("An error occurred. Please try again.");

@@ -19,7 +19,7 @@ async function seed() {
     // Create admin user
     const { data: user, error: createError } = await supabase.auth.admin.createUser({
       email: "rg.aviaga@gmail.com",
-      password: "Xaxi.4112",
+      password: "Xaxi.41123871",
       email_confirm: true,
     });
 
