@@ -14,7 +14,7 @@ import { renderMarkdown } from "@/lib/knowledge/markdown";
 import { ProposeButton } from "@/components/knowledge/propose-button";
 import { CommentsThread } from "@/components/shared/comments-thread";
 import { ShareDialog } from "@/components/shared/share-dialog";
-import { VisibilityToggle } from "@/components/shared/visibility-toggle";
+import { KuVisibilityLock } from "@/components/knowledge/ku-visibility-lock";
 import { KuPeoplePopover } from "@/components/knowledge/ku-people-popover";
 import { Icon } from "@/components/shared/icon";
 import { StatusBadge } from "@/components/shared/status-badge";
@@ -96,6 +96,11 @@ export default async function KnowledgeUnitPage({
               invitations={invitations}
               canManage={canManage}
             />
+            <KuVisibilityLock
+              kuId={ku.id}
+              visibility={ku.visibility ?? "private"}
+              canManage={canManage}
+            />
             <ShareDialog path={`/knowledge/${ku.id}`} title={ku.title} />
             {canEdit && (
               <Link
@@ -133,17 +138,6 @@ export default async function KnowledgeUnitPage({
           )}
         </dl>
       </header>
-
-      <section className="panel p-6">
-        <h2 className="section-heading mb-4">COMPARTIR</h2>
-        <VisibilityToggle
-          itemId={ku.id}
-          itemType="knowledge_unit"
-          currentVisibility={ku.visibility ?? "private"}
-          organizationId={ku.organization_id}
-          onlyOwner={ku.owner_id !== user?.id && !EDITOR_ROLES.includes(role)}
-        />
-      </section>
 
       <article className="panel p-6">
         <h2 className="section-heading mb-4">CONTENIDO</h2>
