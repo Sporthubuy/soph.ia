@@ -1,89 +1,51 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Project {
   id: string;
   name: string;
-  description: string;
-  owner: string;
+  description?: string;
   status: "planning" | "in-progress" | "completed" | "on-hold";
-  progress: number;
-  members: number;
-  createdAt: string;
-  dueDate: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ApiResponse {
+  data: Project[];
+  count: number;
+  limit: number;
+  offset: number;
 }
 
 export default function ProjectsPage() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  const projects: Project[] = [
-    {
-      id: "proj_001",
-      name: "AI Agent Suite v2.0",
-      description: "Next generation of AI agents with improved performance",
-      owner: "john.doe@example.com",
-      status: "in-progress",
-      progress: 65,
-      members: 8,
-      createdAt: "2024-01-01",
-      dueDate: "2024-03-31",
-    },
-    {
-      id: "proj_002",
-      name: "Knowledge Graph Optimization",
-      description: "Improve query performance and reduce latency",
-      owner: "jane.smith@example.com",
-      status: "in-progress",
-      progress: 42,
-      members: 5,
-      createdAt: "2024-02-01",
-      dueDate: "2024-04-15",
-    },
-    {
-      id: "proj_003",
-      name: "User Dashboard Redesign",
-      description: "Modern UI/UX refresh for the main platform",
-      owner: "john.doe@example.com",
-      status: "planning",
-      progress: 15,
-      members: 6,
-      createdAt: "2024-02-20",
-      dueDate: "2024-05-01",
-    },
-    {
-      id: "proj_004",
-      name: "API Rate Limiting",
-      description: "Implement comprehensive rate limiting system",
-      owner: "jane.smith@example.com",
-      status: "completed",
-      progress: 100,
-      members: 3,
-      createdAt: "2023-12-01",
-      dueDate: "2024-02-28",
-    },
-    {
-      id: "proj_005",
-      name: "Mobile App Alpha",
-      description: "iOS and Android mobile application",
-      owner: "john.doe@example.com",
-      status: "on-hold",
-      progress: 30,
-      members: 7,
-      createdAt: "2024-01-15",
-      dueDate: "2024-06-01",
-    },
-  ];
+  useEffect(() => {
+    fetchProjects();
+  }, [searchTerm, statusFilter]);
 
-  const filteredProjects = projects.filter((project) => {
-    const matchesSearch =
-      project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" || project.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  const fetchProjects = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        ...(searchTerm && { search: searchTerm }),
+        ...(statusFilter !== "all" && { status: statusFilter }),
+        limit: "50",
+        offset: "0",
+      });
+      const response = await fetch(`/api/admin/projects?${params}`);
+      const result: ApiResponse = await response.json();
+      setProjects(result.data || []);
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -100,45 +62,37 @@ export default function ProjectsPage() {
     }
   };
 
-  const getProgressColor = (progress: number) => {
-    if (progress >= 75) return "bg-green-500";
-    if (progress >= 50) return "bg-blue-500";
-    if (progress >= 25) return "bg-yellow-500";
-    return "bg-red-500";
-  };
+  const totalProjects = projects.length;
+  const completedProjects = projects.filter((p) => p.status === "completed").length;
+  const inProgressProjects = projects.filter((p) => p.status === "in-progress").length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-[var(--star-1)]">Projects</h1>
-          <p className="text-[#64748b] mt-1">
-            Manage and track all projects
-          </p>
-        </div>
-        <button className="px-4 py-2 rounded-lg bg-[#3b82f6] text-white font-medium hover:bg-[#2563eb] transition-colors">
-          New Project
-        </button>
+      <div>
+        <h1 className="text-4xl font-bold text-[var(--star-1)]">Projects</h1>
+        <p className="text-[#64748b] mt-1">Track and manage organization projects</p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-4">
-          <p className="text-sm text-[#64748b] mb-1">Total Projects</p>
-          <p className="text-2xl font-bold text-[#f1f5f9]">5</p>
+        <div className="rounded-lg border border-[#3b82f6]/30 bg-[#3b82f6]/5 p-4">
+          <p className="text-sm text-[#3b82f6] mb-1">Total Projects</p>
+          <p className="text-2xl font-bold text-[#3b82f6]">{totalProjects}</p>
         </div>
         <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-4">
           <p className="text-sm text-blue-400 mb-1">In Progress</p>
-          <p className="text-2xl font-bold text-blue-400">2</p>
+          <p className="text-2xl font-bold text-blue-400">{inProgressProjects}</p>
         </div>
         <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-4">
           <p className="text-sm text-green-400 mb-1">Completed</p>
-          <p className="text-2xl font-bold text-green-400">1</p>
+          <p className="text-2xl font-bold text-green-400">{completedProjects}</p>
         </div>
         <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-4">
-          <p className="text-sm text-yellow-400 mb-1">Team Members</p>
-          <p className="text-2xl font-bold text-yellow-400">29</p>
+          <p className="text-sm text-yellow-400 mb-1">Planning</p>
+          <p className="text-2xl font-bold text-yellow-400">
+            {projects.filter((p) => p.status === "planning").length}
+          </p>
         </div>
       </div>
 
@@ -177,81 +131,71 @@ export default function ProjectsPage() {
         </div>
       </div>
 
-      {/* Project Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {filteredProjects.map((project) => (
-          <div
-            key={project.id}
-            className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6 space-y-4 hover:border-[#3b82f6]/50 transition-colors"
-          >
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <h3 className="text-lg font-bold text-[var(--star-1)]">
-                  {project.name}
-                </h3>
-                <p className="text-sm text-[#64748b] mt-1">
-                  {project.description}
-                </p>
-              </div>
-              <span
-                className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(project.status)} whitespace-nowrap ml-2`}
-              >
-                {project.status
-                  .split("-")
-                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(" ")}
-              </span>
-            </div>
-
-            {/* Progress Bar */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-[#64748b]">Progress</span>
-                <span className="text-sm font-medium text-[#94a3b8]">
-                  {project.progress}%
-                </span>
-              </div>
-              <div className="w-full bg-[#1e293b] rounded-full h-2">
-                <div
-                  className={`h-2 rounded-full ${getProgressColor(project.progress)}`}
-                  style={{ width: `${project.progress}%` }}
-                ></div>
-              </div>
-            </div>
-
-            {/* Info */}
-            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#1e293b]">
-              <div>
-                <p className="text-xs text-[#64748b]">Owner</p>
-                <p className="text-sm font-medium text-[#94a3b8]">
-                  {project.owner.split("@")[0]}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-[#64748b]">Members</p>
-                <p className="text-sm font-medium text-[#94a3b8]">
-                  {project.members}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs text-[#64748b]">Due Date</p>
-                <p className="text-sm font-medium text-[#94a3b8]">
-                  {project.dueDate}
-                </p>
-              </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex gap-2 pt-2">
-              <button className="flex-1 px-3 py-2 rounded-lg border border-[#1e293b] text-[#94a3b8] font-medium hover:bg-[#1e293b] transition-colors text-sm">
-                View Details
-              </button>
-              <button className="flex-1 px-3 py-2 rounded-lg border border-[#1e293b] text-[#94a3b8] font-medium hover:bg-[#1e293b] transition-colors text-sm">
-                Edit
-              </button>
-            </div>
-          </div>
-        ))}
+      {/* Projects Table */}
+      <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-[#1e293b] bg-[#07090e]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                  Name
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                  Description
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                  Created
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                  Updated
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-4 text-center text-[#64748b]">
+                    Loading projects...
+                  </td>
+                </tr>
+              ) : projects.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-4 text-center text-[#64748b]">
+                    No projects found
+                  </td>
+                </tr>
+              ) : (
+                projects.map((project) => (
+                  <tr
+                    key={project.id}
+                    className="border-b border-[#1e293b] hover:bg-[#1e293b]/30 transition-colors"
+                  >
+                    <td className="px-6 py-4 text-sm font-medium text-[#94a3b8]">
+                      {project.name}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-[#64748b] max-w-xs truncate">
+                      {project.description || "—"}
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
+                        {project.status.split("-").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-[#64748b]">
+                      {new Date(project.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-[#64748b]">
+                      {new Date(project.updated_at).toLocaleDateString()}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
