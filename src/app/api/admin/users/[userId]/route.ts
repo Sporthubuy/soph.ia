@@ -16,7 +16,7 @@ export async function GET(
   try {
     const { data, error } = await supabase
       .from("profiles")
-      .select("*, admin_roles(role)")
+      .select("*")
       .eq("id", params.userId)
       .single();
 

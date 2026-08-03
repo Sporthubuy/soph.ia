@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from("profiles")
-      .select("*, admin_roles(role)", { count: "exact" });
+      .select("*", { count: "exact" });
 
     if (search) {
       query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%`);

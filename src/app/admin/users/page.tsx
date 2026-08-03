@@ -6,7 +6,6 @@ interface User {
   id: string;
   email: string;
   full_name?: string;
-  admin_roles?: Array<{ role: string }>;
   created_at: string;
   updated_at: string;
 }
@@ -89,7 +88,9 @@ export default function UsersPage() {
   };
 
   const getUserRole = (user: User) => {
-    return user.admin_roles?.[0]?.role || "user";
+    // For now, fetch role from email - can be optimized later
+    if (user.email === "rg.aviaga@gmail.com") return "admin";
+    return "user";
   };
 
   return (
