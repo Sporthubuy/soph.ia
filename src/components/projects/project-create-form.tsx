@@ -60,17 +60,17 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
 
   return (
     <div className="p-8 max-w-3xl mx-auto space-y-6">
-      <nav aria-label="Migas de pan" className="body-sm text-[#64748b]">
+      <nav aria-label="Migas de pan" className="body-sm text-[var(--star-3)]">
         <Link href="/projects" className="hover:text-[var(--star-1)] transition-colors">
           Proyectos
         </Link>
         <span className="mx-2">/</span>
-        <span className="text-[#94a3b8]">Nuevo proyecto</span>
+        <span className="text-[var(--star-2)]">Nuevo proyecto</span>
       </nav>
 
       <header className="space-y-1">
         <h1 className="headline-xl text-[var(--star-1)] font-bold">Nuevo proyecto</h1>
-        <p className="body-md text-[#94a3b8]">
+        <p className="body-md text-[var(--star-2)]">
           Un proyecto agrupa el conocimiento, la gente y los agentes que
           trabajan sobre un mismo objetivo.
         </p>
@@ -79,7 +79,7 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="panel p-6 space-y-5">
           <div className="space-y-2">
-            <label htmlFor="name" className="label-sm text-[#64748b]">
+            <label htmlFor="name" className="label-sm text-[var(--star-3)]">
               NOMBRE
             </label>
             <input
@@ -88,12 +88,12 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
               onChange={(e) => setName(e.target.value)}
               placeholder="Ej: Lanzamiento de la app 2026"
               autoFocus
-              className="w-full px-4 py-3 border border-[#1e293b] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent"
+              className="w-full px-4 py-3 border border-[var(--edge)] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[var(--star-3)] focus:outline-none focus:ring-2 focus:ring-[var(--azure)] focus:border-transparent"
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="description" className="label-sm text-[#64748b]">
+            <label htmlFor="description" className="label-sm text-[var(--star-3)]">
               QUE QUEREMOS LOGRAR
             </label>
             <textarea
@@ -102,12 +102,12 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describi el objetivo del proyecto, su alcance y por que existe."
               rows={5}
-              className="w-full px-4 py-3 border border-[#1e293b] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent"
+              className="w-full px-4 py-3 border border-[var(--edge)] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[var(--star-3)] focus:outline-none focus:ring-2 focus:ring-[var(--azure)] focus:border-transparent"
             />
           </div>
 
           <div className="space-y-2">
-            <label className="label-sm text-[#64748b]">ICONO</label>
+            <label className="label-sm text-[var(--star-3)]">ICONO</label>
             <div className="flex flex-wrap gap-2">
               {ICONS.map((i) => (
                 <button
@@ -118,8 +118,8 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
                   aria-label={i}
                   className={`w-11 h-11 rounded-lg border flex items-center justify-center transition-colors ${
                     icon === i
-                      ? "border-[#3b82f6] ring-2 ring-[#3b82f6]/30"
-                      : "border-[#1e293b] hover:bg-[#07090e]"
+                      ? "border-[var(--azure)] ring-2 ring-[var(--azure)]/30"
+                      : "border-[var(--edge)] hover:bg-[var(--sky-1)]"
                   }`}
                   style={{ backgroundColor: color }}
                 >
@@ -130,7 +130,7 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
           </div>
 
           <div className="space-y-2">
-            <label className="label-sm text-[#64748b]">COLOR</label>
+            <label className="label-sm text-[var(--star-3)]">COLOR</label>
             <div className="flex flex-wrap gap-2">
               {COLORS.map((c) => (
                 <button
@@ -142,8 +142,8 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
                   title={c.label}
                   className={`w-11 h-11 rounded-lg border transition-colors ${
                     color === c.value
-                      ? "border-[#3b82f6] ring-2 ring-[#3b82f6]/30"
-                      : "border-[#1e293b]"
+                      ? "border-[var(--azure)] ring-2 ring-[var(--azure)]/30"
+                      : "border-[var(--edge)]"
                   }`}
                   style={{ backgroundColor: c.value }}
                 />
@@ -171,14 +171,14 @@ export const ProjectCreateForm = ({ locale }: { locale: string }) => {
           <button
             type="submit"
             disabled={isSaving}
-            className="bg-[#3b82f6] text-[var(--azure-ink)] font-medium py-2.5 px-5 rounded-lg hover:bg-[#2563eb] transition-colors disabled:opacity-50 body-md"
+            className="bg-[var(--azure)] text-[var(--azure-ink)] font-medium py-2.5 px-5 rounded-lg hover:bg-[#2563eb] transition-colors disabled:opacity-50 body-md"
           >
             {isSaving ? "Creando..." : "Crear proyecto"}
           </button>
           <button
             type="button"
             onClick={() => router.push("/projects")}
-            className="py-2.5 px-5 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] transition-colors body-md"
+            className="py-2.5 px-5 rounded-lg border border-[var(--edge)] text-[var(--star-2)] hover:bg-[var(--sky-1)] transition-colors body-md"
           >
             Cancelar
           </button>

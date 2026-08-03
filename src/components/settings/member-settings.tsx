@@ -73,7 +73,7 @@ export const MemberSettings = ({
     <section className="panel p-6 space-y-4">
       <div>
         <h2 className="body-md font-semibold text-[var(--star-1)]">{t("membersTitle")}</h2>
-        <p className="body-sm text-[#64748b] mt-0.5">{t("membersDesc")}</p>
+        <p className="body-sm text-[var(--star-3)] mt-0.5">{t("membersDesc")}</p>
       </div>
 
       {error && (
@@ -92,17 +92,17 @@ export const MemberSettings = ({
           return (
             <div
               key={member.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-lg border border-[#1e293b] px-3 py-3"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-lg border border-[var(--edge)] px-3 py-3"
             >
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-[var(--star-1)]">
                   {name}
                   {isSelf && (
-                    <span className="ml-2 text-xs text-[#64748b]">(you)</span>
+                    <span className="ml-2 text-xs text-[var(--star-3)]">(you)</span>
                   )}
                 </p>
                 {name !== email && email && (
-                  <p className="text-xs text-[#64748b]">{email}</p>
+                  <p className="text-xs text-[var(--star-3)]">{email}</p>
                 )}
               </div>
               <div className="flex items-center gap-2">
@@ -126,7 +126,7 @@ export const MemberSettings = ({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-8 text-xs text-[#64748b] hover:text-[var(--danger)]"
+                      className="h-8 text-xs text-[var(--star-3)] hover:text-[var(--danger)]"
                       onClick={() => handleRemove(member.id)}
                       disabled={isPending}
                     >

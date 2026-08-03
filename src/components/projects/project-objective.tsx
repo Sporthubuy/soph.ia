@@ -44,7 +44,7 @@ export const ProjectObjective = ({
               setValue(description);
               setEditing(true);
             }}
-            className="label-sm px-2 py-1 rounded-md border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] transition-colors inline-flex items-center gap-1.5"
+            className="label-sm px-2 py-1 rounded-md border border-[var(--edge)] text-[var(--star-2)] hover:bg-[var(--sky-1)] transition-colors inline-flex items-center gap-1.5"
           >
             <Icon name="edit" size={13} />
             Editar
@@ -59,7 +59,7 @@ export const ProjectObjective = ({
             onChange={(e) => setValue(e.target.value)}
             rows={9}
             placeholder="Que objetivo persigue este proyecto?"
-            className="w-full flex-1 body-md border border-[#1e293b] rounded-lg px-3 py-2.5 bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] resize-none"
+            className="w-full flex-1 body-md border border-[var(--edge)] rounded-lg px-3 py-2.5 bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[var(--star-3)] focus:outline-none focus:ring-2 focus:ring-[var(--azure)] resize-none"
           />
           {error && (
             <p role="alert" className="body-sm text-[var(--danger)]">
@@ -71,7 +71,7 @@ export const ProjectObjective = ({
               type="button"
               disabled={isPending || !value.trim()}
               onClick={save}
-              className="body-sm px-3 py-2 rounded-lg bg-[#3b82f6] text-[var(--azure-ink)] font-medium hover:bg-[#2563eb] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="body-sm px-3 py-2 rounded-lg bg-[var(--azure)] text-[var(--azure-ink)] font-medium hover:bg-[#2563eb] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isPending ? "Guardando..." : "Guardar objetivo"}
             </button>
@@ -83,16 +83,16 @@ export const ProjectObjective = ({
                 setEditing(false);
                 setError(null);
               }}
-              className="body-sm px-3 py-2 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] transition-colors disabled:opacity-50"
+              className="body-sm px-3 py-2 rounded-lg border border-[var(--edge)] text-[var(--star-2)] hover:bg-[var(--sky-1)] transition-colors disabled:opacity-50"
             >
               Cancelar
             </button>
           </div>
         </div>
       ) : description ? (
-        <p className="flex-1 body-lg text-[#94a3b8] whitespace-pre-wrap overflow-y-auto">{description}</p>
+        <p className="flex-1 body-lg text-[var(--star-2)] whitespace-pre-wrap overflow-y-auto">{description}</p>
       ) : (
-        <p className="body-sm text-[#64748b] flex-1">
+        <p className="body-sm text-[var(--star-3)] flex-1">
           {canManage ? "Este proyecto todavia no tiene objetivo definido. Apreta Editar para escribirlo." : "Este proyecto no tiene objetivo definido."}
         </p>
       )}

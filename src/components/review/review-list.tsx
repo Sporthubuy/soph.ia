@@ -58,14 +58,17 @@ export const ReviewList = ({
 
   if (proposals.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16">
+      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16" style={{
+        borderColor: "var(--edge)",
+        color: "var(--star-2)"
+      }}>
         <CheckCircleIcon />
-        <p className="mt-3 font-medium">{t("emptyTitle")}</p>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-3 font-medium" style={{ color: "var(--star-1)" }}>{t("emptyTitle")}</p>
+        <p className="mt-1 text-sm" style={{ color: "var(--star-3)" }}>
           {t("emptyDesc")}
         </p>
-        <Separator className="my-6 w-48" />
-        <p className="text-sm text-muted-foreground">{t("nextStep")}</p>
+        <Separator className="my-6 w-48" style={{ backgroundColor: "var(--edge)" }} />
+        <p className="text-sm" style={{ color: "var(--star-3)" }}>{t("nextStep")}</p>
         <Button
           render={<Link href="/agents/new" />}
           variant="outline"
@@ -156,15 +159,22 @@ const ReviewCard = ({
   const newText = diff?.current.content ?? "";
 
   return (
-    <div className="panel p-6 space-y-4 border border-[#1e293b]">
-      <div className="flex items-start justify-between gap-4 pb-3 border-b border-[#1e293b]">
+    <div className="p-6 space-y-4 rounded-[12px]" style={{
+      backgroundColor: "var(--sky-2)",
+      border: "1px solid var(--edge)"
+    }}>
+      <div className="flex items-start justify-between gap-4 pb-3" style={{
+        borderBottom: "1px solid var(--edge)"
+      }}>
         <div className="min-w-0">
-          <h3 className="section-heading">
-            <Link href={`/knowledge/${ku.id}`} className="hover:text-[var(--azure)] transition-colors">
+          <h3 className="section-heading" style={{ color: "var(--star-1)" }}>
+            <Link href={`/knowledge/${ku.id}`} style={{
+              color: "var(--star-1)"
+            }} className="hover:text-[var(--azure)] transition-colors">
               {ku.title}
             </Link>
           </h3>
-          <p className="body-sm text-[#64748b] mt-1">
+          <p className="body-sm mt-1" style={{ color: "var(--star-3)" }}>
             {ownerName} · {domainName} · v{ku.version} ·{" "}
             {new Date(ku.updated_at).toLocaleDateString(locale)}
           </p>
@@ -173,9 +183,14 @@ const ReviewCard = ({
           <ShareDialog
             path={`/knowledge/${ku.id}`}
             title={ku.title}
-            triggerClassName="label-sm px-2 py-1 rounded border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] inline-flex items-center gap-1"
+            triggerClassName="label-sm px-2 py-1 rounded border inline-flex items-center gap-1 transition-colors"
+            triggerStyle={{
+              borderColor: "var(--edge)",
+              color: "var(--star-3)",
+              backgroundColor: "transparent"
+            }}
           />
-          <StatusBadge status={ku.status} size="sm" />
+          <StatusBadge status={ku.status as any} />
         </div>
       </div>
       <div className="space-y-4">
