@@ -22,7 +22,7 @@ export default async function AdminLayout({
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/admin/login");
+    redirect("/login/admin");
   }
 
   // Check if user is admin
@@ -34,7 +34,7 @@ export default async function AdminLayout({
     .single();
 
   if (!adminRole) {
-    redirect("/admin/login");
+    redirect("/login/admin");
   }
 
   return (

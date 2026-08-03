@@ -43,6 +43,11 @@ const extractLocale = (pathname: string): string => {
 };
 
 export async function middleware(request: NextRequest) {
+  // Skip middleware for admin login
+  if (request.nextUrl.pathname === "/login/admin") {
+    return NextResponse.next();
+  }
+
   const intlResponse = intlMiddleware(request);
 
   if (intlResponse.status === 307 || intlResponse.status === 308) {
@@ -108,6 +113,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|api|admin|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // Apply to all routes EXCEPT: _next, api, admin, and static files
+    "/((?!_next|static|api|admin|.*\\.(?:ico|png|svg)$).*)",
   ],
 };

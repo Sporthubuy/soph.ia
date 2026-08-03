@@ -1,16 +1,40 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+"use client";
 
-export default async function AdminLoginPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-  // If already logged in, redirect to admin dashboard
-  if (user) {
-    redirect("/admin");
-  }
+export default function AdminLoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const supabase = createClient();
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        setError(signInError.message || "Invalid credentials");
+        setLoading(false);
+        return;
+      }
+
+      router.push("/admin");
+    } catch (err) {
+      setError("An error occurred. Please try again.");
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#07090e] flex items-center justify-center">
@@ -27,31 +51,13 @@ export default async function AdminLoginPage() {
         </div>
 
         {/* Login Form */}
-        <form
-          action={async (formData) => {
-            "use server";
-            const email = formData.get("email") as string;
-            const password = formData.get("password") as string;
+        <form onSubmit={handleSubmit} className="space-y-6 rounded-lg border border-[#1e293b] bg-[#0f1117] p-6">
+          {error && (
+            <div className="rounded-lg bg-red-500/20 border border-red-500/50 p-3">
+              <p className="text-sm text-red-400">{error}</p>
+            </div>
+          )}
 
-            if (!email || !password) {
-              return;
-            }
-
-            const supabase = await createClient();
-            const { error } = await supabase.auth.signInWithPassword({
-              email,
-              password,
-            });
-
-            if (error) {
-              // TODO: Handle error
-              return;
-            }
-
-            redirect("/admin");
-          }}
-          className="space-y-6 rounded-lg border border-[#1e293b] bg-[#0f1117] p-6"
-        >
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-[#94a3b8]">
               Email address
@@ -60,6 +66,8 @@ export default async function AdminLoginPage() {
               id="email"
               type="email"
               name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="mt-1 w-full px-4 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] placeholder-[#64748b] focus:border-[#3b82f6] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
               placeholder="admin@example.com"
@@ -74,6 +82,8 @@ export default async function AdminLoginPage() {
               id="password"
               type="password"
               name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               required
               className="mt-1 w-full px-4 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] placeholder-[#64748b] focus:border-[#3b82f6] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
               placeholder="••••••••"
@@ -82,9 +92,10 @@ export default async function AdminLoginPage() {
 
           <button
             type="submit"
-            className="w-full rounded-lg bg-[#3b82f6] py-2 font-medium text-white hover:bg-[#2563eb] transition-colors"
+            disabled={loading}
+            className="w-full rounded-lg bg-[#3b82f6] py-2 font-medium text-white hover:bg-[#2563eb] transition-colors disabled:opacity-50"
           >
-            Sign in
+            {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
 
