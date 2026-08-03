@@ -4,10 +4,15 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 interface StatsData {
-  totalUsers: number;
-  totalKUs: number;
-  activeAgents: number;
-  totalProjects: number;
+  users: { total: number };
+  knowledgeUnits: {
+    total: number;
+    approved: number;
+    proposed: number;
+    draft: number;
+  };
+  agents: { total: number; active: number };
+  projects: { total: number };
   timestamp: string;
 }
 
@@ -54,7 +59,7 @@ export default function AdminDashboardPage() {
   const statCards = [
     {
       label: "Total Users",
-      value: stats?.totalUsers || 0,
+      value: stats?.users.total || 0,
       icon: "👥",
       color: "bg-blue-500/20",
       borderColor: "border-blue-500/30",
@@ -62,7 +67,8 @@ export default function AdminDashboardPage() {
     },
     {
       label: "Knowledge Units",
-      value: stats?.totalKUs || 0,
+      value: stats?.knowledgeUnits.total || 0,
+      subtext: `${stats?.knowledgeUnits.approved || 0} approved`,
       icon: "📚",
       color: "bg-green-500/20",
       borderColor: "border-green-500/30",
@@ -70,7 +76,8 @@ export default function AdminDashboardPage() {
     },
     {
       label: "Active Agents",
-      value: stats?.activeAgents || 0,
+      value: stats?.agents.active || 0,
+      subtext: `of ${stats?.agents.total || 0} total`,
       icon: "🤖",
       color: "bg-purple-500/20",
       borderColor: "border-purple-500/30",
@@ -78,7 +85,7 @@ export default function AdminDashboardPage() {
     },
     {
       label: "Projects",
-      value: stats?.totalProjects || 0,
+      value: stats?.projects.total || 0,
       icon: "📁",
       color: "bg-orange-500/20",
       borderColor: "border-orange-500/30",
@@ -156,10 +163,14 @@ export default function AdminDashboardPage() {
             </div>
             <div className="pt-2 border-t border-[#1e293b]">
               <p className="text-xs text-[#64748b]">
-                {stat.label === "Total Users" && "Active members"}
-                {stat.label === "Knowledge Units" && "Across all domains"}
-                {stat.label === "Active Agents" && "Currently running"}
-                {stat.label === "Projects" && "In progress"}
+                {(stat as any).subtext || (
+                  <>
+                    {stat.label === "Total Users" && "Active members"}
+                    {stat.label === "Knowledge Units" && "Across all domains"}
+                    {stat.label === "Active Agents" && "Currently running"}
+                    {stat.label === "Projects" && "In progress"}
+                  </>
+                )}
               </p>
             </div>
           </div>
