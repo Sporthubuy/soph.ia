@@ -1,285 +1,286 @@
 "use client";
 
-import { useState } from "react";
-import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import { useEffect, useState } from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 
 interface Agent {
   id: string;
   name: string;
-  type: "support" | "sales" | "knowledge" | "custom";
-  status: "active" | "inactive" | "paused";
+  description?: string;
   model: string;
-  users: number;
-  uptime: number;
-  avgResponseTime: number;
-  lastUpdate: string;
+  system_prompt?: string;
+  status: "draft" | "deployed" | "paused" | "archived";
+  temperature?: number;
+  created_at: string;
+  updated_at: string;
+  selected_ku_ids?: string[];
 }
 
+interface ApiResponse {
+  data: Agent[];
+  count: number;
+  limit: number;
+  offset: number;
+}
+
+const MODEL_OPTIONS = [
+  "Claude 3.5 Sonnet",
+  "Claude 3 Opus",
+  "Claude 3 Sonnet",
+  "Claude 3 Haiku",
+  "GPT-4",
+  "GPT-3.5-turbo",
+];
+
 export default function AgentsPage() {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [typeFilter, setTypeFilter] = useState<string>("all");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-
-  const agents: Agent[] = [
-    {
-      id: "agent_001",
-      name: "Support Bot",
-      type: "support",
-      status: "active",
-      model: "Claude 3 Sonnet",
-      users: 1247,
-      uptime: 99.8,
-      avgResponseTime: 1.2,
-      lastUpdate: "2 hours ago",
-    },
-    {
-      id: "agent_002",
-      name: "Sales Assistant",
-      type: "sales",
-      status: "active",
-      model: "Claude 3 Opus",
-      users: 856,
-      uptime: 99.5,
-      avgResponseTime: 2.1,
-      lastUpdate: "5 hours ago",
-    },
-    {
-      id: "agent_003",
-      name: "Knowledge Navigator",
-      type: "knowledge",
-      status: "active",
-      model: "Claude 3 Sonnet",
-      users: 2341,
-      uptime: 99.9,
-      avgResponseTime: 0.8,
-      lastUpdate: "1 hour ago",
-    },
-    {
-      id: "agent_004",
-      name: "Custom Bot",
-      type: "custom",
-      status: "paused",
-      model: "Claude 3 Haiku",
-      users: 0,
-      uptime: 0,
-      avgResponseTime: 0,
-      lastUpdate: "2 days ago",
-    },
-    {
-      id: "agent_005",
-      name: "Legacy Agent",
-      type: "support",
-      status: "inactive",
-      model: "GPT-4",
-      users: 0,
-      uptime: 0,
-      avgResponseTime: 0,
-      lastUpdate: "30 days ago",
-    },
-  ];
-
-  const filteredAgents = agents.filter((agent) => {
-    const matchesSearch = agent.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesType = typeFilter === "all" || agent.type === typeFilter;
-    const matchesStatus =
-      statusFilter === "all" || agent.status === statusFilter;
-    return matchesSearch && matchesType && matchesStatus;
+  const [agents, setAgents] = useState<Agent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    model: "Claude 3.5 Sonnet",
+    system_prompt: "",
+    temperature: 0.4,
   });
 
-  // Chart data
-  const chartData = [
-    { name: "Support Bot", users: 1247, responses: 3450 },
-    { name: "Sales Assistant", users: 856, responses: 2100 },
-    { name: "Knowledge Navigator", users: 2341, responses: 5600 },
-    { name: "Custom Bot", users: 0, responses: 0 },
-  ];
+  useEffect(() => {
+    fetchAgents();
+  }, []);
 
-  const statusData = [
-    { name: "Active", value: 3 },
-    { name: "Paused", value: 1 },
-    { name: "Inactive", value: 1 },
-  ];
-
-  const COLORS = ["#4ade80", "#fbbf24", "#ef4444"];
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-green-500/20 text-green-400";
-      case "paused":
-        return "bg-yellow-500/20 text-yellow-400";
-      case "inactive":
-        return "bg-red-500/20 text-red-400";
-      default:
-        return "bg-gray-500/20 text-gray-400";
+  const fetchAgents = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("/api/admin/agents?limit=10&offset=0");
+      const result: ApiResponse = await response.json();
+      setAgents(result.data || []);
+    } catch (error) {
+      console.error("Error fetching agents:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case "support":
-        return "bg-blue-500/20 text-blue-400";
-      case "sales":
-        return "bg-purple-500/20 text-purple-400";
-      case "knowledge":
-        return "bg-green-500/20 text-green-400";
-      case "custom":
-        return "bg-orange-500/20 text-orange-400";
-      default:
-        return "bg-gray-500/20 text-gray-400";
+  const handleCreateAgent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("/api/admin/agents", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setFormData({
+          name: "",
+          description: "",
+          model: "Claude 3.5 Sonnet",
+          system_prompt: "",
+          temperature: 0.4,
+        });
+        setShowForm(false);
+        fetchAgents();
+      }
+    } catch (error) {
+      console.error("Error creating agent:", error);
     }
   };
+
+  const handleDeleteAgent = async (agentId: string) => {
+    if (!confirm("Are you sure you want to delete this agent?")) return;
+    try {
+      await fetch(`/api/admin/agents/${agentId}`, { method: "DELETE" });
+      fetchAgents();
+    } catch (error) {
+      console.error("Error deleting agent:", error);
+    }
+  };
+
+  // Mock data for charts
+  const agentActivity = [
+    { name: "Support Bot", responses: 3200, users: 1247 },
+    { name: "Sales Assistant", responses: 2100, users: 856 },
+    { name: "Knowledge Nav", responses: 2800, users: 1432 },
+    { name: "Custom Bot", responses: 1900, users: 654 },
+  ];
+
+  const deployedCount = agents.filter((a) => a.status === "deployed").length;
+  const pausedCount = agents.filter((a) => a.status === "paused").length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[var(--star-1)]">Agents</h1>
-          <p className="text-[#64748b] mt-1">
-            Monitor and manage AI agents
-          </p>
+          <h1 className="text-4xl font-bold text-[var(--star-1)]">Agents</h1>
+          <p className="text-[#64748b] mt-1">Monitor and manage AI agents</p>
         </div>
-        <button className="px-4 py-2 rounded-lg bg-[#3b82f6] text-white font-medium hover:bg-[#2563eb] transition-colors">
-          Create Agent
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="px-4 py-2 rounded-lg bg-[#3b82f6] text-white font-medium hover:bg-[#2563eb] transition-colors"
+        >
+          {showForm ? "Cancel" : "Create Agent"}
         </button>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-4">
-          <p className="text-sm text-green-400 mb-1">Active Agents</p>
-          <p className="text-2xl font-bold text-green-400">3</p>
+          <p className="text-sm text-green-400 mb-1">Deployed</p>
+          <p className="text-2xl font-bold text-green-400">{deployedCount}</p>
         </div>
         <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-4">
           <p className="text-sm text-yellow-400 mb-1">Paused</p>
-          <p className="text-2xl font-bold text-yellow-400">1</p>
+          <p className="text-2xl font-bold text-yellow-400">{pausedCount}</p>
         </div>
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-4">
-          <p className="text-sm text-[#64748b] mb-1">Total Interactions</p>
-          <p className="text-2xl font-bold text-[#f1f5f9]">11,150</p>
+        <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-4">
+          <p className="text-sm text-blue-400 mb-1">Total Agents</p>
+          <p className="text-2xl font-bold text-blue-400">{agents.length}</p>
         </div>
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-4">
-          <p className="text-sm text-[#64748b] mb-1">Avg Uptime</p>
-          <p className="text-2xl font-bold text-[#f1f5f9]">99.7%</p>
-        </div>
-      </div>
-
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Bar Chart */}
-        <div className="lg:col-span-2 rounded-lg border border-[#1e293b] bg-[#0f1117] p-6">
-          <h2 className="text-lg font-bold text-[var(--star-1)] mb-4">
-            Agent Activity
-          </h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-              <XAxis dataKey="name" stroke="#64748b" />
-              <YAxis stroke="#64748b" />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#0f1117",
-                  border: "1px solid #1e293b",
-                  borderRadius: "0.375rem",
-                  color: "#94a3b8",
-                }}
-              />
-              <Legend />
-              <Bar dataKey="users" fill="#3b82f6" />
-              <Bar dataKey="responses" fill="#10b981" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Pie Chart */}
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6">
-          <h2 className="text-lg font-bold text-[var(--star-1)] mb-4">
-            Status Distribution
-          </h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={statusData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, value }) => `${name} ${value}`}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {statusData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index]} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#0f1117",
-                  border: "1px solid #1e293b",
-                  borderRadius: "0.375rem",
-                  color: "#94a3b8",
-                }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
+        <div className="rounded-lg border border-purple-500/30 bg-purple-500/5 p-4">
+          <p className="text-sm text-purple-400 mb-1">Total Interactions</p>
+          <p className="text-2xl font-bold text-purple-400">
+            {agents.reduce((sum, a) => sum + (a.invocations || 0), 0)}
+          </p>
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-4 space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
-              Search
-            </label>
-            <input
-              type="text"
-              placeholder="Search by agent name..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] placeholder-[#64748b] focus:border-[#3b82f6] focus:outline-none"
+      {/* Create Agent Form */}
+      {showForm && (
+        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6 space-y-4">
+          <form onSubmit={handleCreateAgent} className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+                  Agent Name *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+                  placeholder="e.g., Support Bot"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+                  Model *
+                </label>
+                <select
+                  value={formData.model}
+                  onChange={(e) =>
+                    setFormData({ ...formData, model: e.target.value })
+                  }
+                  className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+                >
+                  {MODEL_OPTIONS.map((model) => (
+                    <option key={model} value={model}>
+                      {model}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+                Description
+              </label>
+              <textarea
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+                className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+                placeholder="What does this agent do?"
+                rows={2}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+                System Prompt *
+              </label>
+              <textarea
+                required
+                value={formData.system_prompt}
+                onChange={(e) =>
+                  setFormData({ ...formData, system_prompt: e.target.value })
+                }
+                className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+                placeholder="System prompt to guide the agent's behavior..."
+                rows={4}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+                Temperature (0-1)
+              </label>
+              <input
+                type="number"
+                min="0"
+                max="1"
+                step="0.1"
+                value={formData.temperature}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    temperature: parseFloat(e.target.value),
+                  })
+                }
+                className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full px-4 py-2 rounded-lg bg-[#3b82f6] text-white font-medium hover:bg-[#2563eb] transition-colors"
+            >
+              Create Agent
+            </button>
+          </form>
+        </div>
+      )}
+
+      {/* Agent Activity Chart */}
+      <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6">
+        <h2 className="text-lg font-bold text-[var(--star-1)] mb-4">
+          Agent Activity
+        </h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={agentActivity}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+            <XAxis dataKey="name" stroke="#64748b" />
+            <YAxis stroke="#64748b" />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#0f1117",
+                border: "1px solid #1e293b",
+                borderRadius: "0.375rem",
+                color: "#94a3b8",
+              }}
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
-              Type
-            </label>
-            <select
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
-            >
-              <option value="all">All Types</option>
-              <option value="support">Support</option>
-              <option value="sales">Sales</option>
-              <option value="knowledge">Knowledge</option>
-              <option value="custom">Custom</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
-              Status
-            </label>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="paused">Paused</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-        </div>
+            <Legend />
+            <Bar dataKey="responses" fill="#10b981" />
+            <Bar dataKey="users" fill="#3b82f6" />
+          </BarChart>
+        </ResponsiveContainer>
       </div>
 
-      {/* Table */}
+      {/* Agents Table */}
       <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -289,22 +290,16 @@ export default function AgentsPage() {
                   Name
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
-                  Type
+                  Model
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
                   Status
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
-                  Model
+                  Prompt
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
-                  Users
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
-                  Uptime
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
-                  Response Time
+                  Created
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
                   Actions
@@ -312,52 +307,66 @@ export default function AgentsPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredAgents.map((agent) => (
-                <tr
-                  key={agent.id}
-                  className="border-b border-[#1e293b] hover:bg-[#0f1117] transition-colors"
-                >
-                  <td className="px-6 py-4 text-sm font-medium text-[#94a3b8]">
-                    {agent.name}
-                  </td>
-                  <td className="px-6 py-4 text-sm">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(agent.type)}`}
-                    >
-                      {agent.type.charAt(0).toUpperCase() +
-                        agent.type.slice(1)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm">
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(agent.status)}`}
-                    >
-                      {agent.status.charAt(0).toUpperCase() +
-                        agent.status.slice(1)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-[#64748b]">
-                    {agent.model}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-[#94a3b8]">
-                    {agent.users.toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-[#94a3b8]">
-                    {agent.uptime}%
-                  </td>
-                  <td className="px-6 py-4 text-sm text-[#94a3b8]">
-                    {agent.avgResponseTime}s
-                  </td>
-                  <td className="px-6 py-4 text-sm space-x-2">
-                    <button className="text-[#3b82f6] hover:text-[#2563eb] transition-colors">
-                      Edit
-                    </button>
-                    <button className="text-[#3b82f6] hover:text-[#2563eb] transition-colors">
-                      Logs
-                    </button>
+              {loading ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-4 text-center text-[#64748b]">
+                    Loading agents...
                   </td>
                 </tr>
-              ))}
+              ) : agents.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-6 py-4 text-center text-[#64748b]">
+                    No agents found. Create one to get started!
+                  </td>
+                </tr>
+              ) : (
+                agents.map((agent) => (
+                  <tr
+                    key={agent.id}
+                    className="border-b border-[#1e293b] hover:bg-[#0f1117] transition-colors"
+                  >
+                    <td className="px-6 py-4 text-sm font-medium text-[#94a3b8]">
+                      {agent.name}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-[#64748b]">
+                      {agent.model}
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          agent.status === "deployed"
+                            ? "bg-green-500/20 text-green-400"
+                            : agent.status === "paused"
+                            ? "bg-yellow-500/20 text-yellow-400"
+                            : agent.status === "draft"
+                            ? "bg-blue-500/20 text-blue-400"
+                            : "bg-gray-500/20 text-gray-400"
+                        }`}
+                      >
+                        {agent.status.charAt(0).toUpperCase() +
+                          agent.status.slice(1)}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-[#64748b] max-w-xs truncate">
+                      {agent.system_prompt || "—"}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-[#64748b]">
+                      {new Date(agent.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 text-sm space-x-2">
+                      <button className="text-[#3b82f6] hover:text-[#2563eb] transition-colors">
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteAgent(agent.id)}
+                        className="text-red-400 hover:text-red-300 transition-colors"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
