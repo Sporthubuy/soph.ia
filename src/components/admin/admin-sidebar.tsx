@@ -1,17 +1,65 @@
 "use client";
 
+import { usePathname } from "next/navigation";
+
 export const AdminSidebar = () => {
+  const pathname = usePathname();
+
+  const isActive = (href: string) => {
+    return pathname === href || pathname.startsWith(href + "/");
+  };
+
+  const menuItems = [
+    { href: "/admin", label: "📊 Dashboard", icon: "📊" },
+    { href: "/admin/users", label: "👥 Users", icon: "👥" },
+    { href: "/admin/knowledge", label: "📚 Knowledge", icon: "📚" },
+    { href: "/admin/agents", label: "🤖 Agents", icon: "🤖" },
+    { href: "/admin/projects", label: "📁 Projects", icon: "📁" },
+    { href: "/admin/team", label: "👨‍💼 Team", icon: "👨‍💼" },
+    { href: "/admin/analytics", label: "📈 Analytics", icon: "📈" },
+    { href: "/admin/audit-logs", label: "🔐 Audit Logs", icon: "🔐" },
+    { href: "/admin/settings", label: "⚙️ Settings", icon: "⚙️" },
+  ];
+
   return (
     <aside className="w-64 border-r border-[#1e293b] bg-[#0f1117] flex flex-col">
       <div className="p-6 border-b border-[#1e293b]">
-        <div className="font-bold text-[var(--star-1)]">SOPH.IA Admin</div>
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-[#3b82f6] flex items-center justify-center text-sm font-bold text-white">
+            S
+          </div>
+          <div>
+            <div className="font-bold text-[var(--star-1)] text-sm">SOPH.IA</div>
+            <div className="text-xs text-[#64748b]">Admin</div>
+          </div>
+        </div>
       </div>
-      <nav className="flex-1 p-4 space-y-1">
-        <a href="/admin" className="block px-4 py-2 rounded text-[#94a3b8] hover:bg-[#1e293b]">Dashboard</a>
-        <a href="/admin/users" className="block px-4 py-2 rounded text-[#94a3b8] hover:bg-[#1e293b]">Users</a>
-        <a href="/admin/knowledge" className="block px-4 py-2 rounded text-[#94a3b8] hover:bg-[#1e293b]">Knowledge</a>
-        <a href="/admin/agents" className="block px-4 py-2 rounded text-[#94a3b8] hover:bg-[#1e293b]">Agents</a>
+
+      <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+        {menuItems.map((item) => (
+          <a
+            key={item.href}
+            href={item.href}
+            className={`block px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              isActive(item.href)
+                ? "bg-[#3b82f6]/20 text-[#3b82f6] border border-[#3b82f6]/30"
+                : "text-[#94a3b8] hover:bg-[#1e293b]"
+            }`}
+          >
+            {item.label}
+          </a>
+        ))}
       </nav>
+
+      {/* Footer */}
+      <div className="border-t border-[#1e293b] p-4">
+        <div className="rounded-lg bg-[#0f1117] p-3 text-xs space-y-1">
+          <p className="text-[#64748b]">Need help?</p>
+          <button className="w-full px-3 py-1.5 rounded bg-[#3b82f6]/20 text-[#3b82f6] text-xs font-medium hover:bg-[#3b82f6]/30 transition-colors">
+            Documentation
+          </button>
+        </div>
+      </div>
     </aside>
   );
 };
