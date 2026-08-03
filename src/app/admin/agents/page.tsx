@@ -1,145 +1,365 @@
-export default function AdminAgentsPage() {
-  const agents = [
-    { id: 1, name: "Support Bot", type: "Customer Support", status: "active", model: "Claude 3.5 Sonnet", users: 234, createdDate: "2025-01-10" },
-    { id: 2, name: "Content Generator", type: "Content Creation", status: "active", model: "Claude 3.5 Sonnet", users: 156, createdDate: "2025-01-15" },
-    { id: 3, name: "Data Analyzer", type: "Analytics", status: "paused", model: "Claude 3.5 Sonnet", users: 89, createdDate: "2025-02-01" },
-    { id: 4, name: "Code Assistant", type: "Development", status: "active", model: "Claude 3.5 Sonnet", users: 412, createdDate: "2025-02-10" },
-    { id: 5, name: "HR Assistant", type: "HR & Recruitment", status: "inactive", model: "Claude 3.5 Sonnet", users: 0, createdDate: "2025-02-20" },
+"use client";
+
+import { useState } from "react";
+import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+
+interface Agent {
+  id: string;
+  name: string;
+  type: "support" | "sales" | "knowledge" | "custom";
+  status: "active" | "inactive" | "paused";
+  model: string;
+  users: number;
+  uptime: number;
+  avgResponseTime: number;
+  lastUpdate: string;
+}
+
+export default function AgentsPage() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+
+  const agents: Agent[] = [
+    {
+      id: "agent_001",
+      name: "Support Bot",
+      type: "support",
+      status: "active",
+      model: "Claude 3 Sonnet",
+      users: 1247,
+      uptime: 99.8,
+      avgResponseTime: 1.2,
+      lastUpdate: "2 hours ago",
+    },
+    {
+      id: "agent_002",
+      name: "Sales Assistant",
+      type: "sales",
+      status: "active",
+      model: "Claude 3 Opus",
+      users: 856,
+      uptime: 99.5,
+      avgResponseTime: 2.1,
+      lastUpdate: "5 hours ago",
+    },
+    {
+      id: "agent_003",
+      name: "Knowledge Navigator",
+      type: "knowledge",
+      status: "active",
+      model: "Claude 3 Sonnet",
+      users: 2341,
+      uptime: 99.9,
+      avgResponseTime: 0.8,
+      lastUpdate: "1 hour ago",
+    },
+    {
+      id: "agent_004",
+      name: "Custom Bot",
+      type: "custom",
+      status: "paused",
+      model: "Claude 3 Haiku",
+      users: 0,
+      uptime: 0,
+      avgResponseTime: 0,
+      lastUpdate: "2 days ago",
+    },
+    {
+      id: "agent_005",
+      name: "Legacy Agent",
+      type: "support",
+      status: "inactive",
+      model: "GPT-4",
+      users: 0,
+      uptime: 0,
+      avgResponseTime: 0,
+      lastUpdate: "30 days ago",
+    },
   ];
+
+  const filteredAgents = agents.filter((agent) => {
+    const matchesSearch = agent.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesType = typeFilter === "all" || agent.type === typeFilter;
+    const matchesStatus =
+      statusFilter === "all" || agent.status === statusFilter;
+    return matchesSearch && matchesType && matchesStatus;
+  });
+
+  // Chart data
+  const chartData = [
+    { name: "Support Bot", users: 1247, responses: 3450 },
+    { name: "Sales Assistant", users: 856, responses: 2100 },
+    { name: "Knowledge Navigator", users: 2341, responses: 5600 },
+    { name: "Custom Bot", users: 0, responses: 0 },
+  ];
+
+  const statusData = [
+    { name: "Active", value: 3 },
+    { name: "Paused", value: 1 },
+    { name: "Inactive", value: 1 },
+  ];
+
+  const COLORS = ["#4ade80", "#fbbf24", "#ef4444"];
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "active":
+        return "bg-green-500/20 text-green-400";
+      case "paused":
+        return "bg-yellow-500/20 text-yellow-400";
+      case "inactive":
+        return "bg-red-500/20 text-red-400";
+      default:
+        return "bg-gray-500/20 text-gray-400";
+    }
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case "support":
+        return "bg-blue-500/20 text-blue-400";
+      case "sales":
+        return "bg-purple-500/20 text-purple-400";
+      case "knowledge":
+        return "bg-green-500/20 text-green-400";
+      case "custom":
+        return "bg-orange-500/20 text-orange-400";
+      default:
+        return "bg-gray-500/20 text-gray-400";
+    }
+  };
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-[var(--star-1)]">Agents</h2>
+          <h1 className="text-3xl font-bold text-[var(--star-1)]">Agents</h1>
           <p className="text-[#64748b] mt-1">
-            Manage and monitor AI agents
+            Monitor and manage AI agents
           </p>
         </div>
-        <a
-          href="/admin/agents/new"
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#3b82f6] text-white font-medium hover:bg-[#2563eb] transition-colors"
-        >
-          🤖 Create Agent
-        </a>
+        <button className="px-4 py-2 rounded-lg bg-[#3b82f6] text-white font-medium hover:bg-[#2563eb] transition-colors">
+          Create Agent
+        </button>
       </div>
 
-      {/* Filters and Search */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-md">
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]">🔍</span>
-          <input
-            type="search"
-            placeholder="Search agents..."
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] placeholder-[#64748b] focus:border-[#3b82f6] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
-          />
+      {/* Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-4">
+          <p className="text-sm text-green-400 mb-1">Active Agents</p>
+          <p className="text-2xl font-bold text-green-400">3</p>
         </div>
-        <select className="px-4 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]">
-          <option value="">All Types</option>
-          <option value="support">Customer Support</option>
-          <option value="content">Content Creation</option>
-          <option value="analytics">Analytics</option>
-          <option value="dev">Development</option>
-          <option value="hr">HR & Recruitment</option>
-        </select>
-        <select className="px-4 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]">
-          <option value="">All Status</option>
-          <option value="active">Active</option>
-          <option value="paused">Paused</option>
-          <option value="inactive">Inactive</option>
-        </select>
+        <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-4">
+          <p className="text-sm text-yellow-400 mb-1">Paused</p>
+          <p className="text-2xl font-bold text-yellow-400">1</p>
+        </div>
+        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-4">
+          <p className="text-sm text-[#64748b] mb-1">Total Interactions</p>
+          <p className="text-2xl font-bold text-[#f1f5f9]">11,150</p>
+        </div>
+        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-4">
+          <p className="text-sm text-[#64748b] mb-1">Avg Uptime</p>
+          <p className="text-2xl font-bold text-[#f1f5f9]">99.7%</p>
+        </div>
       </div>
 
-      {/* Agents Table */}
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Bar Chart */}
+        <div className="lg:col-span-2 rounded-lg border border-[#1e293b] bg-[#0f1117] p-6">
+          <h2 className="text-lg font-bold text-[var(--star-1)] mb-4">
+            Agent Activity
+          </h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+              <XAxis dataKey="name" stroke="#64748b" />
+              <YAxis stroke="#64748b" />
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#0f1117",
+                  border: "1px solid #1e293b",
+                  borderRadius: "0.375rem",
+                  color: "#94a3b8",
+                }}
+              />
+              <Legend />
+              <Bar dataKey="users" fill="#3b82f6" />
+              <Bar dataKey="responses" fill="#10b981" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Pie Chart */}
+        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6">
+          <h2 className="text-lg font-bold text-[var(--star-1)] mb-4">
+            Status Distribution
+          </h2>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={statusData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, value }) => `${name} ${value}`}
+                outerRadius={80}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {statusData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: "#0f1117",
+                  border: "1px solid #1e293b",
+                  borderRadius: "0.375rem",
+                  color: "#94a3b8",
+                }}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-4 space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+              Search
+            </label>
+            <input
+              type="text"
+              placeholder="Search by agent name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] placeholder-[#64748b] focus:border-[#3b82f6] focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+              Type
+            </label>
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+            >
+              <option value="all">All Types</option>
+              <option value="support">Support</option>
+              <option value="sales">Sales</option>
+              <option value="knowledge">Knowledge</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+              Status
+            </label>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+            >
+              <option value="all">All Status</option>
+              <option value="active">Active</option>
+              <option value="paused">Paused</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Table */}
       <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-[#1e293b] bg-[#07090e]">
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[#94a3b8]">Agent Name</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[#94a3b8]">Type</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[#94a3b8]">Model</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[#94a3b8]">Status</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[#94a3b8]">Users</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[#94a3b8]">Created</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-[#94a3b8]">Actions</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                  Name
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                  Type
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                  Status
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                  Model
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                  Users
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                  Uptime
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                  Response Time
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody>
-              {agents.map((agent) => (
-                <tr key={agent.id} className="border-b border-[#1e293b] hover:bg-[#07090e] transition-colors">
-                  <td className="px-6 py-3 text-sm text-[#94a3b8] font-medium">{agent.name}</td>
-                  <td className="px-6 py-3 text-sm text-[#64748b]">{agent.type}</td>
-                  <td className="px-6 py-3 text-sm text-[#64748b]">{agent.model}</td>
-                  <td className="px-6 py-3 text-sm">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      agent.status === 'active' ? 'bg-green-500/20 text-green-400' :
-                      agent.status === 'paused' ? 'bg-yellow-500/20 text-yellow-400' :
-                      'bg-red-500/20 text-red-400'
-                    }`}>
-                      {agent.status.charAt(0).toUpperCase() + agent.status.slice(1)}
+              {filteredAgents.map((agent) => (
+                <tr
+                  key={agent.id}
+                  className="border-b border-[#1e293b] hover:bg-[#0f1117] transition-colors"
+                >
+                  <td className="px-6 py-4 text-sm font-medium text-[#94a3b8]">
+                    {agent.name}
+                  </td>
+                  <td className="px-6 py-4 text-sm">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${getTypeColor(agent.type)}`}
+                    >
+                      {agent.type.charAt(0).toUpperCase() +
+                        agent.type.slice(1)}
                     </span>
                   </td>
-                  <td className="px-6 py-3 text-sm text-[#94a3b8]">{agent.users}</td>
-                  <td className="px-6 py-3 text-sm text-[#64748b]">{agent.createdDate}</td>
-                  <td className="px-6 py-3 text-sm">
-                    <div className="flex items-center gap-2">
-                      <button className="p-1 text-[#64748b] hover:text-[#3b82f6] hover:bg-[#1e293b] rounded transition-colors" title="View">
-                        👁️
-                      </button>
-                      <button className="p-1 text-[#64748b] hover:text-[#3b82f6] hover:bg-[#1e293b] rounded transition-colors" title="Edit">
-                        ✏️
-                      </button>
-                      <button className="p-1 text-[#64748b] hover:text-red-400 hover:bg-[#1e293b] rounded transition-colors" title="Delete">
-                        🗑️
-                      </button>
-                    </div>
+                  <td className="px-6 py-4 text-sm">
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(agent.status)}`}
+                    >
+                      {agent.status.charAt(0).toUpperCase() +
+                        agent.status.slice(1)}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-[#64748b]">
+                    {agent.model}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-[#94a3b8]">
+                    {agent.users.toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-[#94a3b8]">
+                    {agent.uptime}%
+                  </td>
+                  <td className="px-6 py-4 text-sm text-[#94a3b8]">
+                    {agent.avgResponseTime}s
+                  </td>
+                  <td className="px-6 py-4 text-sm space-x-2">
+                    <button className="text-[#3b82f6] hover:text-[#2563eb] transition-colors">
+                      Edit
+                    </button>
+                    <button className="text-[#3b82f6] hover:text-[#2563eb] transition-colors">
+                      Logs
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-
-        {/* Pagination */}
-        <div className="px-6 py-4 border-t border-[#1e293b] flex items-center justify-between">
-          <p className="text-sm text-[#64748b]">
-            Showing 5 of 47 agents
-          </p>
-          <div className="flex items-center gap-2">
-            <button className="px-3 py-1 rounded border border-[#1e293b] text-[#94a3b8] hover:bg-[#1e293b] transition-colors text-sm">
-              Previous
-            </button>
-            <button className="px-3 py-1 rounded bg-[#3b82f6] text-white text-sm">
-              1
-            </button>
-            <button className="px-3 py-1 rounded border border-[#1e293b] text-[#94a3b8] hover:bg-[#1e293b] transition-colors text-sm">
-              2
-            </button>
-            <button className="px-3 py-1 rounded border border-[#1e293b] text-[#94a3b8] hover:bg-[#1e293b] transition-colors text-sm">
-              Next
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Agent Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6">
-          <p className="text-sm text-[#64748b] mb-2">Active Agents</p>
-          <p className="text-2xl font-bold text-[var(--star-1)]">3</p>
-          <p className="text-xs text-green-400 mt-1">60% of total</p>
-        </div>
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6">
-          <p className="text-sm text-[#64748b] mb-2">Total Users</p>
-          <p className="text-2xl font-bold text-[var(--star-1)]">891</p>
-          <p className="text-xs text-[#64748b] mt-1">Across all agents</p>
-        </div>
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6">
-          <p className="text-sm text-[#64748b] mb-2">Avg Response Time</p>
-          <p className="text-2xl font-bold text-[var(--star-1)]">1.2s</p>
-          <p className="text-xs text-green-400 mt-1">↓ 15% from last week</p>
         </div>
       </div>
     </div>
