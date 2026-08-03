@@ -38,26 +38,22 @@ export default async function AdminLayout({
   }
 
   return (
-    <html lang="en">
-      <body className="bg-[#07090e] text-[#94a3b8]">
-        <div className="flex h-screen">
-          {/* Admin Sidebar */}
-          <AdminSidebar />
+    <div className="flex h-screen bg-[#07090e] text-[#94a3b8]">
+      {/* Admin Sidebar */}
+      <AdminSidebar />
 
-          {/* Main Content */}
-          <div className="flex flex-col flex-1 overflow-hidden">
-            {/* Admin Header */}
-            <AdminHeader />
+      {/* Main Content */}
+      <div className="flex flex-col flex-1 overflow-hidden">
+        {/* Admin Header */}
+        <AdminHeader />
 
-            {/* Page Content */}
-            <main className="flex-1 overflow-y-auto">
-              <div className="p-6 max-w-7xl">
-                {children}
-              </div>
-            </main>
+        {/* Page Content */}
+        <main className="flex-1 overflow-y-auto">
+          <div className="p-6 max-w-7xl">
+            {children}
           </div>
-        </div>
-      </body>
-    </html>
+        </main>
+      </div>
+    </div>
   );
 }
