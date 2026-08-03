@@ -51,6 +51,7 @@ export default function AgentsPage() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [editingAgentId, setEditingAgentId] = useState<string | null>(null);
   const [knowledgeUnits, setKnowledgeUnits] = useState<KnowledgeUnit[]>([]);
   const [selectedKUs, setSelectedKUs] = useState<string[]>([]);
   const [formData, setFormData] = useState({
@@ -89,7 +90,11 @@ export default function AgentsPage() {
     }
   };
 
-  const handleCreateAgent = async (e: React.FormEvent) => {
+  const handleSubmitForm = async (e: React.FormEvent) => {
+    if (editingAgentId) {
+      return handleSaveAgent(e);
+    }
+
     e.preventDefault();
     try {
       const response = await fetch("/api/admin/agents", {
@@ -118,6 +123,51 @@ export default function AgentsPage() {
     }
   };
 
+  const handleEditAgent = async (agent: Agent) => {
+    setEditingAgentId(agent.id);
+    setFormData({
+      name: agent.name,
+      description: agent.description || "",
+      model: agent.model,
+      system_prompt: agent.system_prompt || "",
+      temperature: agent.temperature || 0.4,
+    });
+    setSelectedKUs(agent.selected_ku_ids || []);
+    setShowForm(true);
+  };
+
+  const handleSaveAgent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingAgentId) return;
+
+    try {
+      const response = await fetch(`/api/admin/agents/${editingAgentId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          knowledge_unit_ids: selectedKUs,
+        }),
+      });
+
+      if (response.ok) {
+        setFormData({
+          name: "",
+          description: "",
+          model: "Claude 3.5 Sonnet",
+          system_prompt: "",
+          temperature: 0.4,
+        });
+        setSelectedKUs([]);
+        setEditingAgentId(null);
+        setShowForm(false);
+        fetchAgents();
+      }
+    } catch (error) {
+      console.error("Error updating agent:", error);
+    }
+  };
+
   const handleDeleteAgent = async (agentId: string) => {
     if (!confirm("Are you sure you want to delete this agent?")) return;
     try {
@@ -126,6 +176,19 @@ export default function AgentsPage() {
     } catch (error) {
       console.error("Error deleting agent:", error);
     }
+  };
+
+  const handleCancelEdit = () => {
+    setFormData({
+      name: "",
+      description: "",
+      model: "Claude 3.5 Sonnet",
+      system_prompt: "",
+      temperature: 0.4,
+    });
+    setSelectedKUs([]);
+    setEditingAgentId(null);
+    setShowForm(false);
   };
 
   // Mock data for charts
@@ -148,7 +211,13 @@ export default function AgentsPage() {
           <p className="text-[#64748b] mt-1">Monitor and manage AI agents</p>
         </div>
         <button
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            if (showForm) {
+              handleCancelEdit();
+            } else {
+              setShowForm(true);
+            }
+          }}
           className="px-4 py-2 rounded-lg bg-[#3b82f6] text-white font-medium hover:bg-[#2563eb] transition-colors"
         >
           {showForm ? "Cancel" : "Create Agent"}
@@ -177,10 +246,13 @@ export default function AgentsPage() {
         </div>
       </div>
 
-      {/* Create Agent Form */}
+      {/* Create/Edit Agent Form */}
       {showForm && (
         <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6 space-y-4">
-          <form onSubmit={handleCreateAgent} className="space-y-4">
+          <h2 className="text-lg font-bold text-[var(--star-1)]">
+            {editingAgentId ? "Edit Agent" : "Create New Agent"}
+          </h2>
+          <form onSubmit={handleSubmitForm} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-[#94a3b8] mb-2">
@@ -314,7 +386,7 @@ export default function AgentsPage() {
               type="submit"
               className="w-full px-4 py-2 rounded-lg bg-[#3b82f6] text-white font-medium hover:bg-[#2563eb] transition-colors"
             >
-              Create Agent
+              {editingAgentId ? "Update Agent" : "Create Agent"}
             </button>
           </form>
         </div>
@@ -419,7 +491,10 @@ export default function AgentsPage() {
                       {new Date(agent.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-sm space-x-2">
-                      <button className="text-[#3b82f6] hover:text-[#2563eb] transition-colors">
+                      <button
+                        onClick={() => handleEditAgent(agent)}
+                        className="text-[#3b82f6] hover:text-[#2563eb] transition-colors"
+                      >
                         Edit
                       </button>
                       <button
