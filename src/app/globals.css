@@ -14,38 +14,45 @@
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
   --font-display: var(--font-outfit), var(--font-sans);
 
-  /* Backgrounds & surfaces */
-  --sky-0: #050609; /* deepest void */
-  --sky-1: #07090e; /* app canvas (bg-canvas) */
-  --sky-2: #0f1420; /* surface: panels, cards, chrome (surface-1) */
-  --sky-3: #182032; /* raised: inputs, hover, tiles (surface-2) */
-  --sky-4: #1e293b; /* higher: popovers, active tiles */
+  /* ═════════════════════════════════════════════════════════════
+     SOPH.IA Brand Colors (Constellation Design System v1.0)
+     Reference: SOPH.IA_Brand_Guide_Oficial.md
+     ═════════════════════════════════════════════════════════════ */
+
+  /* Backgrounds & surfaces (Sky palette - dark-first) */
+  --sky-0: #080B12; /* deepest - canvas alternativo */
+  --sky-1: #0A0E17; /* canvas principal */
+  --sky-2: #0F1420; /* surfaces: panels, cards */
+  --sky-3: #151B2B; /* raised: inputs, hover, tiles */
+  --sky-4: #1B2233; /* higher: popovers, modals */
   --glass: rgb(15 20 32 / 0.65); /* glassmorphism surface */
 
   /* Borders & dividers */
-  --edge: #1e293b;        /* border-subtle */
-  --edge-strong: #334155; /* border-bright */
+  --edge: #212A3E;        /* hairline edge - bordes sutiles */
+  --edge-strong: #2E3950; /* edge fuerte - énfasis, hover */
 
-  /* Typography colors */
-  --star-1: #f8fafc; /* text-primary (slate-50) */
-  --star-2: #94a3b8; /* text-secondary (slate-400) */
-  --star-3: #64748b; /* text-muted (slate-500) */
-  --star-4: #475569; /* faint / disabled (slate-600) */
+  /* Typography colors (Star palette - bright text) */
+  --star-1: #E8EDF7; /* primary - headings, énfasis */
+  --star-2: #B8C1D4; /* body - texto regular */
+  --star-3: #8B95AB; /* muted - hints, metadata */
+  --star-4: #5B6478; /* faint - disabled, subtle */
 
-  /* Brand accents — electric blue + cyan */
-  --azure: #3b82f6;        /* brand-primary (blue-500) */
-  --azure-bright: #60a5fa; /* blue-400 */
-  --azure-deep: #2563eb;   /* brand-primary-hover (blue-600) */
+  /* Brand accents (Azure - official primary) */
+  --azure: #5B9BFF;        /* brand primary - acciones, enlaces */
+  --azure-bright: #82B4FF; /* hover/active emphasis */
+  --azure-deep: #3F7FE0;   /* pressed state */
   --azure-ink: #ffffff;    /* text on brand fills */
-  --cyan: #06b6d4;         /* AI node accent / connection line */
-  --indigo: #6366f1;       /* node secondary accent */
 
-  /* Semantic status */
-  --verified: #10b981;  /* emerald-500 */
-  --pending: #f59e0b;   /* amber-500 */
-  --draft: #94a3b8;
-  --archived: #475569;
-  --danger: #ef4444;    /* red-500 */
+  /* Secondary accents */
+  --cyan: #06b6d4;         /* connection lines */
+  --indigo: #6366f1;       /* secondary accent */
+
+  /* Semantic status (official states) */
+  --verified: #34D399;  /* verde - aprobado */
+  --pending: #FBBF24;   /* amarillo - pendiente */
+  --draft: #93A4C4;     /* gris-azul - borrador */
+  --archived: #5B6478;  /* gris - inactivo */
+  --danger: #FB6A68;    /* rojo - error/riesgo */
 }
 
 @theme inline {
