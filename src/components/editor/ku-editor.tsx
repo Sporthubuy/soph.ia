@@ -11,7 +11,8 @@ import { Separator } from "@/components/ui/separator";
 import { updateKnowledgeUnit } from "@/lib/knowledge/actions";
 import { renderMarkdown } from "@/lib/knowledge/markdown";
 import { toast } from "@/components/ui/toast";
-import { KUStatusBadge } from "@/components/shared/ku-status-badge";
+import { StatusBadge } from "@/components/shared/status-badge";
+import { Icon } from "@/components/shared/icon";
 import {
   KUDependencies,
   type DependencyEdge,
@@ -41,7 +42,6 @@ interface VersionItem {
   profiles: { full_name: string | null; email: string } | null;
 }
 
-
 export const KUEditor = ({
   ku,
   versions,
@@ -59,10 +59,13 @@ export const KUEditor = ({
   const [title, setTitle] = useState(ku.title);
   const [content, setContent] = useState(ku.content);
   const [changeMessage, setChangeMessage] = useState("");
-  const [tab, setTab] = useState<"write" | "preview">("write");
+  const [tab, setTab] = useState<"write" | "preview" | "diff">("write");
   const [loading, setLoading] = useState(false);
 
-  const hasChanges = title !== ku.title || content !== ku.content;
+  const titleChanged = title !== ku.title;
+  const contentChanged = content !== ku.content;
+  const hasChanges = titleChanged || contentChanged;
+  const charDiff = content.length - ku.content.length;
 
   const handleSubmit = async (formData: FormData) => {
     setLoading(true);
@@ -72,171 +75,226 @@ export const KUEditor = ({
     formData.set("changeMessage", changeMessage);
     const result = await updateKnowledgeUnit(formData);
     if (result?.error) {
-      toast.add({ type: "error", title: t("saveError"), description: result.error });
+      toast.add({ type: "error", title: "Error", description: result.error });
     } else {
-      toast.add({ type: "success", title: t("changeProposed"), description: t("changeProposedDesc") });
+      toast.add({ type: "success", title: "Cambio propuesto", description: "Pendiente de aprobación" });
       setChangeMessage("");
     }
     setLoading(false);
   };
 
   return (
-    <div className="flex flex-1 gap-6">
+    <div className="flex flex-col lg:flex-row gap-6 min-h-screen">
+      {/* Main editor */}
       <div className="flex-1 space-y-6">
         <form action={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">{t("title")}</Label>
+          {/* Title section */}
+          <div className="panel p-6 space-y-3">
+            <div className="flex items-center gap-2">
+              <Label htmlFor="title" className="section-heading">Título</Label>
+              {titleChanged && <span className="label-xs px-2 py-0.5 rounded-full bg-[#f59e0b]/20 text-[#f59e0b]">Modificado</span>}
+            </div>
             <Input
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              className="body-md border-[#1e293b]"
               required
             />
           </div>
 
-          <div className="space-y-2">
+          {/* Content editor */}
+          <div className="panel p-6 space-y-3">
             <div className="flex items-center justify-between">
-              <Label htmlFor="content">{t("contentLabel")}</Label>
-              <div className="flex rounded-md border p-0.5 text-xs">
-                <button
-                  type="button"
-                  className={`rounded px-2 py-1 ${
-                    tab === "write"
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground"
-                  }`}
-                  onClick={() => setTab("write")}
-                >
-                  {t("write")}
-                </button>
-                <button
-                  type="button"
-                  className={`rounded px-2 py-1 ${
-                    tab === "preview"
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground"
-                  }`}
-                  onClick={() => setTab("preview")}
-                >
-                  {t("preview")}
-                </button>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="content" className="section-heading">Contenido</Label>
+                {contentChanged && (
+                  <span className="label-xs px-2 py-0.5 rounded-full bg-[#3b82f6]/20 text-[#3b82f6]">
+                    {Math.abs(charDiff)} caracteres
+                  </span>
+                )}
+              </div>
+              <div className="flex rounded-lg border border-[#1e293b] p-1 gap-1 bg-[#07090e]">
+                {["write", "preview", "diff"].map((t_val) => (
+                  <button
+                    key={t_val}
+                    type="button"
+                    className={`label-sm px-3 py-1.5 rounded transition-colors ${
+                      tab === t_val
+                        ? "bg-[#3b82f6] text-white"
+                        : "text-[#64748b] hover:text-[#94a3b8]"
+                    }`}
+                    onClick={() => setTab(t_val as any)}
+                  >
+                    {t_val === "write" && "Editar"}
+                    {t_val === "preview" && "Preview"}
+                    {t_val === "diff" && "Cambios"}
+                  </button>
+                ))}
               </div>
             </div>
-            {tab === "write" ? (
+
+            {/* Write tab */}
+            {tab === "write" && (
               <Textarea
                 id="content"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                rows={20}
-                className="font-mono text-sm"
+                rows={24}
+                className="font-mono text-sm border-[#1e293b] bg-[#07090e]"
+                placeholder="Escribe el contenido en Markdown..."
               />
-            ) : (
-              <div
-                className="prose prose-sm dark:prose-invert max-w-none overflow-auto rounded-md border p-4 text-sm leading-relaxed [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_h1]:mt-2 [&_h2]:mt-2 [&_h3]:mt-2 [&_pre]:bg-muted [&_pre]:p-3"
-                dangerouslySetInnerHTML={{
-                  __html:
-                    renderMarkdown(content) ||
-                    `<p class="text-muted-foreground">${t("previewEmpty")}</p>`,
-                }}
-              />
+            )}
+
+            {/* Preview tab */}
+            {tab === "preview" && (
+              <div className="min-h-[500px] overflow-auto rounded-lg border border-[#1e293b] bg-[#07090e] p-6">
+                <div
+                  className="ku-content body-md text-[#94a3b8] leading-relaxed max-w-none"
+                  dangerouslySetInnerHTML={{
+                    __html: renderMarkdown(content) || '<p class="text-[#64748b]">Sin contenido aún</p>',
+                  }}
+                />
+              </div>
+            )}
+
+            {/* Diff tab */}
+            {tab === "diff" && (
+              <div className="min-h-[500px] space-y-4">
+                {!contentChanged ? (
+                  <div className="flex items-center justify-center h-96 text-[#64748b]">
+                    <p>Sin cambios en el contenido</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <p className="label-sm text-[#64748b]">Original (v{ku.version})</p>
+                      <div className="h-96 overflow-auto rounded-lg border border-[#1e293b] bg-[#07090e] p-3">
+                        <pre className="text-xs text-[#94a3b8] whitespace-pre-wrap break-words font-mono">
+                          {ku.content}
+                        </pre>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <p className="label-sm text-[#64748b]">Nuevo</p>
+                      <div className="h-96 overflow-auto rounded-lg border border-[#1e293b] bg-[#07090e] p-3">
+                        <pre className="text-xs text-[#94a3b8] whitespace-pre-wrap break-words font-mono">
+                          {content}
+                        </pre>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </div>
 
+          {/* Change message */}
           {hasChanges && (
-            <div className="space-y-2">
-              <Label htmlFor="changeMessage">
-                {t("changeMessage")}
-              </Label>
+            <div className="panel p-6 space-y-3 border border-[#3b82f6]/30 bg-[#3b82f6]/5">
+              <div className="flex items-center gap-2">
+                <Icon name="bulb" size={16} className="text-[#3b82f6]" />
+                <Label htmlFor="changeMessage" className="section-heading">Describe tu cambio</Label>
+              </div>
               <Input
                 id="changeMessage"
                 value={changeMessage}
                 onChange={(e) => setChangeMessage(e.target.value)}
-                placeholder={t("changeMessagePlaceholder")}
+                placeholder="¿Qué cambió y por qué?"
+                className="body-md border-[#1e293b]"
               />
+              <p className="label-xs text-[#64748b]">
+                Este cambio irá a revisión y requiere aprobación del responsable (Artículo 6).
+              </p>
             </div>
           )}
 
-          <div className="flex items-center gap-3">
-            <Button type="submit" disabled={!hasChanges || loading}>
-              {loading ? t("saving") : t("proposeChange")}
+          {/* Action buttons */}
+          <div className="flex items-center gap-3 pt-4">
+            <Button
+              type="submit"
+              disabled={!hasChanges || loading}
+              className="bg-[#3b82f6] hover:bg-[#2563eb] disabled:opacity-50 text-white font-medium px-6 py-2 rounded-lg"
+            >
+              {loading ? "Proponiendo..." : "Proponer cambio"}
             </Button>
             <Button
               type="button"
               variant="outline"
-              render={<Link href="/knowledge" />}
+              render={<Link href={`/knowledge/${ku.id}`} />}
+              className="border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e]"
             >
-              {t("backToList")}
+              Cancelar
             </Button>
           </div>
         </form>
       </div>
 
-      <aside className="hidden w-72 shrink-0 lg:block">
-        <div className="space-y-4 rounded-lg border p-4">
-          <h3 className="font-semibold">{t("details")}</h3>
-          <div className="space-y-3 text-sm">
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">{tc("status")}</span>
-              <KUStatusBadge status={ku.status} />
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">{t("trustScore")}</span>
-              <TrustBadge score={ku.trust_score} />
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">{tc("version")}</span>
-              <span>{ku.version}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">{t("domain")}</span>
-              <span>{ku.domains?.name ?? "—"}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">{t("owner")}</span>
-              <span className="truncate max-w-[120px]">
-                {ku.profiles?.full_name ?? ku.profiles?.email ?? "—"}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground">{t("hash")}</span>
-              <code className="text-xs text-muted-foreground">
-                {ku.hash.slice(0, 8)}
-              </code>
+      {/* Sidebar */}
+      <aside className="hidden lg:block w-80 shrink-0">
+        <div className="space-y-4">
+          {/* KU Info */}
+          <div className="panel p-5 space-y-3">
+            <h3 className="section-heading flex items-center gap-2">
+              <Icon name="bulb" size={16} className="text-[#3b82f6]" />
+              Información
+            </h3>
+            <div className="space-y-2.5 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-[#64748b]">Estado</span>
+                <StatusBadge status={ku.status} size="sm" />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[#64748b]">Trust Score</span>
+                <TrustBadge score={ku.trust_score} />
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[#64748b]">Versión</span>
+                <span className="font-medium text-[#94a3b8]">v{ku.version}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[#64748b]">Dominio</span>
+                <span className="font-medium text-[#94a3b8]">{ku.domains?.name ?? "—"}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[#64748b]">Responsable</span>
+                <span className="font-medium text-[#94a3b8] truncate max-w-[120px]">
+                  {ku.profiles?.full_name ?? ku.profiles?.email ?? "—"}
+                </span>
+              </div>
             </div>
           </div>
 
-          <Separator />
+          {/* Dependencies */}
+          <div className="panel p-5">
+            <KUDependencies
+              kuId={ku.id}
+              dependencies={dependencies}
+              candidates={candidates}
+            />
+          </div>
 
-          <KUDependencies
-            kuId={ku.id}
-            dependencies={dependencies}
-            candidates={candidates}
-          />
-
-          <Separator />
-
-          <div>
-            <h3 className="mb-3 font-semibold">{t("versionHistory")}</h3>
+          {/* Version history */}
+          <div className="panel p-5 space-y-3">
+            <h3 className="section-heading flex items-center gap-2">
+              <Icon name="check" size={16} className="text-[#3b82f6]" />
+              Historial ({versions.length})
+            </h3>
             {versions.length === 0 ? (
-              <p className="text-sm text-muted-foreground">{t("noVersions")}</p>
+              <p className="text-sm text-[#64748b]">Sin historial</p>
             ) : (
-              <div className="space-y-3">
-                {versions.map((v) => (
-                  <div key={v.id} className="text-sm">
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium">v{v.version}</span>
-                      <code className="text-xs text-muted-foreground">
-                        {v.hash.slice(0, 8)}
-                      </code>
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {versions.slice(0, 5).map((v) => (
+                  <div key={v.id} className="text-xs p-2 rounded border border-[#1e293b] hover:bg-[#07090e]/50">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-medium text-[#94a3b8]">v{v.version}</span>
+                      <code className="text-[#64748b]">{v.hash.slice(0, 6)}</code>
                     </div>
                     {v.change_message && (
-                      <p className="text-muted-foreground">
-                        {v.change_message}
-                      </p>
+                      <p className="text-[#64748b] line-clamp-1">{v.change_message}</p>
                     )}
-                    <p className="text-xs text-muted-foreground">
-                      {v.profiles?.full_name ?? v.profiles?.email ?? "—"} ·{" "}
-                      {new Date(v.created_at).toLocaleDateString(locale)}
+                    <p className="text-[#64748b] text-[10px]">
+                      {v.profiles?.full_name ?? v.profiles?.email} · {new Date(v.created_at).toLocaleDateString(locale)}
                     </p>
                   </div>
                 ))}
@@ -252,10 +310,10 @@ export const KUEditor = ({
 const TrustBadge = ({ score }: { score: number }) => {
   const color =
     score >= 70
-      ? "text-[var(--verified)] dark:text-[var(--verified)]"
+      ? "text-[var(--verified)]"
       : score >= 40
-        ? "text-[var(--pending)] dark:text-[var(--pending)]"
-        : "text-[var(--danger)] dark:text-[var(--danger)]";
+        ? "text-[var(--pending)]"
+        : "text-[var(--danger)]";
 
-  return <span className={`font-medium ${color}`}>{score}/100</span>;
+  return <span className={`font-medium ${color}`}>{score}%</span>;
 };
