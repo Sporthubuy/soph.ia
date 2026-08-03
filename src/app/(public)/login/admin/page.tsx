@@ -40,14 +40,15 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-[#07090e] flex items-center justify-center">
       <div className="w-full max-w-md space-y-8">
         {/* Logo */}
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-lg bg-[#3b82f6]">
-            <span className="text-lg font-bold text-white">S</span>
+        <div className="text-center space-y-2">
+          <div className="mx-auto h-16 w-16 flex items-center justify-center rounded-xl bg-gradient-to-br from-[#3b82f6] to-[#2563eb] shadow-lg shadow-blue-500/20">
+            <span className="text-4xl font-bold text-white">S</span>
           </div>
-          <h1 className="mt-4 text-3xl font-bold text-[var(--star-1)]">
+          <h1 className="text-4xl font-bold text-[var(--star-1)]">
             SOPH.IA
           </h1>
-          <p className="mt-2 text-sm text-[#64748b]">Admin Panel</p>
+          <p className="text-sm text-[#64748b]">Admin Panel</p>
+          <p className="text-xs text-[#475569] pt-1">The Knowledge Operating System for AI</p>
         </div>
 
         {/* Login Form */}
