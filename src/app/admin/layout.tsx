@@ -25,9 +25,17 @@ export default async function AdminLayout({
     redirect("/admin/login");
   }
 
-  // Check if user is admin (will implement this logic)
-  // For now, allow all authenticated users
-  // TODO: Verify user has admin role
+  // Check if user is admin
+  const { data: adminRole } = await supabase
+    .from("admin_roles")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("role", "admin")
+    .single();
+
+  if (!adminRole) {
+    redirect("/admin/login");
+  }
 
   return (
     <html lang="en">

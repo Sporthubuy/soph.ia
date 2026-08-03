@@ -1,11 +1,43 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+interface StatsData {
+  totalUsers: number;
+  totalKUs: number;
+  activeAgents: number;
+  totalProjects: number;
+  timestamp: string;
+}
 
 export default function AdminDashboardPage() {
-  // TODO: Fetch real statistics from database
-  const stats = [
-    { label: "Total Users", value: "1,284", icon: "people", color: "bg-blue-500/20", textColor: "text-blue-400" },
-    { label: "Knowledge Units", value: "856", icon: "knowledge", color: "bg-green-500/20", textColor: "text-green-400" },
-    { label: "Active Agents", value: "42", icon: "agents", color: "bg-purple-500/20", textColor: "text-purple-400" },
-    { label: "Projects", value: "28", icon: "folder", color: "bg-orange-500/20", textColor: "text-orange-400" },
+  const [stats, setStats] = useState<StatsData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch("/api/admin/stats");
+        const data = await response.json();
+        setStats(data);
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+    // Refresh stats every 30 seconds
+    const interval = setInterval(fetchStats, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const statCards = [
+    { label: "Total Users", value: stats?.totalUsers || "0", icon: "people", color: "bg-blue-500/20", textColor: "text-blue-400" },
+    { label: "Knowledge Units", value: stats?.totalKUs || "0", icon: "knowledge", color: "bg-green-500/20", textColor: "text-green-400" },
+    { label: "Active Agents", value: stats?.activeAgents || "0", icon: "agents", color: "bg-purple-500/20", textColor: "text-purple-400" },
+    { label: "Projects", value: stats?.totalProjects || "0", icon: "folder", color: "bg-orange-500/20", textColor: "text-orange-400" },
   ];
 
   const recentActivity = [
@@ -27,7 +59,7 @@ export default function AdminDashboardPage() {
 
       {/* Statistics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat) => (
+        {statCards.map((stat) => (
           <div
             key={stat.label}
             className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6 space-y-3"
