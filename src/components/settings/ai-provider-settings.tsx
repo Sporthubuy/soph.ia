@@ -119,7 +119,7 @@ export const AIProviderSettings = () => {
     <section className="panel p-6 space-y-6">
       <div className="space-y-1">
         <h2 className="section-heading">AI PROVIDERS</h2>
-        <p className="body-sm text-[#64748b]">
+        <p className="body-sm text-[var(--star-3)]">
           Configura tus credenciales para usar diferentes modelos de IA en tus agentes
         </p>
       </div>
@@ -128,7 +128,7 @@ export const AIProviderSettings = () => {
         {PROVIDERS.map((provider) => {
           const saved = savedProviders.find((p) => p.provider === provider.id);
           return (
-            <div key={provider.id} className="border border-[#1e293b] rounded-lg p-4 space-y-3">
+            <div key={provider.id} className="border border-[var(--edge)] rounded-lg p-4 space-y-3">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-3">
@@ -137,7 +137,7 @@ export const AIProviderSettings = () => {
                     </span>
                     <div>
                       <p className="body-md font-medium text-[var(--star-1)]">{provider.name}</p>
-                      <p className="label-xs text-[#64748b]">{provider.desc}</p>
+                      <p className="label-xs text-[var(--star-3)]">{provider.desc}</p>
                     </div>
                   </div>
                 </div>
@@ -172,7 +172,7 @@ export const AIProviderSettings = () => {
               ) : (
                 <div className="space-y-2">
                   <div>
-                    <Label className="text-xs text-[#64748b]">
+                    <Label className="text-xs text-[var(--star-3)]">
                       {provider.id === "anthropic" && "Anthropic API Key"}
                       {provider.id === "openai" && "OpenAI API Key"}
                       {provider.id === "google" && "Google AI API Key"}
@@ -191,7 +191,7 @@ export const AIProviderSettings = () => {
                     />
                   </div>
                   <div>
-                    <Label className="text-xs text-[#64748b]">
+                    <Label className="text-xs text-[var(--star-3)]">
                       Modelo (opcional)
                     </Label>
                     <Input

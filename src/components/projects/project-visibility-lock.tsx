@@ -58,7 +58,7 @@ export const ProjectVisibilityLock = ({
       disabled={!canManage || isPending}
       title={canManage ? meta.title : "No tenes permisos para cambiar la visibilidad"}
       aria-label={meta.title}
-      className="flex h-8 w-8 items-center justify-center rounded-lg border border-[#1e293b] bg-[var(--sky-2)] text-[#94a3b8] hover:bg-[#07090e] hover:text-[var(--star-1)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      className="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] text-[var(--star-2)] hover:bg-[var(--sky-1)] hover:text-[var(--star-1)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <Icon name={meta.icon} size={15} />
     </button>

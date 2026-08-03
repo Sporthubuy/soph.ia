@@ -65,7 +65,7 @@ export const DomainSettings = ({
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
           <h2 className="body-md font-semibold text-[var(--star-1)]">{t("domainsTitle")}</h2>
-          <p className="body-sm text-[#64748b] mt-0.5">{t("domainsDesc")}</p>
+          <p className="body-sm text-[var(--star-3)] mt-0.5">{t("domainsDesc")}</p>
         </div>
         {canManage && !showForm && (
           <Button
@@ -97,7 +97,7 @@ export const DomainSettings = ({
               type="submit"
               size="sm"
               disabled={isPending}
-              className="rounded-lg bg-[#3b82f6] text-[var(--azure-ink)] hover:bg-[#2563eb]"
+              className="rounded-lg bg-[var(--azure)] text-[var(--azure-ink)] hover:bg-[#2563eb]"
             >
               {isPending ? t("creating") : tc("create")}
             </Button>
@@ -124,17 +124,17 @@ export const DomainSettings = ({
       )}
 
       {domains.length === 0 ? (
-        <p className="text-sm text-[#64748b]">{t("noDomains")}</p>
+        <p className="text-sm text-[var(--star-3)]">{t("noDomains")}</p>
       ) : (
         <div className="space-y-2">
           {domains.map((domain) => (
             <div
               key={domain.id}
-              className="flex items-center justify-between rounded-lg border border-[#1e293b] px-3 py-3"
+              className="flex items-center justify-between rounded-lg border border-[var(--edge)] px-3 py-3"
             >
               <div className="flex items-center gap-3 min-w-0">
                 <span
-                  className="text-[#3b82f6] text-lg"
+                  className="text-[var(--azure)] text-lg"
                   aria-hidden
                 >
                   account_tree
@@ -147,7 +147,7 @@ export const DomainSettings = ({
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-8 text-xs text-[#64748b] hover:text-[var(--danger)]"
+                  className="h-8 text-xs text-[var(--star-3)] hover:text-[var(--danger)]"
                   onClick={() => handleDelete(domain.id)}
                   disabled={isPending}
                 >
