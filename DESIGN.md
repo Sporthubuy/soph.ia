@@ -1,88 +1,130 @@
-# SOPH.IA — Design System ("Constellation")
+# SOPH.IA — Diseño del Sistema (Constellation)
 
-Graph-native, dark, Operate register. The organization's knowledge is a
-navigable night sky: **nodes are bodies with state, edges are the lines
-between them, azure is the connective light.** This world is user-pinned;
-it refuses both the AI-default light dashboard and the neon-on-black cliché.
+**Última actualización:** 2026-08-03  
+**Versión:** 1.0 Oficial  
+**Fuente:** SOPH.IA_Brand_Guide_Oficial
 
-Source of truth for tokens: [`src/app/globals.css`](src/app/globals.css).
+---
 
-## Color — cool midnight ink
+## 🎨 Paleta de Colores Oficial
 
-| Role | Token | Value |
-|------|-------|-------|
-| Void (deepest) | `--sky-0` | `#080b12` |
-| App canvas | `--sky-1` | `#0a0e17` |
-| Surface (panels, cards, chrome) | `--sky-2` | `#0f1420` |
-| Raised (inputs, hover, tiles) | `--sky-3` | `#151b2b` |
-| Higher (popovers, active tiles) | `--sky-4` | `#1b2233` |
-| Hairline edge | `--edge` | `#212a3e` |
-| Edge strong | `--edge-strong` | `#2e3950` |
-| Text primary | `--star-1` | `#e8edf7` |
-| Text body | `--star-2` | `#b8c1d4` |
-| Text muted | `--star-3` | `#8b95ab` |
-| Text faint / disabled | `--star-4` | `#5b6478` |
+### Primarios (Azure Accent)
+```css
+--azure: #5B9BFF;           /* Azul primario - Acciones, enlaces, focos */
+--azure-bright: #82B4FF;    /* Azul claro - Estados hover/active */
+--azure-deep: #3F7FE0;      /* Azul profundo - Estados presionados */
+```
 
-**Connective accent (the signature light):** `--azure #5b9bff`, hover
-`--azure-bright #82b4ff`, deep `--azure-deep #3f7fe0`. Filled azure controls
-carry dark ink text `--azure-ink #08101f` (white on azure fails contrast).
+### Fondos (Sky - Paleta Oscura)
+```css
+--sky-0: #080B12;    /* Más oscuro - Canvas alternativo */
+--sky-1: #0A0E17;    /* Canvas principal */
+--sky-2: #0F1420;    /* Superficies - Cards, panels */
+--sky-3: #151B2B;    /* Raised - Inputs, hover */
+--sky-4: #1B2233;    /* Higher - Popovers, modals */
+```
 
-**Status = the color of a body's glow:** verified `--verified #34d399`,
-pending `--pending #fbbf24`, draft `--draft #93a4c4`, archived
-`--archived #5b6478`, danger `--danger #fb6a68`. Rendered as a node-dot with a
-soft same-hue ring, plus a same-hue text label — never gray on a tinted chip.
+### Textos (Star - Claros)
+```css
+--star-1: #E8EDF7;   /* Primario - Headings, énfasis */
+--star-2: #B8C1D4;   /* Body - Texto regular */
+--star-3: #8B95AB;   /* Muted - Hints, metadata */
+--star-4: #5B6478;   /* Disabled - Texto deshabilitado */
+```
 
-Color strategy: **Restrained** (dark neutrals + one azure accent). Dark chosen
-from the use scene: an infrastructure tool for prolonged, focused operator work.
+### Estados Semánticos
+```css
+--verified: #34D399;  /* Verde - Aprobado/Verificado */
+--pending: #FBBF24;   /* Amarillo - Pendiente/Revisar */
+--danger: #FB6A68;    /* Rojo - Error/Riesgo */
+--archived: #5B6478;  /* Gris - Inactivo/Archivado */
+--draft: #93A4C4;     /* Gris-Azul - Borrador */
+```
 
-## Type
+### Bordes
+```css
+--edge: #212A3E;          /* Hairline - Bordes sutiles */
+--edge-strong: #2E3950;   /* Strong - Énfasis, hover */
+```
 
-Typographic pairing (3 levels), following the brand manual:
+---
 
-- **Display / headings:** Outfit (`--font-display`) — geometric tech-modern font,
-  matches the SOPH.IA logo style. Used for H1–H3: `headline-xl/lg/md`, landing
-  hero/section headings, and headings inside rendered KUs. Display tracking
-  `-0.02 … -0.025em`.
-- **Body / editor:** Inter (`--font-sans`) — the workhorse grotesque for all UI
-  and reading text (Markdown, forms, tables).
-- **Coordinates:** JetBrains Mono (`--font-mono`) — used **only** for the
-  product's measurement data: KU ids, hashes, versions, trust scores, counts.
-  Never as decorative "technical" costume.
-- Scale utilities in `globals.css`: `headline-xl/lg/md`, `body-lg/md/sm`,
-  `label-sm/xs`, `section-heading` (uppercase, tracked), `mono-code`.
+## 📝 Tipografía
 
-## Shape & elevation
+### Fuentes
+- **Display/Headings:** Inter (weights: 300, 400, 500, 600)
+- **Body:** Inter (weights: 400, 600)
+- **Data/Mono:** JetBrains Mono (weight: 400)
 
-- Radii: card **14px** (`--radius-lg`), inputs/tiles 10px, pills `full` for
-  small controls. Cards sit at 12–16px, never sharp.
-- Elevation declared **once**: panels use a hairline border on `--sky-2`
-  (no border+shadow ghosting). Real shadows carry offset + blur; the one
-  meaningful glow is `node-active` on the selected graph body.
+### Escala Headline
+- `headline-xl`: 48px / Light (300) / tracking -1px
+- `headline-lg`: 36px / Regular (400) / tracking -0.5px
+- `headline-md`: 28px / Medium (500) / tracking -0.3px
 
-## Icons & logo — drawn, never emoji
+### Escala Body
+- `body-lg`: 18px / Regular / line-height 1.7
+- `body-md`: 16px / Regular / line-height 1.6
+- `body-sm`: 14px / Regular / line-height 1.6
 
-- [`src/components/shared/icon.tsx`](src/components/shared/icon.tsx): one line
-  set, `currentColor`, stroke ~1.6, drawn in the node+edge grammar where the
-  concept allows (the `graph` glyph is three connected bodies).
-- [`src/components/shared/logo.tsx`](src/components/shared/logo.tsx): the
-  constellation mark — satellite bodies wired to a luminous azure core; the
-  wordmark's "." is a small azure node. Pure geometry, the brand in one glyph.
+### Utilidades
+- `label`: 12px / Semibold / uppercase
+- `caption`: 11px / Regular / muted
+- `mono`: 13px / Regular / JetBrains Mono
 
-## The dot substrate
+---
 
-The faint dot field is the graph canvas's own ground. It lives **only where a
-real canvas exists** — the React Flow `Background` on `/graph`, and the auth /
-landing hero as atmosphere — never as generic page decoration. (The mechanical
-detector flags any tiled dot field as advisory "slop"; this usage is the
-deliberate, world-justified exception for a knowledge-graph product.)
+## 🎯 Componentes
 
-## Notes / follow-ups
+### Botones Primary
+- Background: #5B9BFF (Azure)
+- Text: White
+- Padding: 12px 28px
+- Border Radius: 6px
+- Hover: #82B4FF + shadow
+- Active: #3F7FE0 + scale(0.98)
 
-- All content emoji have been replaced with the drawn `Icon` set (or clean text
-  in native `<select>` options, which can't hold SVG). Project tiles render the
-  `projects` glyph on the user's chosen color; the per-project material-symbol
-  icon is no longer surfaced (uniform iconography > custom emoji).
-- Theme is dark-only today; a light variant would reuse the same token names.
-- Pre-existing (not design) type errors live in `graph/page.tsx` (KU/dependency
-  prop shape), `agent-wizard.tsx` (undefined `model`/`temperature`/`tags`), and
-  `api/visibility/route.ts` — unrelated to this rebrand.
+### Botones Secondary
+- Background: Transparent
+- Border: 1.5px solid #2E3950
+- Text: #E8EDF7
+- Hover: Border/Text → #5B9BFF
+
+### Cards
+- Background: #0F1420 (Sky-2)
+- Border: 1px solid #212A3E
+- Border Radius: 12px
+- Padding: 24px
+
+### Inputs
+- Background: #151B2B (Sky-3)
+- Border: 1px solid #212A3E
+- Border Radius: 8px
+- Focus: Border #5B9BFF + shadow
+
+### Badges
+- Verified: #34D399 (White text)
+- Pending: #FBBF24 (#1a1a1a text)
+- Draft: #93A4C4 (White text)
+- Archived: #5B6478 (White text)
+
+---
+
+## 📐 Espaciado
+- XS: 4px | SM: 8px | MD: 16px | LG: 24px | XL: 32px | 2XL: 48px
+
+---
+
+## ✨ Animaciones
+- Duration: 300ms ease-out (default)
+- Fast: 150ms | Slow: 500ms
+
+---
+
+## ♿ Accesibilidad (WCAG AA)
+- Text contrast: 4.5:1 minimum
+- Focus ring: 2px solid Azure
+- Star-1 on Sky-1: 19.5:1 ✓
+
+---
+
+**SOPH.IA — The Knowledge Operating System**

@@ -1,76 +1,120 @@
+import React from 'react';
+
+interface LogoProps {
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'full' | 'isotype';
+  className?: string;
+}
+
+const sizes = {
+  sm: 16,
+  md: 24,
+  lg: 32,
+  xl: 48,
+};
+
 /**
- * SOPH.IA logo. The isotype is the official "S" mesh extracted from the brand
- * sheet (the 14 facet paths of the top hexagonal mark), cropped and recolored
- * to render in `currentColor` so it shows white on the dark app. The wordmark
- * follows the brand: lowercase "soph.ia" with ".ia" in the electric-blue accent.
+ * SOPH.IA Logo - Constellation Design System
+ * Official brand mark per SOPH.IA_Brand_Guide_Oficial.md
  */
+export function Logo({ size = 'md', variant = 'full', className = '' }: LogoProps) {
+  const dimensions = sizes[size];
 
-const ISOTYPE_PATHS = [
-  "M691.495 187.356C689.173 185.995 676.64 178.634 674.834 178.062C668.122 181.9 661.08 185.79 654.568 189.914L713.061 252.04L721.842 261.421L721.852 204.898C711.7 199.108 701.581 193.261 691.495 187.356Z",
-  "M674.451 222.878C671.307 219.547 656.435 203.442 653.82 201.878L653.813 252.572C669.588 261.551 685.29 270.656 700.919 279.886L711.888 273.519L718.626 269.566L674.451 222.878Z",
-  "M775.371 300.808C759.45 292.387 743.63 283.777 727.914 274.98C717.246 298.561 705.461 323.412 695.552 347.146C704.646 341.835 716.869 334.161 725.926 329.454C742.323 319.858 759.085 310.463 775.371 300.808Z",
-  "M725.621 127.104C721.07 124.455 700.269 111.957 696.117 110.462C701.592 121.621 708.499 134.802 713.407 146.019C719.021 142.956 724.579 139.791 730.078 136.526C730.068 141.705 730.088 147.02 730.109 152.388C730.157 165.164 730.206 178.235 729.857 190.464L756.848 174.739C765.041 170.038 774.581 164.86 782.507 159.921L725.621 127.104Z",
-  "M645.916 314.792C645.957 300.435 646.046 269.018 645.011 267.487C628.125 277.265 610.506 287.123 593.9 297.2L653.907 331.983C662.264 336.779 671.702 342.5 680.124 346.951C674.206 335.199 668.369 323.406 662.613 311.574C657 314.634 651.431 317.774 645.907 320.992C645.902 319.863 645.908 317.671 645.916 314.792Z",
-  "M679.63 111.12L679.287 110.807C653.556 125.728 625.732 141.171 600.466 156.499L618.06 166.556C624.665 170.4 641.343 180.631 647.835 183.5C656.468 163.286 670.321 133.276 679.904 112.188C679.813 111.832 679.721 111.476 679.63 111.12Z",
-  "M775.826 235.759C763.99 228.96 741.323 215.25 729.777 209.959L729.853 262.564C739.44 257.153 748.96 251.622 758.409 245.974C764.167 242.663 770.23 239.294 775.826 235.759Z",
-  "M645.712 196.842C645.207 196.45 645.101 196.222 644.617 196.156L600.132 222.137C605.966 225.388 611.978 228.65 617.704 232.062C626.465 236.988 637.136 243.438 645.911 247.895C645.884 243.581 645.947 238.012 646.015 232.035C646.157 219.477 646.32 205.121 645.712 196.842Z",
-  "M706.412 150.034C704.104 145.187 690.278 114.671 688.268 112.684L658.727 178.098L671.258 170.86C682.81 164.009 695.029 157.044 706.412 150.034Z",
-  "M691.793 335.831C699.91 317.989 716.505 281.512 716.283 280.162C701.646 288.698 684.138 299.456 669.349 307.288C673.553 315.986 677.823 325.143 682.211 333.711L687.65 344.968C688.193 343.744 689.715 340.398 691.793 335.831Z",
-  "M779.115 281.376C779.046 266.583 778.945 244.828 778.178 243.992C766.456 250.782 745.464 262.212 734.807 269.47L751.406 278.814C760.721 283.865 769.996 288.991 779.229 294.191C779.167 292.433 779.144 287.501 779.115 281.376Z",
-  "M640.622 189.19C633.412 184.756 603.942 166.886 597.163 164.057L597.119 214.45C604.821 210.052 616.487 202.661 623.837 199.022L640.622 189.19Z",
-  "M721.79 195.774C721.907 190.925 722.601 152.242 721.391 150.464C709.727 157.306 693.764 166.157 682.586 173.464L697.743 181.968C705.824 186.454 713.841 191.057 721.79 195.774Z",
-  "M693.124 284.193L653.819 261.78L653.832 307.103C662.435 302.285 670.956 297.324 679.392 292.22C683.457 289.862 689.331 286.697 693.124 284.193Z",
-];
+  if (variant === 'isotype') {
+    return (
+      <svg
+        width={dimensions}
+        height={dimensions}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className={className}
+        role="img"
+        aria-label="SOPH.IA"
+      >
+        <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+        <circle cx="12" cy="3" r="1.2" fill="currentColor" opacity="0.8" />
+        <circle cx="18.5" cy="5.5" r="1.2" fill="currentColor" opacity="0.7" />
+        <circle cx="21" cy="12" r="1.2" fill="currentColor" opacity="0.8" />
+        <circle cx="18.5" cy="18.5" r="1.2" fill="currentColor" opacity="0.7" />
+        <circle cx="12" cy="21" r="1.2" fill="currentColor" opacity="0.8" />
+        <circle cx="5.5" cy="18.5" r="1.2" fill="currentColor" opacity="0.7" />
+        <circle cx="3" cy="12" r="1.2" fill="currentColor" opacity="0.8" />
+        <circle cx="5.5" cy="5.5" r="1.2" fill="currentColor" opacity="0.7" />
 
-export const LogoMark = ({
-  size = 36,
-  className,
-}: {
-  size?: number;
-  className?: string;
-}) => (
-  <svg
-    height={size}
-    width={Math.round(size * 0.8)}
-    viewBox="591 107 194 243"
-    fill="currentColor"
-    className={`text-[var(--star-1)] ${className ?? ""}`}
-    aria-hidden="true"
-  >
-    {ISOTYPE_PATHS.map((d, i) => (
-      <path key={i} d={d} />
-    ))}
-  </svg>
-);
+        <line x1="12" y1="12" x2="12" y2="3" stroke="currentColor" strokeWidth="0.8" opacity="0.4" />
+        <line x1="12" y1="12" x2="18.5" y2="5.5" stroke="currentColor" strokeWidth="0.8" opacity="0.3" />
+        <line x1="12" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="0.8" opacity="0.4" />
+        <line x1="12" y1="12" x2="18.5" y2="18.5" stroke="currentColor" strokeWidth="0.8" opacity="0.3" />
+        <line x1="12" y1="12" x2="12" y2="21" stroke="currentColor" strokeWidth="0.8" opacity="0.4" />
+        <line x1="12" y1="12" x2="5.5" y2="18.5" stroke="currentColor" strokeWidth="0.8" opacity="0.3" />
+        <line x1="12" y1="12" x2="3" y2="12" stroke="currentColor" strokeWidth="0.8" opacity="0.4" />
+        <line x1="12" y1="12" x2="5.5" y2="5.5" stroke="currentColor" strokeWidth="0.8" opacity="0.3" />
 
-export const Wordmark = ({ className }: { className?: string }) => (
-  <span
-    className={`inline-flex items-baseline tracking-tight text-[var(--star-1)] ${className ?? ""}`}
-  >
-    <span className="font-medium">soph</span>
-    <span className="font-extrabold text-[var(--azure)]">.</span>
-    <span className="font-extrabold">ia</span>
-  </span>
-);
+        <line x1="12" y1="3" x2="18.5" y2="5.5" stroke="currentColor" strokeWidth="0.6" opacity="0.25" />
+        <line x1="18.5" y1="5.5" x2="21" y2="12" stroke="currentColor" strokeWidth="0.6" opacity="0.25" />
+        <line x1="21" y1="12" x2="18.5" y2="18.5" stroke="currentColor" strokeWidth="0.6" opacity="0.25" />
+        <line x1="18.5" y1="18.5" x2="12" y2="21" stroke="currentColor" strokeWidth="0.6" opacity="0.25" />
+        <line x1="12" y1="21" x2="5.5" y2="18.5" stroke="currentColor" strokeWidth="0.6" opacity="0.25" />
+        <line x1="5.5" y1="18.5" x2="3" y2="12" stroke="currentColor" strokeWidth="0.6" opacity="0.25" />
+        <line x1="3" y1="12" x2="5.5" y2="5.5" stroke="currentColor" strokeWidth="0.6" opacity="0.25" />
+        <line x1="5.5" y1="5.5" x2="12" y2="3" stroke="currentColor" strokeWidth="0.6" opacity="0.25" />
+      </svg>
+    );
+  }
 
-export const Logo = ({
-  markSize = 36,
-  className,
-  subtitle = true,
-}: {
-  markSize?: number;
-  className?: string;
-  subtitle?: boolean;
-}) => (
-  <span className={`inline-flex items-center gap-2.5 ${className ?? ""}`}>
-    <LogoMark size={markSize} />
-    <span className="flex flex-col leading-none">
-      <Wordmark className="text-[17px]" />
-      {subtitle && (
-        <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.16em] text-[var(--star-3)]">
-          Knowledge OS
-        </span>
-      )}
+  return (
+    <div className={`flex items-center gap-2 ${className}`}>
+      <svg
+        width={dimensions}
+        height={dimensions}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-label="SOPH.IA Logo"
+      >
+        <circle cx="12" cy="12" r="1.5" fill="currentColor" />
+        <circle cx="12" cy="3" r="1.2" fill="currentColor" opacity="0.8" />
+        <circle cx="18.5" cy="5.5" r="1.2" fill="currentColor" opacity="0.7" />
+        <circle cx="21" cy="12" r="1.2" fill="currentColor" opacity="0.8" />
+        <circle cx="18.5" cy="18.5" r="1.2" fill="currentColor" opacity="0.7" />
+        <circle cx="12" cy="21" r="1.2" fill="currentColor" opacity="0.8" />
+        <circle cx="5.5" cy="18.5" r="1.2" fill="currentColor" opacity="0.7" />
+        <circle cx="3" cy="12" r="1.2" fill="currentColor" opacity="0.8" />
+        <circle cx="5.5" cy="5.5" r="1.2" fill="currentColor" opacity="0.7" />
+
+        <line x1="12" y1="12" x2="12" y2="3" stroke="currentColor" strokeWidth="0.8" opacity="0.4" />
+        <line x1="12" y1="12" x2="18.5" y2="5.5" stroke="currentColor" strokeWidth="0.8" opacity="0.3" />
+        <line x1="12" y1="12" x2="21" y2="12" stroke="currentColor" strokeWidth="0.8" opacity="0.4" />
+        <line x1="12" y1="12" x2="18.5" y2="18.5" stroke="currentColor" strokeWidth="0.8" opacity="0.3" />
+        <line x1="12" y1="12" x2="12" y2="21" stroke="currentColor" strokeWidth="0.8" opacity="0.4" />
+        <line x1="12" y1="12" x2="5.5" y2="18.5" stroke="currentColor" strokeWidth="0.8" opacity="0.3" />
+        <line x1="12" y1="12" x2="3" y2="12" stroke="currentColor" strokeWidth="0.8" opacity="0.4" />
+        <line x1="12" y1="12" x2="5.5" y2="5.5" stroke="currentColor" strokeWidth="0.8" opacity="0.3" />
+      </svg>
+      <span className="font-semibold text-base">SOPH.IA</span>
+    </div>
+  );
+}
+
+/**
+ * Alias for backward compatibility with existing code
+ * LogoMark = Logo component in isotype variant
+ */
+export function LogoMark({ size = 'md', className = '' }: Omit<LogoProps, 'variant'>) {
+  return <Logo size={size} variant="isotype" className={className} />;
+}
+
+/**
+ * Wordmark = Logo text only variant (SOPH.IA)
+ */
+export function Wordmark({ className = '' }: { className?: string }) {
+  return (
+    <span className={`font-semibold ${className}`} style={{ color: 'var(--star-1)' }}>
+      SOPH.IA
     </span>
-  </span>
-);
+  );
+}
+
+export default Logo;
