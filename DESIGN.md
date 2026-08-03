@@ -37,8 +37,14 @@ from the use scene: an infrastructure tool for prolonged, focused operator work.
 
 ## Type
 
-- **UI / display:** Hanken Grotesk (`--font-sans`) — a workhorse grotesque with
-  a bit more warmth than Inter. Display tracking `-0.02 … -0.025em`.
+Typographic pairing (3 levels), following the brand manual:
+
+- **Display / headings:** Outfit (`--font-display`) — geometric tech-modern font,
+  matches the SOPH.IA logo style. Used for H1–H3: `headline-xl/lg/md`, landing
+  hero/section headings, and headings inside rendered KUs. Display tracking
+  `-0.02 … -0.025em`.
+- **Body / editor:** Inter (`--font-sans`) — the workhorse grotesque for all UI
+  and reading text (Markdown, forms, tables).
 - **Coordinates:** JetBrains Mono (`--font-mono`) — used **only** for the
   product's measurement data: KU ids, hashes, versions, trust scores, counts.
   Never as decorative "technical" costume.

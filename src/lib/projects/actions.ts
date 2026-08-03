@@ -30,6 +30,13 @@ function revalidateProject(projectId?: string) {
   if (projectId) revalidatePath(`/[locale]/projects/${projectId}`, "page");
 }
 
+// PostgREST devuelve los agregados como [{count: n}]; ausentes en el fallback.
+function countOf(rel: unknown) {
+  return Array.isArray(rel) && rel.length > 0
+    ? ((rel[0] as { count?: number }).count ?? 0)
+    : 0;
+}
+
 // ─── Guards ──────────────────────────────────────────────────────────────────
 
 type ProjectGuard =
@@ -132,12 +139,6 @@ export async function getProjects(locale: string) {
     return [];
   }
 
-  // PostgREST devuelve los agregados como [{count: n}]; ausentes en el fallback.
-  const countOf = (rel: unknown) =>
-    Array.isArray(rel) && rel.length > 0
-      ? ((rel[0] as { count?: number }).count ?? 0)
-      : 0;
-
   type ProjectRow = {
     id: string;
     name: string;
@@ -216,10 +217,20 @@ export async function getProjectMembers(projectId: string) {
 export async function getProjectKnowledgeUnits(projectId: string) {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  // folder_id llega con las carpetas (migracion 20260802000020). Si la
+  // migracion no esta aplicada, cae a la query base sin folder_id en vez de
+  // dejar la seccion vacia.
+  const enriched = await supabase
     .from("project_knowledge_units")
-    .select("id, ku_id, knowledge_units(id, title, status, trust_score, version, domains(name))")
+    .select("id, ku_id, folder_id, knowledge_units(id, title, status, trust_score, version, domains(name))")
     .eq("project_id", projectId);
+
+  const { data, error } = enriched.error
+    ? await supabase
+        .from("project_knowledge_units")
+        .select("id, ku_id, knowledge_units(id, title, status, trust_score, version, domains(name))")
+        .eq("project_id", projectId)
+    : enriched;
 
   if (error) {
     console.error("Error fetching project KUs:", error);
@@ -247,6 +258,7 @@ export async function getProjectKnowledgeUnits(projectId: string) {
         trust_score: ku.trust_score,
         version: ku.version,
         domain: one(ku.domains)?.name ?? "General",
+        folderId: (row as { folder_id?: string | null }).folder_id ?? null,
       };
     })
     .filter((v): v is NonNullable<typeof v> => v !== null);
@@ -527,14 +539,19 @@ export async function cancelProjectInvitation(
 
 export async function addKnowledgeUnitToProject(
   projectId: string,
-  kuId: string
+  kuId: string,
+  folderId?: string | null
 ): Promise<ActionResult> {
   const guard = await assertCanManageProject(projectId);
   if ("error" in guard) return guard;
 
   const { error } = await guard.supabase
     .from("project_knowledge_units")
-    .insert({ project_id: projectId, ku_id: kuId });
+    .insert({
+      project_id: projectId,
+      ku_id: kuId,
+      folder_id: folderId ?? null,
+    });
 
   if (error) {
     if (error.code === "23505") return { error: "Esa Knowledge Unit ya esta en el proyecto." };
@@ -607,4 +624,167 @@ export async function removeAgentFromProject(
 export async function getProjectPermission(projectId: string) {
   const guard = await assertCanManageProject(projectId);
   return { canManage: !("error" in guard) };
+}
+
+/** Publico/privado desde el candado del header. */
+export async function setProjectVisibility(
+  projectId: string,
+  visibility: "private" | "public"
+): Promise<ActionResult> {
+  const guard = await assertCanManageProject(projectId);
+  if ("error" in guard) return guard;
+
+  const { error } = await guard.supabase
+    .from("projects")
+    .update({ visibility })
+    .eq("id", projectId);
+
+  if (error) return { error: error.message };
+
+  revalidateProject(projectId);
+  return { success: true };
+}
+
+// ─── Carpetas del proyecto (estilo Trello) ───────────────────────────────────
+
+export interface ProjectFolder {
+  id: string;
+  name: string;
+  position: number;
+  kuCount: number;
+}
+
+export async function getProjectFolders(projectId: string): Promise<ProjectFolder[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("project_folders")
+    .select("id, name, position, project_knowledge_units(count)")
+    .eq("project_id", projectId)
+    .order("position", { ascending: true });
+
+  if (error) {
+    // Migracion 20260802000020 sin aplicar: la tabla no existe aun.
+    if (!/does not exist|relation|schema cache/.test(error.message)) {
+      console.error("Error fetching project folders:", error);
+    }
+    return [];
+  }
+
+  return (data ?? []).map((row) => ({
+    id: row.id as string,
+    name: row.name as string,
+    position: row.position as number,
+    kuCount: countOf(row.project_knowledge_units),
+  }));
+}
+
+export async function createProjectFolder(
+  projectId: string,
+  name: string
+): Promise<ActionResult & { folderId?: string }> {
+  const guard = await assertCanManageProject(projectId);
+  if ("error" in guard) return guard;
+
+  const cleanName = name.trim();
+  if (!cleanName) return { error: "El nombre de la carpeta no puede estar vacio." };
+
+  const { data: next } = await guard.supabase
+    .from("project_folders")
+    .select("position")
+    .eq("project_id", projectId)
+    .order("position", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  const position = ((next?.position as number | undefined) ?? -1) + 1;
+
+  const { data, error } = await guard.supabase
+    .from("project_folders")
+    .insert({
+      project_id: projectId,
+      name: cleanName,
+      position,
+    })
+    .select("id")
+    .single();
+
+  if (error) return { error: error.message };
+
+  revalidateProject(projectId);
+  return { success: true, folderId: data?.id as string | undefined };
+}
+
+export async function renameProjectFolder(
+  folderId: string,
+  name: string
+): Promise<ActionResult> {
+  const supabase = await createClient();
+
+  const { data: folder } = await supabase
+    .from("project_folders")
+    .select("project_id")
+    .eq("id", folderId)
+    .maybeSingle();
+
+  if (!folder) return { error: "Carpeta no encontrada." };
+
+  const guard = await assertCanManageProject(folder.project_id as string);
+  if ("error" in guard) return guard;
+
+  const cleanName = name.trim();
+  if (!cleanName) return { error: "El nombre de la carpeta no puede estar vacio." };
+
+  const { error } = await guard.supabase
+    .from("project_folders")
+    .update({ name: cleanName })
+    .eq("id", folderId);
+
+  if (error) return { error: error.message };
+
+  revalidateProject(folder.project_id as string);
+  return { success: true };
+}
+
+export async function deleteProjectFolder(folderId: string): Promise<ActionResult> {
+  const supabase = await createClient();
+
+  const { data: folder } = await supabase
+    .from("project_folders")
+    .select("project_id")
+    .eq("id", folderId)
+    .maybeSingle();
+
+  if (!folder) return { error: "Carpeta no encontrada." };
+
+  const guard = await assertCanManageProject(folder.project_id as string);
+  if ("error" in guard) return guard;
+
+  const { error } = await guard.supabase.from("project_folders").delete().eq("id", folderId);
+
+  if (error) return { error: error.message };
+
+  revalidateProject(folder.project_id as string);
+  return { success: true };
+}
+
+/** Mueve una KU del proyecto dentro de una carpeta (o la saca con null). */
+export async function setKnowledgeUnitFolder(
+  projectId: string,
+  linkId: string,
+  folderId: string | null
+): Promise<ActionResult> {
+  const guard = await assertCanManageProject(projectId);
+  if ("error" in guard) return guard;
+
+  const { error } = await guard.supabase
+    .from("project_knowledge_units")
+    .update({ folder_id: folderId })
+    .eq("id", linkId)
+    .eq("project_id", projectId);
+
+  if (error) return { error: error.message };
+
+  revalidateProject(projectId);
+  return { success: true };
 }

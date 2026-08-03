@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocale } from "next-intl";
+import { Icon, type IconName } from "@/components/shared/icon";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +21,8 @@ type ShareDialogProps = {
   description?: string;
   triggerLabel?: string;
   triggerClassName?: string;
+  triggerIcon?: IconName;
+  triggerOnlyIcon?: boolean;
 };
 
 export const ShareDialog = ({
@@ -28,6 +31,8 @@ export const ShareDialog = ({
   description = "Anyone in your organization with this link can open it (if they have access).",
   triggerLabel = "Share",
   triggerClassName,
+  triggerIcon,
+  triggerOnlyIcon = false,
 }: ShareDialogProps) => {
   const locale = useLocale();
   const [open, setOpen] = useState(false);
@@ -64,10 +69,8 @@ export const ShareDialog = ({
           "label-sm px-3 py-1.5 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] transition-colors inline-flex items-center gap-1.5"
         }
       >
-        <span className="text-base" aria-hidden>
-          share
-        </span>
-        {triggerLabel}
+        {triggerIcon && <Icon name={triggerIcon} size={16} />}
+        {!triggerOnlyIcon && triggerLabel}
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>

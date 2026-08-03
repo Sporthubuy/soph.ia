@@ -12,11 +12,11 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import {
-  inviteToKnowledgeUnit,
-  updateKuMemberRole,
-  removeKuMember,
-  cancelKuInvitation,
-} from "@/lib/knowledge/actions";
+  inviteToProject,
+  updateProjectMemberRole,
+  removeProjectMember,
+  cancelProjectInvitation,
+} from "@/lib/projects/actions";
 
 interface Member {
   id: string;
@@ -32,7 +32,8 @@ interface Invitation {
 }
 
 const ROLES = [
-  { value: "editor", label: "Editor", hint: "Puede editar contenido" },
+  { value: "admin", label: "Admin", hint: "Gestiona el proyecto y su gente" },
+  { value: "editor", label: "Editor", hint: "Agrega y edita contenido" },
   { value: "viewer", label: "Lector", hint: "Solo lectura" },
 ];
 
@@ -44,14 +45,14 @@ const initials = (name: string | null, email: string) => {
   return source.slice(0, 2).toUpperCase();
 };
 
-export const KuPeoplePopover = ({
-  kuId,
+export const ProjectPeoplePopover = ({
+  projectId,
   ownerId,
   members,
   invitations,
   canManage,
 }: {
-  kuId: string;
+  projectId: string;
   ownerId: string;
   members: Member[];
   invitations: Invitation[];
@@ -86,7 +87,7 @@ export const KuPeoplePopover = ({
     setError(null);
     setNotice(null);
     startTransition(async () => {
-      const result = await inviteToKnowledgeUnit(kuId, value, role);
+      const result = await inviteToProject(projectId, value, role);
       if (result?.error) setError(result.error);
       else {
         setEmail("");
@@ -96,19 +97,17 @@ export const KuPeoplePopover = ({
     });
   };
 
-  const totalMembers = members.length + 1; // +1 para el owner
-
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
-        title={`Colaboradores (${totalMembers})`}
-        aria-label="Ver colaboradores de la Knowledge Unit"
+        title={`Participantes (${members.length})`}
+        aria-label="Ver participantes del proyecto"
         className="relative flex h-8 w-8 items-center justify-center rounded-lg border border-[#1e293b] bg-[var(--sky-2)] text-[#94a3b8] hover:bg-[#07090e] hover:text-[var(--star-1)] transition-colors outline-none data-[popup-open]:bg-[#07090e] data-[popup-open]:text-[var(--star-1)]"
       >
         <Icon name="people" size={15} />
-        {totalMembers > 0 && (
+        {members.length > 0 && (
           <span className="label-xs absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full border border-[var(--sky-1)] bg-[var(--azure)] px-1 text-[var(--azure-ink)]">
-            {totalMembers}
+            {members.length}
           </span>
         )}
       </DropdownMenuTrigger>
@@ -117,31 +116,15 @@ export const KuPeoplePopover = ({
         <div className="max-h-[min(420px,var(--available-height))] overflow-y-auto p-1.5">
           <DropdownMenuGroup>
             <DropdownMenuLabel className="section-heading px-2 py-2">
-              COLABORADORES ({totalMembers}
+              PARTICIPANTES ({members.length}
               {invitations.length > 0 &&
                 ` + ${invitations.length} pendiente${invitations.length === 1 ? "" : "s"}`}
               )
             </DropdownMenuLabel>
 
             <div className="space-y-1">
-              {/* Owner */}
-              <div className="flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-[var(--sky-2)]">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1e40af] text-[#93c5fd] label-sm font-semibold">
-                  👑
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="body-sm text-[var(--star-1)] font-medium">
-                    Responsable
-                  </p>
-                  <p className="body-sm text-[#64748b] text-xs">Propietario</p>
-                </div>
-                <span className="label-sm shrink-0 px-2 py-0.5 rounded border border-[#1e293b] text-[#94a3b8]">
-                  Propietario
-                </span>
-              </div>
-
-              {/* Members */}
               {members.map((m) => {
+                const isOwner = m.user_id === ownerId;
                 const name = m.profiles?.full_name ?? m.profiles?.email ?? "Sin nombre";
                 const mail = m.profiles?.email ?? "";
                 return (
@@ -152,19 +135,24 @@ export const KuPeoplePopover = ({
                     <div className="min-w-0 flex-1">
                       <p className="body-sm text-[var(--star-1)] font-medium truncate">
                         {name}
+                        {isOwner && (
+                          <span className="ml-2 label-xs text-[#64748b] font-normal">
+                            Responsable
+                          </span>
+                        )}
                       </p>
                       {mail && name !== mail && (
                         <p className="body-sm text-[#64748b] truncate">{mail}</p>
                       )}
                     </div>
-                    {canManage ? (
+                    {canManage && !isOwner ? (
                       <div className="flex items-center gap-1.5 shrink-0">
                         <select
                           value={m.role}
                           disabled={isPending}
                           onChange={(e) =>
                             run(() =>
-                              updateKuMemberRole(kuId, m.id, e.target.value)
+                              updateProjectMemberRole(projectId, m.id, e.target.value)
                             )
                           }
                           aria-label={`Rol de ${name}`}
@@ -179,7 +167,7 @@ export const KuPeoplePopover = ({
                         <button
                           type="button"
                           disabled={isPending}
-                          onClick={() => run(() => removeKuMember(kuId, m.id))}
+                          onClick={() => run(() => removeProjectMember(projectId, m.id))}
                           aria-label={`Quitar a ${name}`}
                           className="text-[#64748b] hover:text-[var(--danger)]"
                         >
@@ -220,7 +208,7 @@ export const KuPeoplePopover = ({
                         type="button"
                         disabled={isPending}
                         onClick={() =>
-                          run(() => cancelKuInvitation(kuId, inv.id))
+                          run(() => cancelProjectInvitation(projectId, inv.id))
                         }
                         aria-label={`Cancelar invitacion a ${inv.email}`}
                         className="text-[#64748b] hover:text-[var(--danger)] shrink-0"
@@ -238,12 +226,12 @@ export const KuPeoplePopover = ({
             <DropdownMenuGroup>
               <DropdownMenuSeparator className="my-1.5" />
               <form onSubmit={handleInvite} className="space-y-2 px-2 pb-1 pt-1">
-                <label htmlFor="ku-people-invite-email" className="label-xs text-[#64748b]">
+                <label htmlFor="people-invite-email" className="label-xs text-[#64748b]">
                   INVITAR POR EMAIL
                 </label>
                 <div className="flex gap-1.5">
                   <input
-                    id="ku-people-invite-email"
+                    id="people-invite-email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}

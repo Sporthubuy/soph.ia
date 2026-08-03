@@ -40,14 +40,26 @@ export default async function KnowledgeUnitPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [ku, role, comments, members, invitations] = await Promise.all([
+  const [ku, role, comments] = await Promise.all([
     getKnowledgeUnit(kuId),
     getCurrentUserRole(),
     getKuComments(kuId, "general"),
-    getKuMembers(kuId),
-    getKuInvitations(kuId),
   ]);
   if (!ku) notFound();
+
+  // Obtener miembros e invitaciones (puede fallar si tablas no existen)
+  let members = [];
+  let invitations = [];
+  try {
+    [members, invitations] = await Promise.all([
+      getKuMembers(kuId),
+      getKuInvitations(kuId),
+    ]);
+  } catch (e) {
+    // Tablas no existen aún - usar arrays vacíos
+    members = [];
+    invitations = [];
+  }
 
   const trust = ku.trust_score ?? 0;
   const status = ku.status as string;

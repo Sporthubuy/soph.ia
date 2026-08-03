@@ -23,6 +23,12 @@ import {
   Eye,
   SquarePen,
   Lightbulb,
+  Folder,
+  FolderOpen,
+  FolderPlus,
+  LockOpen,
+  Trash2,
+  Clock,
   type LucideIcon,
 } from "lucide-react";
 
@@ -55,7 +61,13 @@ export type IconName =
   | "lock"
   | "eye"
   | "edit"
-  | "bulb";
+  | "bulb"
+  | "folder"
+  | "folder-open"
+  | "folder-plus"
+  | "unlock"
+  | "trash"
+  | "clock";
 
 const MAP: Record<IconName, LucideIcon> = {
   overview: LayoutGrid,
@@ -82,12 +94,19 @@ const MAP: Record<IconName, LucideIcon> = {
   eye: Eye,
   edit: SquarePen,
   bulb: Lightbulb,
+  folder: Folder,
+  "folder-open": FolderOpen,
+  "folder-plus": FolderPlus,
+  unlock: LockOpen,
+  trash: Trash2,
+  clock: Clock,
 };
 
 interface IconProps {
   name: IconName;
   size?: number;
   strokeWidth?: number;
+  fill?: string;
   className?: string;
   "aria-hidden"?: boolean;
 }
@@ -96,11 +115,12 @@ export const Icon = ({
   name,
   size = 20,
   strokeWidth = 1.8,
+  fill,
   className,
   ...props
 }: IconProps) => {
   const Glyph = MAP[name];
   return (
-    <Glyph size={size} strokeWidth={strokeWidth} className={className} aria-hidden {...props} />
+    <Glyph size={size} strokeWidth={strokeWidth} fill={fill} className={className} aria-hidden {...props} />
   );
 };
