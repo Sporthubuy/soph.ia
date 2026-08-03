@@ -1,7 +1,5 @@
-import { Icon } from "@/components/shared/icon";
-import { Link } from "next/link";
 
-export default async function AdminDashboardPage() {
+export default function AdminDashboardPage() {
   // TODO: Fetch real statistics from database
   const stats = [
     { label: "Total Users", value: "1,284", icon: "people", color: "bg-blue-500/20", textColor: "text-blue-400" },
@@ -36,12 +34,11 @@ export default async function AdminDashboardPage() {
           >
             <div className="flex items-center justify-between">
               <p className="text-sm text-[#64748b]">{stat.label}</p>
-              <div className={`${stat.color} p-2 rounded-lg`}>
-                <Icon
-                  name={stat.icon as any}
-                  size={20}
-                  className={stat.textColor}
-                />
+              <div className={`${stat.color} p-2 rounded-lg text-xl`}>
+                {stat.icon === 'people' && '👥'}
+                {stat.icon === 'knowledge' && '📚'}
+                {stat.icon === 'agents' && '🤖'}
+                {stat.icon === 'folder' && '📁'}
               </div>
             </div>
             <p className="text-3xl font-bold text-[var(--star-1)]">
@@ -60,12 +57,12 @@ export default async function AdminDashboardPage() {
             <h3 className="text-lg font-bold text-[var(--star-1)]">
               Recent Activity
             </h3>
-            <Link
+            <a
               href="/admin/analytics"
               className="text-sm text-[#3b82f6] hover:underline"
             >
               View all
-            </Link>
+            </a>
           </div>
 
           <div className="space-y-3">
@@ -75,8 +72,11 @@ export default async function AdminDashboardPage() {
                 className="flex items-center justify-between p-3 rounded-lg hover:bg-[#1e293b] transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#1e293b] flex items-center justify-center">
-                    <Icon name={activity.type as any} size={18} className="text-[#3b82f6]" />
+                  <div className="w-10 h-10 rounded-lg bg-[#1e293b] flex items-center justify-center text-lg">
+                    {activity.type === 'user' && '👤'}
+                    {activity.type === 'knowledge' && '📚'}
+                    {activity.type === 'agent' && '🤖'}
+                    {activity.type === 'project' && '📁'}
                   </div>
                   <div>
                     <p className="text-sm font-medium text-[#94a3b8]">
@@ -100,24 +100,24 @@ export default async function AdminDashboardPage() {
           </h3>
 
           <div className="space-y-2">
-            <Link
+            <a
               href="/admin/users/new"
               className="block w-full px-4 py-2.5 rounded-lg bg-[#3b82f6] text-white font-medium hover:bg-[#2563eb] transition-colors text-center"
             >
               Add User
-            </Link>
-            <Link
+            </a>
+            <a
               href="/admin/agents"
               className="block w-full px-4 py-2.5 rounded-lg border border-[#1e293b] text-[#94a3b8] font-medium hover:bg-[#1e293b] transition-colors text-center"
             >
               Configure Agent
-            </Link>
-            <Link
+            </a>
+            <a
               href="/admin/settings"
               className="block w-full px-4 py-2.5 rounded-lg border border-[#1e293b] text-[#94a3b8] font-medium hover:bg-[#1e293b] transition-colors text-center"
             >
               System Settings
-            </Link>
+            </a>
           </div>
 
           {/* System Status */}

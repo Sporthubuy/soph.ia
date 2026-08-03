@@ -1,6 +1,24 @@
 {
   "version": 1,
   "skills": {
+    "dark-mode-design": {
+      "source": "owl-listener/designer-skills",
+      "sourceType": "github",
+      "skillPath": "ui-design/skills/dark-mode-design/SKILL.md",
+      "computedHash": "521eeba531ff2192df390956126507ecf250d3b16f9ef7688f67c9169c935838"
+    },
+    "design-system": {
+      "source": "community-access/accessibility-agents",
+      "sourceType": "github",
+      "skillPath": ".github/skills/design-system/SKILL.md",
+      "computedHash": "07c3921b2bac6a68f3882306408382cdb48d9d576789b03051ed486f88e8de86"
+    },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "skillPath": "skills/find-skills/SKILL.md",
+      "computedHash": "b146008599c31057cef1c145774cea5d5afb30e8f43fa802e47a4b461419aaaf"
+    },
     "impeccable": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",

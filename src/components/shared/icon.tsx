@@ -29,6 +29,10 @@ import {
   LockOpen,
   Trash2,
   Clock,
+  User,
+  Bell,
+  HelpCircle,
+  BarChart3,
   type LucideIcon,
 } from "lucide-react";
 
@@ -67,7 +71,15 @@ export type IconName =
   | "folder-plus"
   | "unlock"
   | "trash"
-  | "clock";
+  | "clock"
+  | "grid"
+  | "users"
+  | "user"
+  | "store"
+  | "chart"
+  | "bell"
+  | "help"
+  | "delete";
 
 const MAP: Record<IconName, LucideIcon> = {
   overview: LayoutGrid,
@@ -100,6 +112,14 @@ const MAP: Record<IconName, LucideIcon> = {
   unlock: LockOpen,
   trash: Trash2,
   clock: Clock,
+  grid: LayoutGrid,
+  users: Users,
+  user: User,
+  store: Store,
+  chart: BarChart3,
+  bell: Bell,
+  help: HelpCircle,
+  delete: Trash2,
 };
 
 interface IconProps {
