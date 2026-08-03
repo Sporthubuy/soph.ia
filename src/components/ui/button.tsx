@@ -9,16 +9,16 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "btn-gradient text-white [text-shadow:0_1px_1px_rgb(0_0_0_/_0.15)]",
+          "bg-[var(--azure)] text-white hover:bg-[var(--azure-bright)] active:bg-[var(--azure-deep)] shadow-sm hover:shadow-md",
         outline:
-          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+          "border-[var(--edge-strong)] border bg-transparent text-[var(--star-1)] hover:border-[var(--azure)] hover:text-[var(--azure)]",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+          "bg-[var(--sky-3)] text-[var(--star-1)] hover:bg-[var(--sky-4)] hover:border-[var(--edge-strong)]",
         ghost:
-          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+          "text-[var(--star-2)] hover:bg-[var(--sky-3)] hover:text-[var(--star-1)]",
         destructive:
-          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-[var(--danger)]/10 text-[var(--danger)] hover:bg-[var(--danger)]/20 focus-visible:border-[var(--danger)]/40",
+        link: "text-[var(--azure)] underline-offset-4 hover:underline hover:text-[var(--azure-bright)]",
       },
       size: {
         default:

@@ -9,16 +9,20 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        default: "bg-[var(--azure)] text-white [a]:hover:bg-[var(--azure-bright)]",
         secondary:
-          "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
+          "bg-[var(--sky-3)] text-[var(--star-1)] [a]:hover:bg-[var(--sky-4)]",
         destructive:
-          "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
+          "bg-[var(--danger)]/10 text-[var(--danger)] [a]:hover:bg-[var(--danger)]/20",
         outline:
-          "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
+          "border border-[var(--edge)] text-[var(--star-1)] [a]:hover:bg-[var(--sky-3)]",
         ghost:
-          "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
-        link: "text-primary underline-offset-4 hover:underline",
+          "hover:bg-[var(--sky-3)] text-[var(--star-2)] hover:text-[var(--star-1)]",
+        link: "text-[var(--azure)] underline-offset-4 hover:underline",
+        verified: "bg-[var(--verified)] text-white font-semibold [a]:hover:bg-[var(--verified)]/90",
+        pending: "bg-[var(--pending)] text-[#1a1a1a] font-semibold [a]:hover:bg-[var(--pending)]/90",
+        draft: "bg-[var(--draft)] text-white font-semibold [a]:hover:bg-[var(--draft)]/90",
+        archived: "bg-[var(--archived)] text-white font-semibold [a]:hover:bg-[var(--archived)]/90",
       },
     },
     defaultVariants: {
