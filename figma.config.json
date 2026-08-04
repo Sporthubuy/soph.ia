@@ -1,0 +1,23 @@
+{
+  "version": 3,
+  "title": "SOPH.IA",
+  "outputters": [
+    {
+      "name": "react",
+      "config": {}
+    }
+  ],
+  "parser": "react",
+  "codeConnect": {
+    "parserVersion": "2"
+  },
+  "include": "src/figma/**/*.figma.ts",
+  "importPaths": {
+    "@": "src/",
+    "~": "src/"
+  },
+  "paths": {
+    "@/components/ui/*": "src/components/ui/",
+    "@/lib/*": "src/lib/"
+  }
+}
