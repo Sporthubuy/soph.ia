@@ -23,6 +23,7 @@ interface Agent {
   created_at: string;
   updated_at: string;
   selected_ku_ids?: string[];
+  invocations?: number;
 }
 
 interface ApiResponse {

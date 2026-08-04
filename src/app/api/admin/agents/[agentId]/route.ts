@@ -4,8 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { agentId: string } }
+  { params }: { params: Promise<{ agentId: string }> }
 ) {
+  const { agentId } = await params;
+
   const auth = await checkAdminAuth(request);
   if (!auth.authorized) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
@@ -17,7 +19,7 @@ export async function GET(
     const { data: agent, error } = await supabase
       .from("agents")
       .select("*")
-      .eq("id", params.agentId)
+      .eq("id", agentId)
       .single();
 
     if (error) throw error;
@@ -31,8 +33,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { agentId: string } }
+  { params }: { params: Promise<{ agentId: string }> }
 ) {
+  const { agentId } = await params;
+
   const auth = await checkAdminAuth(request);
   if (!auth.authorized) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
@@ -62,7 +66,7 @@ export async function PUT(
         ...(knowledge_unit_ids && { selected_ku_ids: knowledge_unit_ids }),
         updated_at: new Date().toISOString(),
       })
-      .eq("id", params.agentId);
+      .eq("id", agentId);
 
     if (updateError) throw updateError;
 
@@ -78,8 +82,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { agentId: string } }
+  { params }: { params: Promise<{ agentId: string }> }
 ) {
+  const { agentId } = await params;
+
   const auth = await checkAdminAuth(request);
   if (!auth.authorized) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
@@ -92,7 +98,7 @@ export async function DELETE(
     const { error } = await supabase
       .from("agents")
       .delete()
-      .eq("id", params.agentId);
+      .eq("id", agentId);
 
     if (error) throw error;
 

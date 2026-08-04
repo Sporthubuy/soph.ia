@@ -1,0 +1,39 @@
+{
+  "exportedAt": "2026-08-04T15:42:46.394Z",
+  "framework": "Next.js + shadcn/ui",
+  "totalComponents": 3,
+  "components": {
+    "button": {
+      "name": "Button",
+      "description": "Primary CTA button",
+      "variants": [
+        "default",
+        "secondary",
+        "outline",
+        "ghost",
+        "destructive"
+      ],
+      "sizes": [
+        "sm",
+        "md",
+        "lg"
+      ]
+    },
+    "input": {
+      "name": "Input",
+      "description": "Text input field",
+      "variants": [
+        "default",
+        "error"
+      ]
+    },
+    "card": {
+      "name": "Card",
+      "description": "Content container",
+      "variants": [
+        "elevated",
+        "outline"
+      ]
+    }
+  }
+}

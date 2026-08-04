@@ -279,7 +279,7 @@ export default function LandingPage() {
               </div>
               <div className="space-y-3 text-sm">
                 <p className="ml-auto w-fit max-w-[80%] rounded-2xl rounded-br-sm bg-[rgb(59_130_246_/_0.14)] px-3.5 py-2 text-[var(--star-1)]">
-                  What's our refund window?
+                  What&apos;s our refund window?
                 </p>
                 <div className="max-w-[90%] space-y-2 rounded-2xl rounded-bl-sm bg-[var(--sky-3)] px-3.5 py-3 text-[var(--star-2)]">
                   <p>

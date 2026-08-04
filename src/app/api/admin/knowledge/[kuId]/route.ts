@@ -4,8 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { kuId: string } }
+  { params }: { params: Promise<{ kuId: string }> }
 ) {
+  const { kuId } = await params;
+
   const auth = await checkAdminAuth(request);
   if (!auth.authorized) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
@@ -17,7 +19,7 @@ export async function GET(
     const { data, error } = await supabase
       .from("knowledge_units")
       .select("*")
-      .eq("id", params.kuId)
+      .eq("id", kuId)
       .single();
 
     if (error) throw error;
@@ -34,8 +36,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { kuId: string } }
+  { params }: { params: Promise<{ kuId: string }> }
 ) {
+  const { kuId } = await params;
+
   const auth = await checkAdminAuth(request);
   if (!auth.authorized) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
@@ -55,7 +59,7 @@ export async function PUT(
         ...(status && { status }),
         updated_at: new Date().toISOString(),
       })
-      .eq("id", params.kuId)
+      .eq("id", kuId)
       .select()
       .single();
 
@@ -73,8 +77,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { kuId: string } }
+  { params }: { params: Promise<{ kuId: string }> }
 ) {
+  const { kuId } = await params;
+
   const auth = await checkAdminAuth(request);
   if (!auth.authorized) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
@@ -86,7 +92,7 @@ export async function DELETE(
     const { error } = await supabase
       .from("knowledge_units")
       .delete()
-      .eq("id", params.kuId);
+      .eq("id", kuId);
 
     if (error) throw error;
 

@@ -190,7 +190,7 @@ const ReviewCard = ({
               backgroundColor: "transparent"
             }}
           />
-          <StatusBadge status={ku.status as any} />
+          <StatusBadge status={ku.status} />
         </div>
       </div>
       <div className="space-y-4">

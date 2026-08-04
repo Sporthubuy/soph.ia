@@ -1,9 +1,21 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = "https://upyyjwyvkbvjjfxhntzc.supabase.co";
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const adminEmail = process.env.ADMIN_EMAIL;
+const adminPassword = process.env.ADMIN_PASSWORD;
 
-const supabase = createClient(supabaseUrl, serviceKey!, {
+if (!supabaseUrl || !serviceKey) {
+  console.error("❌ NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY not found");
+  process.exit(1);
+}
+
+if (!adminEmail || !adminPassword) {
+  console.error("❌ Set ADMIN_EMAIL and ADMIN_PASSWORD before running this script");
+  process.exit(1);
+}
+
+const supabase = createClient(supabaseUrl, serviceKey, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
@@ -13,8 +25,8 @@ async function createAdmin() {
 
     // Try to create user
     const { data, error: createError } = await supabase.auth.admin.createUser({
-      email: "rg.aviaga@gmail.com",
-      password: "Xaxi.41123871",
+      email: adminEmail,
+      password: adminPassword,
       email_confirm: true,
     });
 
@@ -25,7 +37,7 @@ async function createAdmin() {
     } else if (data?.user) {
       userId = data.user.id;
       console.log("✅ User created successfully!");
-      console.log("   Email: rg.aviaga@gmail.com");
+      console.log("   Email:", adminEmail);
       console.log("   ID:", userId, "\n");
     }
 
@@ -34,7 +46,7 @@ async function createAdmin() {
       const { data: adminUsers, error: getError } = await supabase
         .from("auth.users")
         .select("id")
-        .eq("email", "rg.aviaga@gmail.com")
+        .eq("email", adminEmail)
         .single();
 
       if (getError || !adminUsers) {
@@ -58,7 +70,7 @@ async function createAdmin() {
 
         const users = await response.json();
         const adminUser = users.find(
-          (u: any) => u.email === "rg.aviaga@gmail.com"
+          (u: { email?: string }) => u.email === adminEmail
         );
 
         if (adminUser) {
@@ -93,8 +105,8 @@ async function createAdmin() {
 
     console.log("✅ Setup Complete!\n");
     console.log("📝 Login credentials:");
-    console.log("   Email: rg.aviaga@gmail.com");
-    console.log("   Password: Xaxi.41123871\n");
+    console.log("   Email:", adminEmail);
+    console.log("   Password: (the value of ADMIN_PASSWORD)\n");
     console.log("🌐 Admin URL: http://localhost:3000/login/admin\n");
     console.log("✨ Ready to login!");
   } catch (error) {

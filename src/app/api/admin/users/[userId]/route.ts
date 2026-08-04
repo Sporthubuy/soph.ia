@@ -4,8 +4,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
+  const { userId } = await params;
+
   const auth = await checkAdminAuth(request);
   if (!auth.authorized) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
@@ -17,7 +19,7 @@ export async function GET(
     const { data, error } = await supabase
       .from("profiles")
       .select("*")
-      .eq("id", params.userId)
+      .eq("id", userId)
       .single();
 
     if (error) throw error;
@@ -31,8 +33,10 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
+  const { userId } = await params;
+
   const auth = await checkAdminAuth(request);
   if (!auth.authorized) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
@@ -48,7 +52,7 @@ export async function PUT(
       const { error: profileError } = await supabase
         .from("profiles")
         .update({ full_name })
-        .eq("id", params.userId);
+        .eq("id", userId);
 
       if (profileError) throw profileError;
     }
@@ -58,7 +62,7 @@ export async function PUT(
       const { error: roleError } = await supabase
         .from("admin_roles")
         .upsert({
-          user_id: params.userId,
+          user_id: userId,
           role,
         });
 
@@ -77,8 +81,10 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { userId: string } }
+  { params }: { params: Promise<{ userId: string }> }
 ) {
+  const { userId } = await params;
+
   const auth = await checkAdminAuth(request);
   if (!auth.authorized) {
     return NextResponse.json({ error: auth.error }, { status: auth.status });
@@ -88,18 +94,18 @@ export async function DELETE(
 
   try {
     // Delete from admin_roles first
-    await supabase.from("admin_roles").delete().eq("user_id", params.userId);
+    await supabase.from("admin_roles").delete().eq("user_id", userId);
 
     // Delete profile
     const { error: profileError } = await supabase
       .from("profiles")
       .delete()
-      .eq("id", params.userId);
+      .eq("id", userId);
 
     if (profileError) throw profileError;
 
     // Delete auth user
-    await supabase.auth.admin.deleteUser(params.userId);
+    await supabase.auth.admin.deleteUser(userId);
 
     return NextResponse.json({ message: "User deleted successfully" });
   } catch (error) {

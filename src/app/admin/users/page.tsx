@@ -6,6 +6,8 @@ interface User {
   id: string;
   email: string;
   full_name?: string;
+  /** Resolved from admin_roles by /api/admin/users; "user" when no row exists. */
+  role: "admin" | "moderator" | "user";
   created_at: string;
   updated_at: string;
 }
@@ -87,11 +89,7 @@ export default function UsersPage() {
     }
   };
 
-  const getUserRole = (user: User) => {
-    // For now, fetch role from email - can be optimized later
-    if (user.email === "rg.aviaga@gmail.com") return "admin";
-    return "user";
-  };
+  const getUserRole = (user: User) => user.role ?? "user";
 
   return (
     <div className="space-y-6">

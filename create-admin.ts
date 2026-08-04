@@ -1,10 +1,17 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = "https://upyyjwyvkbvjjfxhntzc.supabase.co";
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const adminEmail = process.env.ADMIN_EMAIL;
+const adminPassword = process.env.ADMIN_PASSWORD;
 
-if (!serviceKey) {
-  console.error("❌ SUPABASE_SERVICE_ROLE_KEY not found");
+if (!supabaseUrl || !serviceKey) {
+  console.error("❌ NEXT_PUBLIC_SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY not found");
+  process.exit(1);
+}
+
+if (!adminEmail || !adminPassword) {
+  console.error("❌ Set ADMIN_EMAIL and ADMIN_PASSWORD before running this script");
   process.exit(1);
 }
 
@@ -17,11 +24,12 @@ async function createAdmin() {
     console.log("🔐 Creating admin user...\n");
 
     // Create user
-    const { data: user, error: createError } = await supabase.auth.admin.createUser({
-      email: "rg.aviaga@gmail.com",
-      password: "Xaxi.41123871",
+    const { data, error: createError } = await supabase.auth.admin.createUser({
+      email: adminEmail,
+      password: adminPassword,
       email_confirm: true,
     });
+    const user = data?.user;
 
     if (createError) {
       if (createError.message.includes("already exists")) {
@@ -56,8 +64,8 @@ async function createAdmin() {
     // Verify
     console.log("✅ Setup Complete!\n");
     console.log("📝 Login credentials:");
-    console.log("   Email: rg.aviaga@gmail.com");
-    console.log("   Password: Xaxi.41123871\n");
+    console.log("   Email:", adminEmail);
+    console.log("   Password: (the value of ADMIN_PASSWORD)\n");
     console.log("🌐 Admin URL: http://localhost:3000/login/admin");
   } catch (error) {
     console.error("❌ Error:", error);

@@ -56,7 +56,15 @@ export default function AdminDashboardPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const statCards = [
+  const statCards: {
+    label: string;
+    value: number;
+    subtext?: string;
+    icon: string;
+    color: string;
+    borderColor: string;
+    textColor: string;
+  }[] = [
     {
       label: "Total Users",
       value: stats?.users.total || 0,
@@ -163,7 +171,7 @@ export default function AdminDashboardPage() {
             </div>
             <div className="pt-2 border-t border-[#1e293b]">
               <p className="text-xs text-[#64748b]">
-                {(stat as any).subtext || (
+                {stat.subtext || (
                   <>
                     {stat.label === "Total Users" && "Active members"}
                     {stat.label === "Knowledge Units" && "Across all domains"}

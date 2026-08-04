@@ -867,15 +867,37 @@ export async function getKuMembers(kuId: string) {
   const supabase = await createClient();
 
   try {
+    // ku_members.user_id references auth.users, not public.profiles, so
+    // PostgREST has no relationship to embed — resolve profiles separately.
     const { data, error } = await supabase
       .from("ku_members")
-      .select("id, role, user_id, profiles:user_id(full_name, email)")
+      .select("id, role, user_id")
       .eq("ku_id", kuId)
       .order("created_at", { ascending: false });
 
     if (error) throw error;
 
-    return data || [];
+    const rows = data || [];
+    if (rows.length === 0) return [];
+
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("id, full_name, email")
+      .in(
+        "id",
+        rows.map((row) => row.user_id)
+      );
+
+    const profileById = new Map(
+      (profiles || []).map((p) => [p.id, { full_name: p.full_name, email: p.email }])
+    );
+
+    return rows.map((row) => ({
+      id: row.id as string,
+      role: row.role as string,
+      user_id: row.user_id as string,
+      profiles: profileById.get(row.user_id) ?? null,
+    }));
   } catch (error) {
     console.error("Error getting KU members:", error);
     return [];

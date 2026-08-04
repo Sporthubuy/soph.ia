@@ -17,6 +17,18 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "10");
     const offset = parseInt(searchParams.get("offset") || "0");
 
+    // admin_roles.user_id references auth.users, not profiles, so PostgREST
+    // cannot embed it — resolve roles with a separate query and merge.
+    const { data: roleRows, error: rolesError } = await supabase
+      .from("admin_roles")
+      .select("user_id, role");
+
+    if (rolesError) throw rolesError;
+
+    const roleByUserId = new Map<string, string>(
+      (roleRows || []).map((r) => [r.user_id, r.role])
+    );
+
     let query = supabase
       .from("profiles")
       .select("*", { count: "exact" });
@@ -26,7 +38,22 @@ export async function GET(request: NextRequest) {
     }
 
     if (role && role !== "all") {
-      query = query.eq("admin_roles.role", role);
+      const privilegedIds = [...roleByUserId.keys()];
+      if (role === "user") {
+        // Everyone without a row in admin_roles.
+        if (privilegedIds.length > 0) {
+          query = query.not("id", "in", `(${privilegedIds.join(",")})`);
+        }
+      } else {
+        const matchingIds = [...roleByUserId.entries()]
+          .filter(([, r]) => r === role)
+          .map(([userId]) => userId);
+
+        if (matchingIds.length === 0) {
+          return NextResponse.json({ data: [], count: 0, limit, offset });
+        }
+        query = query.in("id", matchingIds);
+      }
     }
 
     const { data, count, error } = await query.range(offset, offset + limit - 1);
@@ -34,7 +61,10 @@ export async function GET(request: NextRequest) {
     if (error) throw error;
 
     return NextResponse.json({
-      data: data || [],
+      data: (data || []).map((profile) => ({
+        ...profile,
+        role: roleByUserId.get(profile.id) ?? "user",
+      })),
       count: count || 0,
       limit,
       offset,

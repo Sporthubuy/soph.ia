@@ -29,7 +29,7 @@ const navItems: NavItem[] = [
   { href: "/agents", label: "Agents", icon: "agents", ready: true },
   { href: "/review", label: "Review", icon: "review", ready: true },
   { href: "/people", label: "People", icon: "people", ready: true },
-  { href: "/marketplace", label: "Marketplace", icon: "marketplace", ready: false },
+  { href: "/marketplace", label: "Marketplace", icon: "store", ready: true },
 ];
 
 const SidebarNav = ({ onNavigate }: { onNavigate?: () => void }) => {

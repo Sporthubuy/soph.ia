@@ -3,8 +3,16 @@ import { createClient } from "@supabase/supabase-js";
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+const adminEmail = process.env.ADMIN_EMAIL;
+const adminPassword = process.env.ADMIN_PASSWORD;
+
 if (!supabaseUrl || !supabaseServiceKey) {
   console.error("Missing Supabase credentials");
+  process.exit(1);
+}
+
+if (!adminEmail || !adminPassword) {
+  console.error("Set ADMIN_EMAIL and ADMIN_PASSWORD before seeding");
   process.exit(1);
 }
 
@@ -17,9 +25,9 @@ async function seed() {
     console.log("🌱 Seeding database...");
 
     // Create admin user
-    const { data: user, error: createError } = await supabase.auth.admin.createUser({
-      email: "rg.aviaga@gmail.com",
-      password: "Xaxi.41123871",
+    const { data, error: createError } = await supabase.auth.admin.createUser({
+      email: adminEmail,
+      password: adminPassword,
       email_confirm: true,
     });
 
@@ -28,7 +36,7 @@ async function seed() {
       process.exit(1);
     }
 
-    const userId = user?.id;
+    const userId = data?.user?.id;
     if (userId) {
       console.log("✓ Admin user created");
 

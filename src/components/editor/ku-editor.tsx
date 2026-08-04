@@ -115,7 +115,7 @@ export const KUEditor = ({
                 )}
               </div>
               <div className="flex rounded-lg border border-[#1e293b] p-1 gap-1 bg-[#07090e]">
-                {["write", "preview", "diff"].map((t_val) => (
+                {(["write", "preview", "diff"] as const).map((t_val) => (
                   <button
                     key={t_val}
                     type="button"
@@ -124,7 +124,7 @@ export const KUEditor = ({
                         ? "bg-[#3b82f6] text-white"
                         : "text-[#64748b] hover:text-[#94a3b8]"
                     }`}
-                    onClick={() => setTab(t_val as any)}
+                    onClick={() => setTab(t_val)}
                   >
                     {t_val === "write" && "Editar"}
                     {t_val === "preview" && "Preview"}

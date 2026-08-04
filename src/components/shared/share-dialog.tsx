@@ -21,6 +21,7 @@ type ShareDialogProps = {
   description?: string;
   triggerLabel?: string;
   triggerClassName?: string;
+  triggerStyle?: React.CSSProperties;
   triggerIcon?: IconName;
   triggerOnlyIcon?: boolean;
 };
@@ -31,6 +32,7 @@ export const ShareDialog = ({
   description = "Anyone in your organization with this link can open it (if they have access).",
   triggerLabel = "Share",
   triggerClassName,
+  triggerStyle,
   triggerIcon,
   triggerOnlyIcon = false,
 }: ShareDialogProps) => {
@@ -64,6 +66,7 @@ export const ShareDialog = ({
       <button
         type="button"
         onClick={() => setOpen(true)}
+        style={triggerStyle}
         className={
           triggerClassName ??
           "label-sm px-3 py-1.5 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] transition-colors inline-flex items-center gap-1.5"

@@ -2,12 +2,15 @@ import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
-import { getAgent } from "@/lib/agents/actions";
+import { getAgent, getPublicAgent, getAgentReviews } from "@/lib/agents/actions";
 import { getKnowledgeUnits } from "@/lib/knowledge/actions";
+import { getCurrentOrganizationId } from "@/lib/organization/get-org";
 import { VisibilityToggle } from "@/components/shared/visibility-toggle";
 import { Icon } from "@/components/shared/icon";
 import { StatusBadge } from "@/components/shared/status-badge";
-
+import { AgentRating } from "@/components/marketplace/agent-rating";
+import { CloneButton } from "@/components/marketplace/clone-button";
+import { AgentReviewsList } from "@/components/marketplace/agent-reviews-list";
 
 export default async function AgentPage({
   params,
@@ -22,7 +25,16 @@ export default async function AgentPage({
     data: { user },
   } = await supabase.auth.getUser();
 
-  const agent = await getAgent(agentId);
+  const organizationId = await getCurrentOrganizationId();
+
+  // Try own org first
+  let agent = await getAgent(agentId);
+
+  // If not found or private, try public lookup
+  if (!agent && user) {
+    agent = await getPublicAgent(agentId);
+  }
+
   if (!agent) notFound();
 
   const status = agent.status as string;
@@ -31,6 +43,10 @@ export default async function AgentPage({
   // Resuelve los titulos de las KUs que componen el contexto del agente.
   const allKUs = await getKnowledgeUnits(locale);
   const linkedKUs = allKUs.filter((ku) => selectedIds.includes(ku.id));
+
+  // Fetch reviews only for public agents
+  const reviews =
+    agent.visibility === "public" ? await getAgentReviews(agentId) : [];
 
   return (
     <div className="p-8 max-w-4xl mx-auto space-y-6">
@@ -80,16 +96,38 @@ export default async function AgentPage({
         </dl>
       </header>
 
-      <section className="panel p-6">
-        <h2 className="section-heading mb-4">COMPARTIR</h2>
-        <VisibilityToggle
-          itemId={agentId}
-          itemType="agent"
-          currentVisibility={agent.visibility ?? "private"}
-          organizationId={agent.organization_id}
-          onlyOwner={agent.created_by !== user?.id}
-        />
-      </section>
+      {/* Only show for own agents */}
+      {organizationId === agent.organization_id && (
+        <section className="panel p-6">
+          <h2 className="section-heading mb-4">COMPARTIR</h2>
+          <VisibilityToggle
+            itemId={agentId}
+            itemType="agent"
+            currentVisibility={agent.visibility ?? "private"}
+            organizationId={agent.organization_id}
+            onlyOwner={agent.created_by !== user?.id}
+          />
+        </section>
+      )}
+
+      {/* Show for public agents from other orgs */}
+      {agent.visibility === "public" && organizationId !== agent.organization_id && user && (
+        <section className="panel p-6 space-y-4">
+          <div className="flex items-center gap-2 mb-4">
+            <Icon name="sparkle" size={18} className="text-[var(--azure)]" />
+            <h2 className="section-heading">MARKETPLACE</h2>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <CloneButton agentId={agentId} />
+            <AgentRating agentId={agentId} initialRating={null} initialReview={null} />
+          </div>
+
+          <p className="body-sm text-[var(--star-4)]">
+            This agent is available in the marketplace. Clone it to your workspace to customize and use it with your own Knowledge Units.
+          </p>
+        </section>
+      )}
 
       {/* Contexto compilado: las KUs que alimentan al agente */}
       <section className="panel p-6 space-y-4">
@@ -128,6 +166,19 @@ export default async function AgentPage({
           <pre className="body-sm text-[#94a3b8] whitespace-pre-wrap font-mono leading-relaxed">
             {agent.system_prompt}
           </pre>
+        </section>
+      )}
+
+      {/* Reviews section for public agents */}
+      {agent.visibility === "public" && reviews.length > 0 && (
+        <section className="panel p-6 space-y-4">
+          <div className="flex items-center gap-2 mb-4">
+            <Icon name="chart" size={18} className="text-[var(--pending)]" />
+            <h2 className="section-heading">
+              COMMUNITY REVIEWS ({reviews.length})
+            </h2>
+          </div>
+          <AgentReviewsList reviews={reviews} />
         </section>
       )}
     </div>

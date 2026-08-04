@@ -1,18 +1,12 @@
--- Drop the existing restrictive policy
-drop policy if exists "Only admins can read admin_roles" on public.admin_roles;
+-- SUPERSEDED — intentionally a no-op.
+--
+-- This file's numeric prefix (000010) sorts BEFORE the timestamped migrations,
+-- so it ran before public.admin_roles existed and could never apply. The policy
+-- it tried to install was also self-referential (it queried admin_roles from a
+-- policy on admin_roles), which Postgres rejects with 42P17 infinite recursion.
+--
+-- The correct, non-recursive policy is installed by
+-- 20260803171100_fix_admin_roles_rls_recursion.sql, which sorts after
+-- 20260803170842_add_admin_roles.sql. Do not add statements here.
 
--- Create a new policy that allows users to read their own admin role
--- and allows admins to read all admin roles
-create policy "Users can read their own admin role, admins can read all"
-on public.admin_roles for select
-to authenticated
-using (
-  -- Allow reading own row
-  user_id = auth.uid()
-  OR
-  -- Allow admins to read all rows
-  exists (
-    select 1 from public.admin_roles
-    where user_id = auth.uid() and role = 'admin'
-  )
-);
+select 1;

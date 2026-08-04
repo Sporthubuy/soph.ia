@@ -128,6 +128,7 @@ interface IconProps {
   strokeWidth?: number;
   fill?: string;
   className?: string;
+  style?: React.CSSProperties;
   "aria-hidden"?: boolean;
 }
 
@@ -137,10 +138,19 @@ export const Icon = ({
   strokeWidth = 1.8,
   fill,
   className,
+  style,
   ...props
 }: IconProps) => {
   const Glyph = MAP[name];
   return (
-    <Glyph size={size} strokeWidth={strokeWidth} fill={fill} className={className} aria-hidden {...props} />
+    <Glyph
+      size={size}
+      strokeWidth={strokeWidth}
+      fill={fill}
+      className={className}
+      style={style}
+      aria-hidden
+      {...props}
+    />
   );
 };

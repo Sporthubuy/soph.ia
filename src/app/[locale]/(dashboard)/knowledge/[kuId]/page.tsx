@@ -48,14 +48,14 @@ export default async function KnowledgeUnitPage({
   if (!ku) notFound();
 
   // Obtener miembros e invitaciones (puede fallar si tablas no existen)
-  let members = [];
-  let invitations = [];
+  let members: Awaited<ReturnType<typeof getKuMembers>> = [];
+  let invitations: Awaited<ReturnType<typeof getKuInvitations>> = [];
   try {
     [members, invitations] = await Promise.all([
       getKuMembers(kuId),
       getKuInvitations(kuId),
     ]);
-  } catch (e) {
+  } catch {
     // Tablas no existen aún - usar arrays vacíos
     members = [];
     invitations = [];
