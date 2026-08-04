@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/routing";
 import { type PublicAgent } from "@/lib/agents/actions";
 import { AgentCard } from "./agent-card";
+import { MobileMarketplaceDrawer } from "./mobile-marketplace-drawer";
 
 export function MarketplaceGrid({
   agents,
@@ -50,10 +51,20 @@ export function MarketplaceGrid({
     return true;
   });
 
+  const handleMobileFilter = (type: "tag" | "sort", value: string) => {
+    if (type === "tag") {
+      setTagFilter(value);
+      pushFilters(search, value, sort);
+    } else if (type === "sort") {
+      setSort(value);
+      pushFilters(search, tagFilter, value);
+    }
+  };
+
   return (
     <div className="space-y-6">
-      {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-3">
+      {/* Desktop Toolbar */}
+      <div className="hidden md:flex flex-wrap items-center gap-3">
         {/* Search */}
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <svg
@@ -119,6 +130,49 @@ export function MarketplaceGrid({
         </span>
       </div>
 
+      {/* Mobile Toolbar */}
+      <div className="md:hidden space-y-3">
+        {/* Search */}
+        <div className="relative">
+          <svg
+            viewBox="0 0 20 20"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--star-4)]"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={1.8}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+            />
+          </svg>
+          <input
+            type="text"
+            placeholder={t("searchPlaceholder")}
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              pushFilters(e.target.value, tagFilter, sort);
+            }}
+            className="w-full rounded-[10px] border border-[var(--edge)] bg-[var(--sky-3)] pl-9 pr-3 py-2 text-sm text-[var(--star-1)] placeholder:text-[var(--star-4)] focus:border-[var(--azure)] focus:outline-none"
+          />
+        </div>
+
+        {/* Count */}
+        <span className="block text-xs text-[var(--star-4)]">
+          {visible.length} {visible.length === 1 ? "agent" : "agents"}
+        </span>
+      </div>
+
+      {/* Mobile Drawer */}
+      <MobileMarketplaceDrawer
+        onFilterChange={handleMobileFilter}
+        tags={tags}
+        currentTag={tagFilter}
+        currentSort={sort}
+      />
+
       {/* Grid */}
       {visible.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center space-y-3">
@@ -143,7 +197,7 @@ export function MarketplaceGrid({
           </div>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {visible.map((agent) => (
             <AgentCard
               key={agent.id}
