@@ -209,7 +209,7 @@ export default function AgentsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-bold text-[var(--star-1)]">Agents</h1>
-          <p className="text-[#64748b] mt-1">Monitor and manage AI agents</p>
+          <p className="text-[var(--star-4)] mt-1">Monitor and manage AI agents</p>
         </div>
         <button
           onClick={() => {
@@ -249,14 +249,14 @@ export default function AgentsPage() {
 
       {/* Create/Edit Agent Form */}
       {showForm && (
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6 space-y-4">
+        <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-6 space-y-4">
           <h2 className="text-lg font-bold text-[var(--star-1)]">
             {editingAgentId ? "Edit Agent" : "Create New Agent"}
           </h2>
           <form onSubmit={handleSubmitForm} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+                <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
                   Agent Name *
                 </label>
                 <input
@@ -266,12 +266,12 @@ export default function AgentsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
-                  className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
                   placeholder="e.g., Support Bot"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+                <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
                   Model *
                 </label>
                 <select
@@ -279,7 +279,7 @@ export default function AgentsPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, model: e.target.value })
                   }
-                  className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+                  className="w-full px-3 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
                 >
                   {MODEL_OPTIONS.map((model) => (
                     <option key={model} value={model}>
@@ -291,7 +291,7 @@ export default function AgentsPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+              <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
                 Description
               </label>
               <textarea
@@ -299,14 +299,14 @@ export default function AgentsPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+                className="w-full px-3 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
                 placeholder="What does this agent do?"
                 rows={2}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+              <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
                 System Prompt *
               </label>
               <textarea
@@ -315,14 +315,14 @@ export default function AgentsPage() {
                 onChange={(e) =>
                   setFormData({ ...formData, system_prompt: e.target.value })
                 }
-                className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+                className="w-full px-3 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
                 placeholder="System prompt to guide the agent's behavior..."
                 rows={4}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+              <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
                 Temperature (0-1)
               </label>
               <input
@@ -337,22 +337,22 @@ export default function AgentsPage() {
                     temperature: parseFloat(e.target.value),
                   })
                 }
-                className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+                className="w-full px-3 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+              <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
                 Knowledge Units (Optional)
               </label>
-              <div className="space-y-2 max-h-48 overflow-y-auto border border-[#1e293b] rounded-lg p-3 bg-[#07090e]">
+              <div className="space-y-2 max-h-48 overflow-y-auto border border-[var(--edge)] rounded-lg p-3 bg-[var(--sky-1)]">
                 {knowledgeUnits.length === 0 ? (
-                  <p className="text-sm text-[#64748b]">No knowledge units available</p>
+                  <p className="text-sm text-[var(--star-4)]">No knowledge units available</p>
                 ) : (
                   knowledgeUnits.map((ku) => (
                     <label
                       key={ku.id}
-                      className="flex items-center gap-2 cursor-pointer hover:bg-[#1e293b]/50 p-2 rounded"
+                      className="flex items-center gap-2 cursor-pointer hover:bg-[var(--sky-3)]/50 p-2 rounded"
                     >
                       <input
                         type="checkbox"
@@ -368,8 +368,8 @@ export default function AgentsPage() {
                         }}
                         className="w-4 h-4 rounded"
                       />
-                      <span className="text-sm text-[#94a3b8]">{ku.title}</span>
-                      <span className="text-xs text-[#64748b] ml-auto">
+                      <span className="text-sm text-[var(--star-3)]">{ku.title}</span>
+                      <span className="text-xs text-[var(--star-4)] ml-auto">
                         {ku.status}
                       </span>
                     </label>
@@ -377,7 +377,7 @@ export default function AgentsPage() {
                 )}
               </div>
               {selectedKUs.length > 0 && (
-                <p className="text-xs text-[#64748b] mt-2">
+                <p className="text-xs text-[var(--star-4)] mt-2">
                   {selectedKUs.length} knowledge unit(s) selected
                 </p>
               )}
@@ -394,7 +394,7 @@ export default function AgentsPage() {
       )}
 
       {/* Agent Activity Chart */}
-      <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6">
+      <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-6">
         <h2 className="text-lg font-bold text-[var(--star-1)] mb-4">
           Agent Activity
         </h2>
@@ -419,27 +419,27 @@ export default function AgentsPage() {
       </div>
 
       {/* Agents Table */}
-      <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] overflow-hidden">
+      <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#1e293b] bg-[#07090e]">
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+              <tr className="border-b border-[var(--edge)] bg-[var(--sky-1)]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--star-3)]">
                   Name
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--star-3)]">
                   Model
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--star-3)]">
                   Status
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--star-3)]">
                   Prompt
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--star-3)]">
                   Created
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--star-3)]">
                   Actions
                 </th>
               </tr>
@@ -447,13 +447,13 @@ export default function AgentsPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-4 text-center text-[#64748b]">
+                  <td colSpan={6} className="px-6 py-4 text-center text-[var(--star-4)]">
                     Loading agents...
                   </td>
                 </tr>
               ) : agents.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-4 text-center text-[#64748b]">
+                  <td colSpan={6} className="px-6 py-4 text-center text-[var(--star-4)]">
                     No agents found. Create one to get started!
                   </td>
                 </tr>
@@ -461,12 +461,12 @@ export default function AgentsPage() {
                 agents.map((agent) => (
                   <tr
                     key={agent.id}
-                    className="border-b border-[#1e293b] hover:bg-[#0f1117] transition-colors"
+                    className="border-b border-[var(--edge)] hover:bg-[var(--sky-2)] transition-colors"
                   >
-                    <td className="px-6 py-4 text-sm font-medium text-[#94a3b8]">
+                    <td className="px-6 py-4 text-sm font-medium text-[var(--star-3)]">
                       {agent.name}
                     </td>
-                    <td className="px-6 py-4 text-sm text-[#64748b]">
+                    <td className="px-6 py-4 text-sm text-[var(--star-4)]">
                       {agent.model}
                     </td>
                     <td className="px-6 py-4 text-sm">
@@ -485,10 +485,10 @@ export default function AgentsPage() {
                           agent.status.slice(1)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-[#64748b] max-w-xs truncate">
+                    <td className="px-6 py-4 text-sm text-[var(--star-4)] max-w-xs truncate">
                       {agent.system_prompt || "—"}
                     </td>
-                    <td className="px-6 py-4 text-sm text-[#64748b]">
+                    <td className="px-6 py-4 text-sm text-[var(--star-4)]">
                       {new Date(agent.created_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-sm space-x-2">

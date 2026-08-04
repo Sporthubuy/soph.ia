@@ -37,11 +37,11 @@ export default function SettingsPage() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-[var(--star-1)]">Settings</h1>
-        <p className="text-[#64748b] mt-1">Manage system configuration</p>
+        <p className="text-[var(--star-4)] mt-1">Manage system configuration</p>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-[#1e293b] overflow-x-auto">
+      <div className="flex gap-2 border-b border-[var(--edge)] overflow-x-auto">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -49,7 +49,7 @@ export default function SettingsPage() {
             className={`px-4 py-3 font-medium text-sm whitespace-nowrap transition-colors border-b-2 ${
               activeTab === tab.id
                 ? "border-[#3b82f6] text-[#3b82f6]"
-                : "border-transparent text-[#64748b] hover:text-[#94a3b8]"
+                : "border-transparent text-[var(--star-4)] hover:text-[var(--star-3)]"
             }`}
           >
             {tab.icon} {tab.label}
@@ -59,9 +59,9 @@ export default function SettingsPage() {
 
       {/* General Settings */}
       {activeTab === "general" && (
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6 space-y-6">
+        <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-6 space-y-6">
           <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+            <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
               Site Name
             </label>
             <input
@@ -70,12 +70,12 @@ export default function SettingsPage() {
               onChange={(e) =>
                 setSettings({ ...settings, siteName: e.target.value })
               }
-              className="w-full px-4 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+              className="w-full px-4 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+            <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
               Site Description
             </label>
             <textarea
@@ -83,13 +83,13 @@ export default function SettingsPage() {
               onChange={(e) =>
                 setSettings({ ...settings, siteDescription: e.target.value })
               }
-              className="w-full px-4 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+              className="w-full px-4 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
               rows={3}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+            <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
               Max Upload Size (MB)
             </label>
             <input
@@ -101,7 +101,7 @@ export default function SettingsPage() {
                   maxUploadSize: parseInt(e.target.value),
                 })
               }
-              className="w-full px-4 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+              className="w-full px-4 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
             />
           </div>
 
@@ -119,7 +119,7 @@ export default function SettingsPage() {
                 }
                 className="w-4 h-4 accent-[#3b82f6]"
               />
-              <label htmlFor="publicReg" className="ml-3 text-sm text-[#94a3b8]">
+              <label htmlFor="publicReg" className="ml-3 text-sm text-[var(--star-3)]">
                 Enable Public Registration
               </label>
             </div>
@@ -137,7 +137,7 @@ export default function SettingsPage() {
                 }
                 className="w-4 h-4 accent-[#3b82f6]"
               />
-              <label htmlFor="emailNotif" className="ml-3 text-sm text-[#94a3b8]">
+              <label htmlFor="emailNotif" className="ml-3 text-sm text-[var(--star-3)]">
                 Enable Email Notifications
               </label>
             </div>
@@ -155,7 +155,7 @@ export default function SettingsPage() {
                 }
                 className="w-4 h-4 accent-[#3b82f6]"
               />
-              <label htmlFor="maintenance" className="ml-3 text-sm text-[#94a3b8]">
+              <label htmlFor="maintenance" className="ml-3 text-sm text-[var(--star-3)]">
                 Maintenance Mode
               </label>
             </div>
@@ -165,7 +165,7 @@ export default function SettingsPage() {
 
       {/* Security Settings */}
       {activeTab === "security" && (
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6 space-y-6">
+        <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-6 space-y-6">
           <div className="space-y-3">
             <div className="flex items-center">
               <input
@@ -180,14 +180,14 @@ export default function SettingsPage() {
                 }
                 className="w-4 h-4 accent-[#3b82f6]"
               />
-              <label htmlFor="twoFactor" className="ml-3 text-sm text-[#94a3b8]">
+              <label htmlFor="twoFactor" className="ml-3 text-sm text-[var(--star-3)]">
                 Require Two-Factor Authentication
               </label>
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+            <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
               Session Timeout (minutes)
             </label>
             <input
@@ -199,7 +199,7 @@ export default function SettingsPage() {
                   sessionTimeout: parseInt(e.target.value),
                 })
               }
-              className="w-full px-4 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+              className="w-full px-4 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
             />
           </div>
 
@@ -214,9 +214,9 @@ export default function SettingsPage() {
 
       {/* API Settings */}
       {activeTab === "api" && (
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6 space-y-6">
+        <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-6 space-y-6">
           <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+            <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
               API Rate Limit (requests/hour)
             </label>
             <input
@@ -228,17 +228,17 @@ export default function SettingsPage() {
                   apiRateLimit: parseInt(e.target.value),
                 })
               }
-              className="w-full px-4 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+              className="w-full px-4 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
             />
           </div>
 
-          <div className="rounded-lg border border-[#1e293b] bg-[#07090e] p-4">
-            <h3 className="text-sm font-bold text-[#94a3b8] mb-3">API Keys</h3>
+          <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] p-4">
+            <h3 className="text-sm font-bold text-[var(--star-3)] mb-3">API Keys</h3>
             <div className="space-y-2">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-[#0f1117] border border-[#1e293b]">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-[var(--sky-2)] border border-[var(--edge)]">
                 <div>
-                  <p className="text-sm font-medium text-[#94a3b8]">Production Key</p>
-                  <p className="text-xs text-[#64748b]">sk_prod_xxxxxxxxxxxx</p>
+                  <p className="text-sm font-medium text-[var(--star-3)]">Production Key</p>
+                  <p className="text-xs text-[var(--star-4)]">sk_prod_xxxxxxxxxxxx</p>
                 </div>
                 <button className="text-[#3b82f6] hover:text-[#2563eb] text-sm">
                   Regenerate
@@ -251,9 +251,9 @@ export default function SettingsPage() {
 
       {/* Backup Settings */}
       {activeTab === "backup" && (
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6 space-y-6">
+        <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-6 space-y-6">
           <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+            <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
               Backup Frequency
             </label>
             <select
@@ -261,7 +261,7 @@ export default function SettingsPage() {
               onChange={(e) =>
                 setSettings({ ...settings, backupFrequency: e.target.value })
               }
-              className="w-full px-4 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+              className="w-full px-4 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
             >
               <option value="hourly">Hourly</option>
               <option value="daily">Daily</option>
@@ -270,19 +270,19 @@ export default function SettingsPage() {
             </select>
           </div>
 
-          <div className="rounded-lg border border-[#1e293b] bg-[#07090e] p-4">
-            <h3 className="text-sm font-bold text-[#94a3b8] mb-3">Recent Backups</h3>
+          <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] p-4">
+            <h3 className="text-sm font-bold text-[var(--star-3)] mb-3">Recent Backups</h3>
             <div className="space-y-2">
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-between p-3 rounded-lg hover:bg-[#0f1117] transition-colors border border-[#1e293b]"
+                  className="flex items-center justify-between p-3 rounded-lg hover:bg-[var(--sky-2)] transition-colors border border-[var(--edge)]"
                 >
                   <div>
-                    <p className="text-sm font-medium text-[#94a3b8]">
+                    <p className="text-sm font-medium text-[var(--star-3)]">
                       Backup {i}
                     </p>
-                    <p className="text-xs text-[#64748b]">
+                    <p className="text-xs text-[var(--star-4)]">
                       2024-02-{28 - i} at 02:00 UTC
                     </p>
                   </div>
@@ -298,37 +298,37 @@ export default function SettingsPage() {
 
       {/* Email Settings */}
       {activeTab === "email" && (
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6 space-y-6">
+        <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-6 space-y-6">
           <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+            <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
               SMTP Server
             </label>
             <input
               type="text"
               placeholder="smtp.gmail.com"
-              className="w-full px-4 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+              className="w-full px-4 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+            <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
               SMTP Port
             </label>
             <input
               type="number"
               placeholder="587"
-              className="w-full px-4 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+              className="w-full px-4 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+            <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
               From Email Address
             </label>
             <input
               type="email"
               placeholder="noreply@soph.ia"
-              className="w-full px-4 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+              className="w-full px-4 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
             />
           </div>
 
@@ -340,7 +340,7 @@ export default function SettingsPage() {
 
       {/* Save Button */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-[#64748b]">
+        <p className="text-sm text-[var(--star-4)]">
           {saved && (
             <span className="text-green-400">✓ Changes saved successfully</span>
           )}

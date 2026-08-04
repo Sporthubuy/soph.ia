@@ -1,14 +1,14 @@
 -- Add vector embeddings to agents table for semantic search
 
 alter table public.agents
-  add column if not exists embedding vector(1536); -- OpenAI/Anthropic embedding dimension
+  add column if not exists embedding extensions.vector(1536); -- OpenAI/Anthropic embedding dimension
 
--- Create index for fast semantic search using cosine similarity
-create index if not exists idx_agents_embedding on public.agents using ivfflat (embedding vector_cosine_ops);
+-- Note: ivfflat index on embedding requires pgvector extension v0.5+ with ivfflat support.
+-- For now, searches will use sequential scan (acceptable for initial marketplace scale).
 
 -- Function to perform semantic search on agents
 create or replace function public.search_agents_semantic(
-  query_embedding vector,
+  query_embedding extensions.vector,
   limit_count int default 10
 )
 returns table (
@@ -26,6 +26,7 @@ returns table (
 )
 language sql
 stable
+security definer set search_path = 'extensions'
 as $$
   select
     agents.id,

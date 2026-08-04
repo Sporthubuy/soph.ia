@@ -22,15 +22,15 @@ export const AdminSidebar = () => {
   ];
 
   return (
-    <aside className="w-64 border-r border-[#1e293b] bg-[#0f1117] flex flex-col">
-      <div className="p-6 border-b border-[#1e293b]">
+    <aside className="w-64 border-r border-[var(--edge)] bg-[var(--sky-2)] flex flex-col">
+      <div className="p-6 border-b border-[var(--edge)]">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-[#3b82f6] flex items-center justify-center text-sm font-bold text-white">
             S
           </div>
           <div>
             <div className="font-bold text-[var(--star-1)] text-sm">SOPH.IA</div>
-            <div className="text-xs text-[#64748b]">Admin</div>
+            <div className="text-xs text-[var(--star-4)]">Admin</div>
           </div>
         </div>
       </div>
@@ -43,7 +43,7 @@ export const AdminSidebar = () => {
             className={`block px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
               isActive(item.href)
                 ? "bg-[#3b82f6]/20 text-[#3b82f6] border border-[#3b82f6]/30"
-                : "text-[#94a3b8] hover:bg-[#1e293b]"
+                : "text-[var(--star-3)] hover:bg-[var(--sky-3)]"
             }`}
           >
             {item.label}
@@ -52,9 +52,9 @@ export const AdminSidebar = () => {
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-[#1e293b] p-4">
-        <div className="rounded-lg bg-[#0f1117] p-3 text-xs space-y-1">
-          <p className="text-[#64748b]">Need help?</p>
+      <div className="border-t border-[var(--edge)] p-4">
+        <div className="rounded-lg bg-[var(--sky-2)] p-3 text-xs space-y-1">
+          <p className="text-[var(--star-4)]">Need help?</p>
           <button className="w-full px-3 py-1.5 rounded bg-[#3b82f6]/20 text-[#3b82f6] text-xs font-medium hover:bg-[#3b82f6]/30 transition-colors">
             Documentation
           </button>

@@ -76,12 +76,12 @@ export default async function KnowledgeUnitPage({
 
   return (
     <div className="p-4 sm:p-8 max-w-4xl mx-auto space-y-6">
-      <nav aria-label="Migas de pan" className="body-sm text-[#64748b]">
+      <nav aria-label="Migas de pan" className="body-sm text-[var(--star-4)]">
         <Link href="/knowledge" className="hover:text-[var(--star-1)] transition-colors">
           Knowledge Units
         </Link>
         <span className="mx-2">/</span>
-        <span className="text-[#94a3b8]">{ku.title}</span>
+        <span className="text-[var(--star-3)]">{ku.title}</span>
       </nav>
 
       <header className="space-y-3">
@@ -105,7 +105,7 @@ export default async function KnowledgeUnitPage({
             {canEdit && (
               <Link
                 href={`/knowledge/${ku.id}/edit`}
-                className="label-sm px-3 py-1.5 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] transition-colors flex items-center gap-1.5"
+                className="label-sm px-3 py-1.5 rounded-lg border border-[var(--edge)] text-[var(--star-3)] hover:bg-[var(--sky-1)] transition-colors flex items-center gap-1.5"
               >
                 <Icon name="edit" size={15} />
                 Editar
@@ -115,14 +115,14 @@ export default async function KnowledgeUnitPage({
           </div>
         </div>
 
-        <dl className="flex items-center gap-6 flex-wrap body-sm text-[#64748b]">
+        <dl className="flex items-center gap-6 flex-wrap body-sm text-[var(--star-4)]">
           <div className="flex items-center gap-2">
             <dt>Dominio</dt>
-            <dd className="font-semibold text-[#94a3b8]">{ku.domain}</dd>
+            <dd className="font-semibold text-[var(--star-3)]">{ku.domain}</dd>
           </div>
           <div className="flex items-center gap-2">
             <dt>Version</dt>
-            <dd className="font-semibold text-[#94a3b8]">v{ku.version ?? 1}</dd>
+            <dd className="font-semibold text-[var(--star-3)]">v{ku.version ?? 1}</dd>
           </div>
           <div className="flex items-center gap-2">
             <dt>Trust Score</dt>
@@ -131,7 +131,7 @@ export default async function KnowledgeUnitPage({
           {ku.updated_at && (
             <div className="flex items-center gap-2">
               <dt>Actualizada</dt>
-              <dd className="font-semibold text-[#94a3b8]">
+              <dd className="font-semibold text-[var(--star-3)]">
                 {new Date(ku.updated_at).toLocaleDateString(locale)}
               </dd>
             </div>
@@ -143,11 +143,11 @@ export default async function KnowledgeUnitPage({
         <h2 className="section-heading mb-4">CONTENIDO</h2>
         {ku.content ? (
           <div
-            className="ku-content body-md text-[#94a3b8] leading-relaxed"
+            className="ku-content body-md text-[var(--star-3)] leading-relaxed"
             dangerouslySetInnerHTML={{ __html: renderMarkdown(ku.content) }}
           />
         ) : (
-          <p className="body-md text-[#64748b]">
+          <p className="body-md text-[var(--star-4)]">
             Esta Knowledge Unit todavia no tiene contenido.
           </p>
         )}
@@ -162,8 +162,8 @@ export default async function KnowledgeUnitPage({
       />
 
       <div className="panel p-4">
-        <p className="label-sm text-[#64748b] mb-1">HASH DE VERSION</p>
-        <code className="body-sm text-[#94a3b8] break-all">{ku.hash}</code>
+        <p className="label-sm text-[var(--star-4)] mb-1">HASH DE VERSION</p>
+        <code className="body-sm text-[var(--star-3)] break-all">{ku.hash}</code>
       </div>
     </div>
   );

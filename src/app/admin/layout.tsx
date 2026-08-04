@@ -38,7 +38,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex h-screen bg-[#07090e] text-[#94a3b8]">
+    <div className="flex h-screen bg-[var(--sky-1)] text-[var(--star-3)]">
       {/* Admin Sidebar */}
       <AdminSidebar />
 

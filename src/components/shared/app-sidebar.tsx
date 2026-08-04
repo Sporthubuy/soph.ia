@@ -13,6 +13,7 @@ import {
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { Icon, type IconName } from "@/components/shared/icon";
 import { Logo, LogoMark, Wordmark } from "@/components/shared/logo";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 
 type NavItem = {
   href: string;
@@ -117,6 +118,11 @@ const SidebarNav = ({ onNavigate }: { onNavigate?: () => void }) => {
         <div className="flex items-center justify-between px-3 py-2">
           <span className="label-sm text-[var(--star-3)]">Language</span>
           <LanguageSwitcher />
+        </div>
+
+        <div className="flex items-center justify-between px-3 py-2">
+          <span className="label-sm text-[var(--star-3)]">Theme</span>
+          <ThemeToggle />
         </div>
 
         {navLink({ href: "/settings", label: "Settings", icon: "settings" })}

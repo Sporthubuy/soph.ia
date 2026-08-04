@@ -145,10 +145,10 @@ export default function AdminDashboardPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-bold text-[var(--star-1)]">Dashboard</h1>
-          <p className="text-[#64748b] mt-1">Welcome back, Admin</p>
+          <p className="text-[var(--star-4)] mt-1">Welcome back, Admin</p>
         </div>
         <div className="text-right">
-          <p className="text-sm text-[#64748b]">Last updated</p>
+          <p className="text-sm text-[var(--star-4)]">Last updated</p>
           <p className="text-xs text-[#475569]">{lastUpdated || "Loading..."}</p>
         </div>
       </div>
@@ -158,19 +158,19 @@ export default function AdminDashboardPage() {
         {statCards.map((stat) => (
           <div
             key={stat.label}
-            className={`rounded-lg border ${stat.borderColor} ${stat.color} bg-[#0f1117] p-6 space-y-4`}
+            className={`rounded-lg border ${stat.borderColor} ${stat.color} bg-[var(--sky-2)] p-6 space-y-4`}
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[#64748b]">{stat.label}</p>
+                <p className="text-sm text-[var(--star-4)]">{stat.label}</p>
                 <p className={`text-3xl font-bold ${stat.textColor} mt-1`}>
                   {loading ? "..." : stat.value.toLocaleString()}
                 </p>
               </div>
               <div className="text-4xl">{stat.icon}</div>
             </div>
-            <div className="pt-2 border-t border-[#1e293b]">
-              <p className="text-xs text-[#64748b]">
+            <div className="pt-2 border-t border-[var(--edge)]">
+              <p className="text-xs text-[var(--star-4)]">
                 {stat.subtext || (
                   <>
                     {stat.label === "Total Users" && "Active members"}
@@ -188,7 +188,7 @@ export default function AdminDashboardPage() {
       {/* Main Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Activity */}
-        <div className="lg:col-span-2 rounded-lg border border-[#1e293b] bg-[#0f1117] p-6 space-y-4">
+        <div className="lg:col-span-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-6 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-[var(--star-1)]">
               Recent Activity
@@ -205,25 +205,25 @@ export default function AdminDashboardPage() {
             {recentActivity.map((activity) => (
               <div
                 key={activity.id}
-                className="flex items-center justify-between p-3 rounded-lg hover:bg-[#1e293b] transition-colors border border-transparent hover:border-[#1e293b]"
+                className="flex items-center justify-between p-3 rounded-lg hover:bg-[var(--sky-3)] transition-colors border border-transparent hover:border-[var(--edge)]"
               >
                 <div className="flex items-center gap-3 flex-1">
-                  <div className="w-10 h-10 rounded-lg bg-[#1e293b] flex items-center justify-center text-lg flex-shrink-0">
+                  <div className="w-10 h-10 rounded-lg bg-[var(--sky-3)] flex items-center justify-center text-lg flex-shrink-0">
                     {activity.type === "user" && "👤"}
                     {activity.type === "knowledge" && "📚"}
                     {activity.type === "agent" && "🤖"}
                     {activity.type === "project" && "📁"}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-[#94a3b8]">
+                    <p className="text-sm font-medium text-[var(--star-3)]">
                       {activity.action}
                     </p>
-                    <p className="text-xs text-[#64748b] truncate">
+                    <p className="text-xs text-[var(--star-4)] truncate">
                       {activity.details}
                     </p>
                   </div>
                 </div>
-                <p className="text-xs text-[#64748b] whitespace-nowrap ml-2">
+                <p className="text-xs text-[var(--star-4)] whitespace-nowrap ml-2">
                   {activity.time}
                 </p>
               </div>
@@ -234,7 +234,7 @@ export default function AdminDashboardPage() {
         {/* Quick Actions & System Status */}
         <div className="space-y-6">
           {/* Quick Actions */}
-          <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6 space-y-3">
+          <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-6 space-y-3">
             <h3 className="text-lg font-bold text-[var(--star-1)]">
               Quick Actions
             </h3>
@@ -247,19 +247,19 @@ export default function AdminDashboardPage() {
               </Link>
               <Link
                 href="/admin/agents"
-                className="block w-full px-4 py-2.5 rounded-lg border border-[#1e293b] text-[#94a3b8] font-medium hover:bg-[#1e293b] transition-colors text-center text-sm"
+                className="block w-full px-4 py-2.5 rounded-lg border border-[var(--edge)] text-[var(--star-3)] font-medium hover:bg-[var(--sky-3)] transition-colors text-center text-sm"
               >
                 Configure Agents
               </Link>
               <Link
                 href="/admin/knowledge"
-                className="block w-full px-4 py-2.5 rounded-lg border border-[#1e293b] text-[#94a3b8] font-medium hover:bg-[#1e293b] transition-colors text-center text-sm"
+                className="block w-full px-4 py-2.5 rounded-lg border border-[var(--edge)] text-[var(--star-3)] font-medium hover:bg-[var(--sky-3)] transition-colors text-center text-sm"
               >
                 Knowledge Units
               </Link>
               <Link
                 href="/admin/settings"
-                className="block w-full px-4 py-2.5 rounded-lg border border-[#1e293b] text-[#94a3b8] font-medium hover:bg-[#1e293b] transition-colors text-center text-sm"
+                className="block w-full px-4 py-2.5 rounded-lg border border-[var(--edge)] text-[var(--star-3)] font-medium hover:bg-[var(--sky-3)] transition-colors text-center text-sm"
               >
                 System Settings
               </Link>
@@ -267,42 +267,42 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* System Status */}
-          <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6 space-y-4">
+          <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-6 space-y-4">
             <h3 className="text-lg font-bold text-[var(--star-1)]">
               System Status
             </h3>
 
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-[#0f1117] border border-[#1e293b]">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-[var(--sky-2)] border border-[var(--edge)]">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 bg-green-500 rounded-full"></span>
-                  <span className="text-sm text-[#94a3b8]">Database</span>
+                  <span className="text-sm text-[var(--star-3)]">Database</span>
                 </div>
                 <span className="text-xs font-medium text-green-400">Online</span>
               </div>
 
-              <div className="flex items-center justify-between p-3 rounded-lg bg-[#0f1117] border border-[#1e293b]">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-[var(--sky-2)] border border-[var(--edge)]">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 bg-green-500 rounded-full"></span>
-                  <span className="text-sm text-[#94a3b8]">APIs</span>
+                  <span className="text-sm text-[var(--star-3)]">APIs</span>
                 </div>
                 <span className="text-xs font-medium text-green-400">
                   Operational
                 </span>
               </div>
 
-              <div className="flex items-center justify-between p-3 rounded-lg bg-[#0f1117] border border-[#1e293b]">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-[var(--sky-2)] border border-[var(--edge)]">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 bg-green-500 rounded-full"></span>
-                  <span className="text-sm text-[#94a3b8]">Storage</span>
+                  <span className="text-sm text-[var(--star-3)]">Storage</span>
                 </div>
                 <span className="text-xs font-medium text-green-400">Healthy</span>
               </div>
 
-              <div className="flex items-center justify-between p-3 rounded-lg bg-[#0f1117] border border-[#1e293b]">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-[var(--sky-2)] border border-[var(--edge)]">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 bg-green-500 rounded-full"></span>
-                  <span className="text-sm text-[#94a3b8]">Auth</span>
+                  <span className="text-sm text-[var(--star-3)]">Auth</span>
                 </div>
                 <span className="text-xs font-medium text-green-400">Active</span>
               </div>
@@ -310,9 +310,9 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Version Info */}
-          <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-4">
-            <p className="text-xs text-[#64748b]">SOPH.IA Admin</p>
-            <p className="text-sm font-medium text-[#94a3b8] mt-1">v1.0.0</p>
+          <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-4">
+            <p className="text-xs text-[var(--star-4)]">SOPH.IA Admin</p>
+            <p className="text-sm font-medium text-[var(--star-3)] mt-1">v1.0.0</p>
             <p className="text-xs text-[#475569] mt-2">
               The Knowledge Operating System for AI
             </p>

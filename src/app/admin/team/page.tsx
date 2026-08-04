@@ -105,7 +105,7 @@ export default function TeamPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-[var(--star-1)]">Team</h1>
-          <p className="text-[#64748b] mt-1">Manage team members and roles</p>
+          <p className="text-[var(--star-4)] mt-1">Manage team members and roles</p>
         </div>
         <button className="px-4 py-2 rounded-lg bg-[#3b82f6] text-white font-medium hover:bg-[#2563eb] transition-colors">
           Invite Member
@@ -114,8 +114,8 @@ export default function TeamPage() {
 
       {/* Team Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-4">
-          <p className="text-sm text-[#64748b] mb-1">Total Members</p>
+        <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-4">
+          <p className="text-sm text-[var(--star-4)] mb-1">Total Members</p>
           <p className="text-2xl font-bold text-[#f1f5f9]">6</p>
         </div>
         <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-4">
@@ -126,17 +126,17 @@ export default function TeamPage() {
           <p className="text-sm text-blue-400 mb-1">Departments</p>
           <p className="text-2xl font-bold text-blue-400">5</p>
         </div>
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-4">
-          <p className="text-sm text-[#64748b] mb-1">Avg Tenure</p>
+        <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-4">
+          <p className="text-sm text-[var(--star-4)] mb-1">Avg Tenure</p>
           <p className="text-2xl font-bold text-[#f1f5f9]">1.5m</p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-4 space-y-4">
+      <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-4 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+            <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
               Search
             </label>
             <input
@@ -144,18 +144,18 @@ export default function TeamPage() {
               placeholder="Search by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] placeholder-[#64748b] focus:border-[#3b82f6] focus:outline-none"
+              className="w-full px-3 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] placeholder-[#64748b] focus:border-[#3b82f6] focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+            <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
               Department
             </label>
             <select
               value={departmentFilter}
               onChange={(e) => setDepartmentFilter(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+              className="w-full px-3 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
             >
               {departments.map((dept) => (
                 <option key={dept} value={dept}>
@@ -172,18 +172,18 @@ export default function TeamPage() {
         {filteredTeam.map((member) => (
           <div
             key={member.id}
-            className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6 space-y-4 hover:border-[#3b82f6]/50 transition-colors"
+            className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-6 space-y-4 hover:border-[#3b82f6]/50 transition-colors"
           >
             {/* Avatar and Name */}
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-[#1e293b] flex items-center justify-center text-2xl">
+              <div className="w-12 h-12 rounded-lg bg-[var(--sky-3)] flex items-center justify-center text-2xl">
                 {member.avatar}
               </div>
               <div>
                 <h3 className="text-sm font-bold text-[var(--star-1)]">
                   {member.name}
                 </h3>
-                <p className="text-xs text-[#64748b]">{member.email}</p>
+                <p className="text-xs text-[var(--star-4)]">{member.email}</p>
               </div>
             </div>
 
@@ -201,9 +201,9 @@ export default function TeamPage() {
             </div>
 
             {/* Role and Department */}
-            <div className="space-y-2 border-t border-[#1e293b] pt-4">
+            <div className="space-y-2 border-t border-[var(--edge)] pt-4">
               <div>
-                <p className="text-xs text-[#64748b]">Role</p>
+                <p className="text-xs text-[var(--star-4)]">Role</p>
                 <div className="mt-1">
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(member.role)}`}>
                     {member.role}
@@ -212,26 +212,26 @@ export default function TeamPage() {
               </div>
 
               <div>
-                <p className="text-xs text-[#64748b]">Department</p>
-                <p className="text-sm font-medium text-[#94a3b8]">
+                <p className="text-xs text-[var(--star-4)]">Department</p>
+                <p className="text-sm font-medium text-[var(--star-3)]">
                   {member.department}
                 </p>
               </div>
 
               <div>
-                <p className="text-xs text-[#64748b]">Joined</p>
-                <p className="text-sm font-medium text-[#94a3b8]">
+                <p className="text-xs text-[var(--star-4)]">Joined</p>
+                <p className="text-sm font-medium text-[var(--star-3)]">
                   {member.joinedDate}
                 </p>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="flex gap-2 pt-2 border-t border-[#1e293b]">
-              <button className="flex-1 px-3 py-2 rounded-lg border border-[#1e293b] text-[#94a3b8] font-medium hover:bg-[#1e293b] transition-colors text-sm">
+            <div className="flex gap-2 pt-2 border-t border-[var(--edge)]">
+              <button className="flex-1 px-3 py-2 rounded-lg border border-[var(--edge)] text-[var(--star-3)] font-medium hover:bg-[var(--sky-3)] transition-colors text-sm">
                 Edit
               </button>
-              <button className="flex-1 px-3 py-2 rounded-lg border border-[#1e293b] text-[#94a3b8] font-medium hover:bg-[#1e293b] transition-colors text-sm">
+              <button className="flex-1 px-3 py-2 rounded-lg border border-[var(--edge)] text-[var(--star-3)] font-medium hover:bg-[var(--sky-3)] transition-colors text-sm">
                 Message
               </button>
             </div>
@@ -240,24 +240,24 @@ export default function TeamPage() {
       </div>
 
       {/* Roles Overview */}
-      <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6">
+      <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-6">
         <h2 className="text-lg font-bold text-[var(--star-1)] mb-4">
           Roles & Permissions
         </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#1e293b]">
-                <th className="px-4 py-3 text-left font-semibold text-[#94a3b8]">
+              <tr className="border-b border-[var(--edge)]">
+                <th className="px-4 py-3 text-left font-semibold text-[var(--star-3)]">
                   Role
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-[#94a3b8]">
+                <th className="px-4 py-3 text-left font-semibold text-[var(--star-3)]">
                   Members
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-[#94a3b8]">
+                <th className="px-4 py-3 text-left font-semibold text-[var(--star-3)]">
                   Permissions
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-[#94a3b8]">
+                <th className="px-4 py-3 text-left font-semibold text-[var(--star-3)]">
                   Action
                 </th>
               </tr>
@@ -270,13 +270,13 @@ export default function TeamPage() {
               ].map((row) => (
                 <tr
                   key={row.role}
-                  className="border-b border-[#1e293b] hover:bg-[#0f1117] transition-colors"
+                  className="border-b border-[var(--edge)] hover:bg-[var(--sky-2)] transition-colors"
                 >
-                  <td className="px-4 py-3 font-medium text-[#94a3b8]">
+                  <td className="px-4 py-3 font-medium text-[var(--star-3)]">
                     {row.role}
                   </td>
-                  <td className="px-4 py-3 text-[#64748b]">{row.members}</td>
-                  <td className="px-4 py-3 text-[#64748b]">{row.perms}</td>
+                  <td className="px-4 py-3 text-[var(--star-4)]">{row.members}</td>
+                  <td className="px-4 py-3 text-[var(--star-4)]">{row.perms}</td>
                   <td className="px-4 py-3">
                     <button className="text-[#3b82f6] hover:text-[#2563eb] text-sm">
                       Edit

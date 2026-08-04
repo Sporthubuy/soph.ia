@@ -38,7 +38,7 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#07090e] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[var(--sky-1)] flex items-center justify-center px-4">
       <div className="absolute inset-0 dot-pattern opacity-20" />
 
       <div className="panel relative z-10 w-full max-w-sm p-8 space-y-6">
@@ -47,7 +47,7 @@ export default function ForgotPasswordPage() {
             <LogoMark size={44} />
           </Link>
           <h1 className="headline-md text-[var(--star-1)] font-bold mt-4">Reset password</h1>
-          <p className="body-md text-[#94a3b8]">Enter your email to receive reset link</p>
+          <p className="body-md text-[var(--star-3)]">Enter your email to receive reset link</p>
         </div>
 
         <form onSubmit={handleReset} className="space-y-4">
@@ -85,7 +85,7 @@ export default function ForgotPasswordPage() {
           </Button>
         </form>
 
-        <p className="text-center body-md text-[#94a3b8]">
+        <p className="text-center body-md text-[var(--star-3)]">
           Remember your password?{" "}
           <Link href="/login" className="font-semibold text-[#3b82f6] hover:underline">
             Sign in

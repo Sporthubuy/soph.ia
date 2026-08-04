@@ -24,7 +24,7 @@ export default function DashboardError({
           error
         </span>
         <h1 className="headline-md font-bold text-[var(--star-1)]">Something went wrong</h1>
-        <p className="body-sm text-[#64748b]">
+        <p className="body-sm text-[var(--star-4)]">
           {error.message || "An unexpected error occurred. Please try again."}
         </p>
         <div className="flex flex-wrap justify-center gap-2 pt-2">
@@ -37,7 +37,7 @@ export default function DashboardError({
           </button>
           <Link
             href="/dashboard"
-            className="rounded-lg border border-[#1e293b] bg-[var(--sky-2)] px-4 py-2.5 text-sm font-medium text-[#94a3b8] hover:bg-[#07090e]"
+            className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] px-4 py-2.5 text-sm font-medium text-[var(--star-3)] hover:bg-[var(--sky-1)]"
           >
             Back to dashboard
           </Link>

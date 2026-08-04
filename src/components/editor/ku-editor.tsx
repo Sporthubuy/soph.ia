@@ -98,7 +98,7 @@ export const KUEditor = ({
               id="title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="body-md border-[#1e293b]"
+              className="body-md border-[var(--edge)]"
               required
             />
           </div>
@@ -114,7 +114,7 @@ export const KUEditor = ({
                   </span>
                 )}
               </div>
-              <div className="flex rounded-lg border border-[#1e293b] p-1 gap-1 bg-[#07090e]">
+              <div className="flex rounded-lg border border-[var(--edge)] p-1 gap-1 bg-[var(--sky-1)]">
                 {(["write", "preview", "diff"] as const).map((t_val) => (
                   <button
                     key={t_val}
@@ -122,7 +122,7 @@ export const KUEditor = ({
                     className={`label-sm px-3 py-1.5 rounded transition-colors ${
                       tab === t_val
                         ? "bg-[#3b82f6] text-white"
-                        : "text-[#64748b] hover:text-[#94a3b8]"
+                        : "text-[var(--star-4)] hover:text-[var(--star-3)]"
                     }`}
                     onClick={() => setTab(t_val)}
                   >
@@ -141,18 +141,18 @@ export const KUEditor = ({
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 rows={24}
-                className="font-mono text-sm border-[#1e293b] bg-[#07090e]"
+                className="font-mono text-sm border-[var(--edge)] bg-[var(--sky-1)]"
                 placeholder="Escribe el contenido en Markdown..."
               />
             )}
 
             {/* Preview tab */}
             {tab === "preview" && (
-              <div className="min-h-[500px] overflow-auto rounded-lg border border-[#1e293b] bg-[#07090e] p-6">
+              <div className="min-h-[500px] overflow-auto rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] p-6">
                 <div
-                  className="ku-content body-md text-[#94a3b8] leading-relaxed max-w-none"
+                  className="ku-content body-md text-[var(--star-3)] leading-relaxed max-w-none"
                   dangerouslySetInnerHTML={{
-                    __html: renderMarkdown(content) || '<p class="text-[#64748b]">Sin contenido aún</p>',
+                    __html: renderMarkdown(content) || '<p class="text-[var(--star-4)]">Sin contenido aún</p>',
                   }}
                 />
               </div>
@@ -162,23 +162,23 @@ export const KUEditor = ({
             {tab === "diff" && (
               <div className="min-h-[500px] space-y-4">
                 {!contentChanged ? (
-                  <div className="flex items-center justify-center h-96 text-[#64748b]">
+                  <div className="flex items-center justify-center h-96 text-[var(--star-4)]">
                     <p>Sin cambios en el contenido</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <p className="label-sm text-[#64748b]">Original (v{ku.version})</p>
-                      <div className="h-96 overflow-auto rounded-lg border border-[#1e293b] bg-[#07090e] p-3">
-                        <pre className="text-xs text-[#94a3b8] whitespace-pre-wrap break-words font-mono">
+                      <p className="label-sm text-[var(--star-4)]">Original (v{ku.version})</p>
+                      <div className="h-96 overflow-auto rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] p-3">
+                        <pre className="text-xs text-[var(--star-3)] whitespace-pre-wrap break-words font-mono">
                           {ku.content}
                         </pre>
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <p className="label-sm text-[#64748b]">Nuevo</p>
-                      <div className="h-96 overflow-auto rounded-lg border border-[#1e293b] bg-[#07090e] p-3">
-                        <pre className="text-xs text-[#94a3b8] whitespace-pre-wrap break-words font-mono">
+                      <p className="label-sm text-[var(--star-4)]">Nuevo</p>
+                      <div className="h-96 overflow-auto rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] p-3">
+                        <pre className="text-xs text-[var(--star-3)] whitespace-pre-wrap break-words font-mono">
                           {content}
                         </pre>
                       </div>
@@ -201,9 +201,9 @@ export const KUEditor = ({
                 value={changeMessage}
                 onChange={(e) => setChangeMessage(e.target.value)}
                 placeholder="¿Qué cambió y por qué?"
-                className="body-md border-[#1e293b]"
+                className="body-md border-[var(--edge)]"
               />
-              <p className="label-xs text-[#64748b]">
+              <p className="label-xs text-[var(--star-4)]">
                 Este cambio irá a revisión y requiere aprobación del responsable (Artículo 6).
               </p>
             </div>
@@ -222,7 +222,7 @@ export const KUEditor = ({
               type="button"
               variant="outline"
               render={<Link href={`/knowledge/${ku.id}`} />}
-              className="border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e]"
+              className="border-[var(--edge)] text-[var(--star-3)] hover:bg-[var(--sky-1)]"
             >
               Cancelar
             </Button>
@@ -241,24 +241,24 @@ export const KUEditor = ({
             </h3>
             <div className="space-y-2.5 text-sm">
               <div className="flex items-center justify-between">
-                <span className="text-[#64748b]">Estado</span>
+                <span className="text-[var(--star-4)]">Estado</span>
                 <StatusBadge status={ku.status} size="sm" />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[#64748b]">Trust Score</span>
+                <span className="text-[var(--star-4)]">Trust Score</span>
                 <TrustBadge score={ku.trust_score} />
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[#64748b]">Versión</span>
-                <span className="font-medium text-[#94a3b8]">v{ku.version}</span>
+                <span className="text-[var(--star-4)]">Versión</span>
+                <span className="font-medium text-[var(--star-3)]">v{ku.version}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[#64748b]">Dominio</span>
-                <span className="font-medium text-[#94a3b8]">{ku.domains?.name ?? "—"}</span>
+                <span className="text-[var(--star-4)]">Dominio</span>
+                <span className="font-medium text-[var(--star-3)]">{ku.domains?.name ?? "—"}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[#64748b]">Responsable</span>
-                <span className="font-medium text-[#94a3b8] truncate max-w-[120px]">
+                <span className="text-[var(--star-4)]">Responsable</span>
+                <span className="font-medium text-[var(--star-3)] truncate max-w-[120px]">
                   {ku.profiles?.full_name ?? ku.profiles?.email ?? "—"}
                 </span>
               </div>
@@ -281,19 +281,19 @@ export const KUEditor = ({
               Historial ({versions.length})
             </h3>
             {versions.length === 0 ? (
-              <p className="text-sm text-[#64748b]">Sin historial</p>
+              <p className="text-sm text-[var(--star-4)]">Sin historial</p>
             ) : (
               <div className="space-y-2 max-h-48 overflow-y-auto">
                 {versions.slice(0, 5).map((v) => (
-                  <div key={v.id} className="text-xs p-2 rounded border border-[#1e293b] hover:bg-[#07090e]/50">
+                  <div key={v.id} className="text-xs p-2 rounded border border-[var(--edge)] hover:bg-[var(--sky-1)]/50">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium text-[#94a3b8]">v{v.version}</span>
-                      <code className="text-[#64748b]">{v.hash.slice(0, 6)}</code>
+                      <span className="font-medium text-[var(--star-3)]">v{v.version}</span>
+                      <code className="text-[var(--star-4)]">{v.hash.slice(0, 6)}</code>
                     </div>
                     {v.change_message && (
-                      <p className="text-[#64748b] line-clamp-1">{v.change_message}</p>
+                      <p className="text-[var(--star-4)] line-clamp-1">{v.change_message}</p>
                     )}
-                    <p className="text-[#64748b] text-[10px]">
+                    <p className="text-[var(--star-4)] text-[10px]">
                       {v.profiles?.full_name ?? v.profiles?.email} · {new Date(v.created_at).toLocaleDateString(locale)}
                     </p>
                   </div>

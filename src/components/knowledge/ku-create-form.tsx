@@ -105,12 +105,12 @@ export const KUCreateForm = ({
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6">
-      <nav aria-label="Migas de pan" className="body-sm text-[#64748b]">
+      <nav aria-label="Migas de pan" className="body-sm text-[var(--star-4)]">
         <Link href="/knowledge" className="hover:text-[var(--star-1)] transition-colors">
           Knowledge Units
         </Link>
         <span className="mx-2">/</span>
-        <span className="text-[#94a3b8]">Nueva Knowledge Unit</span>
+        <span className="text-[var(--star-3)]">Nueva Knowledge Unit</span>
       </nav>
 
       <h1 className="headline-xl text-[var(--star-1)] font-bold">
@@ -122,7 +122,7 @@ export const KUCreateForm = ({
           {/* Informacion basica */}
           <div className="lg:col-span-4 panel p-6 space-y-5">
             <div className="space-y-2">
-              <label htmlFor="title" className="label-sm text-[#64748b]">
+              <label htmlFor="title" className="label-sm text-[var(--star-4)]">
                 TITULO
               </label>
               <input
@@ -131,12 +131,12 @@ export const KUCreateForm = ({
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Ej: Politica de reembolsos 2026"
                 autoFocus
-                className="w-full px-4 py-3 border border-[#1e293b] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent"
+                className="w-full px-4 py-3 border border-[var(--edge)] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent"
               />
             </div>
 
             <div className="space-y-2">
-              <label className="label-sm text-[#64748b]">DOMINIO</label>
+              <label className="label-sm text-[var(--star-4)]">DOMINIO</label>
 
               {domains.length > 0 && (
                 <div className="flex flex-wrap gap-2">
@@ -148,7 +148,7 @@ export const KUCreateForm = ({
                       className={`label-sm px-3 py-1.5 rounded-full border transition-colors ${
                         domain === d.name
                           ? "bg-[#3b82f6] text-[var(--azure-ink)] border-[#3b82f6]"
-                          : "bg-[var(--sky-2)] text-[#94a3b8] border-[#1e293b] hover:bg-[#07090e]"
+                          : "bg-[var(--sky-2)] text-[var(--star-3)] border-[var(--edge)] hover:bg-[var(--sky-1)]"
                       }`}
                     >
                       {d.name}
@@ -161,16 +161,16 @@ export const KUCreateForm = ({
                 value={domain}
                 onChange={(e) => setDomain(e.target.value)}
                 placeholder="O escribe un dominio nuevo..."
-                className="w-full px-4 py-2.5 border border-[#1e293b] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent body-sm"
+                className="w-full px-4 py-2.5 border border-[var(--edge)] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent body-sm"
               />
-              <p className="body-sm text-[#64748b]">
+              <p className="body-sm text-[var(--star-4)]">
                 Si el dominio no existe, se crea automaticamente.
               </p>
             </div>
 
             {/* Subida de archivos */}
             <div className="space-y-2 pt-1">
-              <label className="label-sm text-[#64748b]">ARCHIVO</label>
+              <label className="label-sm text-[var(--star-4)]">ARCHIVO</label>
               <input
                 ref={fileInputRef}
                 type="file"
@@ -191,13 +191,13 @@ export const KUCreateForm = ({
                 className={`border-2 border-dashed rounded-lg p-5 text-center transition-colors ${
                   isDragging
                     ? "border-[#3b82f6] bg-[#111a2e]"
-                    : "border-[#1e293b]"
+                    : "border-[var(--edge)]"
                 }`}
               >
-                <span className="text-2xl text-[#64748b]">
+                <span className="text-2xl text-[var(--star-4)]">
                   upload_file
                 </span>
-                <p className="body-sm text-[#94a3b8] mt-1">
+                <p className="body-sm text-[var(--star-3)] mt-1">
                   Arrastra un archivo aca, o{" "}
                   <button
                     type="button"
@@ -208,7 +208,7 @@ export const KUCreateForm = ({
                     elegi uno
                   </button>
                 </p>
-                <p className="body-sm text-[#64748b] mt-1">
+                <p className="body-sm text-[var(--star-4)] mt-1">
                   PDF, DOCX, TXT, Markdown o CSV.
                 </p>
                 {isUploading && (
@@ -224,17 +224,17 @@ export const KUCreateForm = ({
           {/* Contenido */}
           <div className="lg:col-span-8 panel p-6 space-y-4">
             <div className="flex items-center justify-between flex-wrap gap-3">
-              <label className="label-sm text-[#64748b]">
+              <label className="label-sm text-[var(--star-4)]">
                 CONTENIDO (MARKDOWN)
               </label>
-              <div className="flex gap-1 border border-[#1e293b] rounded-lg p-1">
+              <div className="flex gap-1 border border-[var(--edge)] rounded-lg p-1">
                 <button
                   type="button"
                   onClick={() => setView("write")}
                   className={`label-sm px-3 py-1.5 rounded ${
                     view === "write"
                       ? "bg-[#3b82f6] text-[var(--azure-ink)]"
-                      : "text-[#94a3b8] hover:bg-[#07090e]"
+                      : "text-[var(--star-3)] hover:bg-[var(--sky-1)]"
                   }`}
                 >
                   Escribir
@@ -245,7 +245,7 @@ export const KUCreateForm = ({
                   className={`label-sm px-3 py-1.5 rounded ${
                     view === "preview"
                       ? "bg-[#3b82f6] text-[var(--azure-ink)]"
-                      : "text-[#94a3b8] hover:bg-[#07090e]"
+                      : "text-[var(--star-3)] hover:bg-[var(--sky-1)]"
                   }`}
                 >
                   Vista previa
@@ -259,17 +259,17 @@ export const KUCreateForm = ({
                 onChange={(e) => setContent(e.target.value)}
                 placeholder={"Escribe en Markdown, o sube un archivo a la izquierda...\n\n## Un titulo\n\n- Un punto\n- Otro punto"}
                 rows={24}
-                className="w-full px-4 py-3 border border-[#1e293b] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#64748b] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent"
+                className="w-full px-4 py-3 border border-[var(--edge)] rounded-lg bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#64748b] font-mono text-sm focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent"
               />
             ) : (
-              <div className="border border-[#1e293b] rounded-lg p-4 min-h-[38rem]">
+              <div className="border border-[var(--edge)] rounded-lg p-4 min-h-[38rem]">
                 {content.trim() ? (
                   <div
-                    className="ku-content body-md text-[#94a3b8]"
+                    className="ku-content body-md text-[var(--star-3)]"
                     dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}
                   />
                 ) : (
-                  <p className="body-md text-[#64748b]">Nada que previsualizar todavia.</p>
+                  <p className="body-md text-[var(--star-4)]">Nada que previsualizar todavia.</p>
                 )}
               </div>
             )}
@@ -302,7 +302,7 @@ export const KUCreateForm = ({
           <button
             type="button"
             onClick={() => router.push("/knowledge")}
-            className="py-2.5 px-5 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] transition-colors body-md"
+            className="py-2.5 px-5 rounded-lg border border-[var(--edge)] text-[var(--star-3)] hover:bg-[var(--sky-1)] transition-colors body-md"
           >
             Cancelar
           </button>

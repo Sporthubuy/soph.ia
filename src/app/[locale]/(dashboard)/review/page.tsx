@@ -39,7 +39,7 @@ export default async function ReviewPage({
     <div className="p-4 sm:p-8 max-w-4xl mx-auto space-y-6">
       <header className="space-y-1">
         <h1 className="headline-xl text-[var(--star-1)] font-bold">{t("pageTitle")}</h1>
-        <p className="body-md text-[#94a3b8]">{t("pageDesc")}</p>
+        <p className="body-md text-[var(--star-3)]">{t("pageDesc")}</p>
       </header>
 
       <ReviewList

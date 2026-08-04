@@ -109,7 +109,7 @@ export default function KnowledgePage() {
           <h1 className="text-3xl font-bold text-[var(--star-1)]">
             Knowledge Units
           </h1>
-          <p className="text-[#64748b] mt-1">
+          <p className="text-[var(--star-4)] mt-1">
             Manage and review knowledge across domains
           </p>
         </div>
@@ -120,8 +120,8 @@ export default function KnowledgePage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-4">
-          <p className="text-sm text-[#64748b] mb-1">Total KUs</p>
+        <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-4">
+          <p className="text-sm text-[var(--star-4)] mb-1">Total KUs</p>
           <p className="text-2xl font-bold text-[#f1f5f9]">{totalCount}</p>
         </div>
         <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-4">
@@ -145,10 +145,10 @@ export default function KnowledgePage() {
       </div>
 
       {/* Filters */}
-      <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-4 space-y-4">
+      <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-4 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+            <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
               Search
             </label>
             <input
@@ -159,12 +159,12 @@ export default function KnowledgePage() {
                 setSearchTerm(e.target.value);
                 setOffset(0);
               }}
-              className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] placeholder-[#64748b] focus:border-[#3b82f6] focus:outline-none"
+              className="w-full px-3 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] placeholder-[#64748b] focus:border-[#3b82f6] focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+            <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
               Status
             </label>
             <select
@@ -173,7 +173,7 @@ export default function KnowledgePage() {
                 setStatusFilter(e.target.value);
                 setOffset(0);
               }}
-              className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+              className="w-full px-3 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
             >
               <option value="all">All Status</option>
               <option value="approved">Approved</option>
@@ -184,7 +184,7 @@ export default function KnowledgePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+            <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
               Domain
             </label>
             <select
@@ -193,7 +193,7 @@ export default function KnowledgePage() {
                 setDomainFilter(e.target.value);
                 setOffset(0);
               }}
-              className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+              className="w-full px-3 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
             >
               <option value="all">All Domains</option>
               <option value="sales">Sales</option>
@@ -207,27 +207,27 @@ export default function KnowledgePage() {
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] overflow-hidden">
+      <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#1e293b] bg-[#07090e]">
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+              <tr className="border-b border-[var(--edge)] bg-[var(--sky-1)]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--star-3)]">
                   Title
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--star-3)]">
                   Domain
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--star-3)]">
                   Status
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--star-3)]">
                   Trust Score
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--star-3)]">
                   Updated
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--star-3)]">
                   Actions
                 </th>
               </tr>
@@ -235,13 +235,13 @@ export default function KnowledgePage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-4 text-center text-[#64748b]">
+                  <td colSpan={6} className="px-6 py-4 text-center text-[var(--star-4)]">
                     Loading...
                   </td>
                 </tr>
               ) : data.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-6 py-4 text-center text-[#64748b]">
+                  <td colSpan={6} className="px-6 py-4 text-center text-[var(--star-4)]">
                     No knowledge units found
                   </td>
                 </tr>
@@ -249,12 +249,12 @@ export default function KnowledgePage() {
                 data.map((ku) => (
                   <tr
                     key={ku.id}
-                    className="border-b border-[#1e293b] hover:bg-[#0f1117] transition-colors"
+                    className="border-b border-[var(--edge)] hover:bg-[var(--sky-2)] transition-colors"
                   >
-                    <td className="px-6 py-4 text-sm font-medium text-[#94a3b8]">
+                    <td className="px-6 py-4 text-sm font-medium text-[var(--star-3)]">
                       {ku.title}
                     </td>
-                    <td className="px-6 py-4 text-sm text-[#64748b]">
+                    <td className="px-6 py-4 text-sm text-[var(--star-4)]">
                       {ku.domain}
                     </td>
                     <td className="px-6 py-4 text-sm">
@@ -272,7 +272,7 @@ export default function KnowledgePage() {
                     <td className={`px-6 py-4 text-sm font-semibold ${getTrustScoreColor(ku.trust_score)}`}>
                       {ku.trust_score || 0}%
                     </td>
-                    <td className="px-6 py-4 text-sm text-[#64748b]">
+                    <td className="px-6 py-4 text-sm text-[var(--star-4)]">
                       {new Date(ku.updated_at).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 text-sm space-x-2">
@@ -296,21 +296,21 @@ export default function KnowledgePage() {
 
       {/* Pagination */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-[#64748b]">
+        <p className="text-sm text-[var(--star-4)]">
           Showing {Math.min(offset + limit, totalCount)} of {totalCount} knowledge units
         </p>
         <div className="space-x-2">
           <button
             onClick={() => setOffset(Math.max(0, offset - limit))}
             disabled={offset === 0}
-            className="px-3 py-2 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#1e293b] transition-colors text-sm disabled:opacity-50"
+            className="px-3 py-2 rounded-lg border border-[var(--edge)] text-[var(--star-3)] hover:bg-[var(--sky-3)] transition-colors text-sm disabled:opacity-50"
           >
             Previous
           </button>
           <button
             onClick={() => setOffset(offset + limit)}
             disabled={offset + limit >= totalCount}
-            className="px-3 py-2 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#1e293b] transition-colors text-sm disabled:opacity-50"
+            className="px-3 py-2 rounded-lg border border-[var(--edge)] text-[var(--star-3)] hover:bg-[var(--sky-3)] transition-colors text-sm disabled:opacity-50"
           >
             Next
           </button>

@@ -41,7 +41,7 @@ export const OrgSettings = ({
     <section className="panel p-6 space-y-4">
       <div>
         <h2 className="body-md font-semibold text-[var(--star-1)]">{t("orgTitle")}</h2>
-        <p className="body-sm text-[#64748b] mt-0.5">{t("orgDesc")}</p>
+        <p className="body-sm text-[var(--star-4)] mt-0.5">{t("orgDesc")}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -58,7 +58,7 @@ export const OrgSettings = ({
         <div className="space-y-2">
           <Label>{t("slugLabel")}</Label>
           <Input value={organization.slug} disabled className="input-workspace max-w-md" />
-          <p className="text-xs text-[#64748b]">{t("slugHint")}</p>
+          <p className="text-xs text-[var(--star-4)]">{t("slugHint")}</p>
         </div>
         {isOwner && (
           <Button

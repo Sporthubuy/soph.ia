@@ -60,7 +60,7 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#07090e] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[var(--sky-1)] flex items-center justify-center px-4">
       <div className="absolute inset-0 dot-pattern opacity-20" />
 
       <div className="panel relative z-10 w-full max-w-sm p-8 space-y-6">
@@ -69,7 +69,7 @@ export default function RegisterPage() {
             <LogoMark size={44} />
           </Link>
           <h1 className="headline-md text-[var(--star-1)] font-bold mt-4">Create account</h1>
-          <p className="body-md text-[#94a3b8]">Start building knowledge</p>
+          <p className="body-md text-[var(--star-3)]">Start building knowledge</p>
         </div>
 
         {invite && (
@@ -138,7 +138,7 @@ export default function RegisterPage() {
           </Button>
         </form>
 
-        <p className="text-center body-md text-[#94a3b8]">
+        <p className="text-center body-md text-[var(--star-3)]">
           Already have an account?{" "}
           <Link href="/login" className="font-semibold text-[#3b82f6] hover:underline">
             Sign in

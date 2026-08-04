@@ -131,7 +131,7 @@ export const ProjectKnowledge = ({
             <button
               type="button"
               onClick={() => setFolderAdderOpen((v) => !v)}
-              className="flex items-center gap-1.5 label-sm px-3 py-2 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] hover:text-[var(--star-1)] transition-colors"
+              className="flex items-center gap-1.5 label-sm px-3 py-2 rounded-lg border border-[var(--edge)] text-[var(--star-3)] hover:bg-[var(--sky-1)] hover:text-[var(--star-1)] transition-colors"
             >
               <Icon name="folder-plus" size={14} />
               Nueva carpeta
@@ -144,14 +144,14 @@ export const ProjectKnowledge = ({
                 setPreselectFolderId(null);
                 setAdderOpen((v) => !v);
               }}
-              className="flex items-center gap-1.5 label-sm px-3 py-2 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] hover:text-[var(--star-1)] transition-colors"
+              className="flex items-center gap-1.5 label-sm px-3 py-2 rounded-lg border border-[var(--edge)] text-[var(--star-3)] hover:bg-[var(--sky-1)] hover:text-[var(--star-1)] transition-colors"
             >
               <Icon name="plus" size={14} strokeWidth={2.2} />
               Agregar KU
             </button>
           )}
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--star-4)]">
               <Icon name="search" size={15} />
             </span>
             <input
@@ -160,7 +160,7 @@ export const ProjectKnowledge = ({
               placeholder="Buscar en este proyecto..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-56 body-sm border border-[#1e293b] rounded-lg pl-9 pr-3 py-2 bg-[var(--sky-2)] text-[#94a3b8] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
+              className="w-56 body-sm border border-[var(--edge)] rounded-lg pl-9 pr-3 py-2 bg-[var(--sky-2)] text-[var(--star-3)] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
             />
           </div>
         </div>
@@ -198,14 +198,14 @@ export const ProjectKnowledge = ({
 
       {knowledgeUnits.length === 0 && folders.length === 0 ? (
         <div className="flex flex-1 items-center justify-center p-8">
-          <p className="body-md text-[#64748b]">
+          <p className="body-md text-[var(--star-4)]">
             Este proyecto todavia no tiene conocimiento asociado. Crea carpetas para empezar.
           </p>
         </div>
       ) : (
         <>
           {visible.length === 0 && knowledgeUnits.length > 0 && (
-            <p className="body-sm text-[#64748b] shrink-0 px-6 pt-3">
+            <p className="body-sm text-[var(--star-4)] shrink-0 px-6 pt-3">
               Ninguna Knowledge Unit coincide con la busqueda.
             </p>
           )}
@@ -232,7 +232,7 @@ export const ProjectKnowledge = ({
               className={`flex min-h-full min-w-[260px] w-[260px] shrink-0 flex-col rounded-xl border border-dashed p-3 space-y-2 transition-colors ${
                 dragging
                   ? "border-[#3b82f6] bg-[rgb(59_130_246_/_0.06)]"
-                  : "border-[#1e293b] bg-[#07090e]/50"
+                  : "border-[var(--edge)] bg-[var(--sky-1)]/50"
               }`}
               onDragOver={(e) => {
                 if (!dragging) return;
@@ -243,13 +243,13 @@ export const ProjectKnowledge = ({
                 handleDrop(null);
               }}
             >
-              <p className="label-sm text-[#64748b] flex items-center gap-1.5 shrink-0">
+              <p className="label-sm text-[var(--star-4)] flex items-center gap-1.5 shrink-0">
                 <Icon name="folder" size={14} />
                 SIN CARPETA
                 <span className="ml-auto">({kuInFolder(null).length})</span>
               </p>
               {kuInFolder(null).length === 0 ? (
-                <p className="body-sm text-[#64748b]">Vacia. Mové Knowledge Units aca.</p>
+                <p className="body-sm text-[var(--star-4)]">Vacia. Mové Knowledge Units aca.</p>
               ) : (
                 <ul className="min-h-0 flex-1 space-y-2 overflow-y-auto">
                   {kuInFolder(null).map((ku) => (
@@ -277,7 +277,7 @@ export const ProjectKnowledge = ({
                 <button
                   type="button"
                   onClick={() => handleQuickAdd(null)}
-                  className="flex items-center gap-1.5 shrink-0 body-sm text-[#64748b] hover:text-[#94a3b8] px-2 py-1.5 rounded-md hover:bg-[var(--sky-2)] transition-colors"
+                  className="flex items-center gap-1.5 shrink-0 body-sm text-[var(--star-4)] hover:text-[var(--star-3)] px-2 py-1.5 rounded-md hover:bg-[var(--sky-2)] transition-colors"
                 >
                   <Icon name="plus" size={14} strokeWidth={2.2} />
                   Agregar KU
@@ -335,7 +335,7 @@ const FolderColumn = ({
       className={`flex min-h-full w-[260px] shrink-0 flex-col rounded-xl border p-3 space-y-2 transition-colors ${
         over
           ? "border-[#3b82f6] bg-[rgb(59_130_246_/_0.08)]"
-          : "border-[#1e293b] bg-[var(--sky-2)]/60"
+          : "border-[var(--edge)] bg-[var(--sky-2)]/60"
       }`}
       onDragOver={(e) => {
         if (!dragging) return;
@@ -364,7 +364,7 @@ const FolderColumn = ({
                 if (e.key === "Enter") saveRename();
                 if (e.key === "Escape") setRenaming(false);
               }}
-              className="flex-1 min-w-0 body-sm border border-[#1e293b] rounded-md px-2 py-1 bg-[var(--sky-3)] text-[var(--star-1)] focus:outline-none focus:ring-1 focus:ring-[#3b82f6]"
+              className="flex-1 min-w-0 body-sm border border-[var(--edge)] rounded-md px-2 py-1 bg-[var(--sky-3)] text-[var(--star-1)] focus:outline-none focus:ring-1 focus:ring-[#3b82f6]"
             />
             <button type="button" onClick={saveRename} className="text-[var(--verified)] hover:text-[#34d399]">
               <Icon name="check" size={14} />
@@ -384,7 +384,7 @@ const FolderColumn = ({
                     setRenaming(true);
                   }}
                   aria-label={`Renombrar carpeta ${folder.name}`}
-                  className="text-[#64748b] hover:text-[#94a3b8]"
+                  className="text-[var(--star-4)] hover:text-[var(--star-3)]"
                 >
                   <Icon name="edit" size={13} />
                 </button>
@@ -396,7 +396,7 @@ const FolderColumn = ({
                       run(() => deleteProjectFolder(folder.id));
                   }}
                   aria-label={`Eliminar carpeta ${folder.name}`}
-                  className="text-[#64748b] hover:text-[var(--danger)]"
+                  className="text-[var(--star-4)] hover:text-[var(--danger)]"
                 >
                   <Icon name="trash" size={13} />
                 </button>
@@ -404,11 +404,11 @@ const FolderColumn = ({
             )}
           </>
         )}
-        <span className="label-xs text-[#64748b]">{kus.length}</span>
+        <span className="label-xs text-[var(--star-4)]">{kus.length}</span>
       </div>
 
       {kus.length === 0 ? (
-        <p className="body-sm text-[#64748b]">Vacia. Mové Knowledge Units aca.</p>
+        <p className="body-sm text-[var(--star-4)]">Vacia. Mové Knowledge Units aca.</p>
       ) : (
         <ul className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-0.5">
           {kus.map((ku) => (
@@ -436,7 +436,7 @@ const FolderColumn = ({
         <button
           type="button"
           onClick={onQuickAdd}
-          className="flex items-center gap-1.5 shrink-0 body-sm text-[#64748b] hover:text-[#94a3b8] px-2 py-1.5 rounded-md hover:bg-[var(--sky-2)] transition-colors"
+          className="flex items-center gap-1.5 shrink-0 body-sm text-[var(--star-4)] hover:text-[var(--star-3)] px-2 py-1.5 rounded-md hover:bg-[var(--sky-2)] transition-colors"
         >
           <Icon name="plus" size={14} strokeWidth={2.2} />
           Agregar KU
@@ -477,7 +477,7 @@ const KUCard = ({
       onDragStart();
     }}
     onDragEnd={onDragEnd}
-    className={`rounded-lg border border-[#1e293b] bg-[var(--sky-3)]/60 p-2.5 space-y-2 transition-all ${
+    className={`rounded-lg border border-[var(--edge)] bg-[var(--sky-3)]/60 p-2.5 space-y-2 transition-all ${
       isDragging ? "opacity-40" : "hover:border-[#334155]"
     } ${draggable ? "cursor-grab active:cursor-grabbing" : ""}`}
   >
@@ -495,14 +495,14 @@ const KUCard = ({
           disabled={isPending}
           onClick={onRemove}
           aria-label={`Quitar ${ku.title} del proyecto`}
-          className="text-[#64748b] hover:text-[var(--danger)] shrink-0"
+          className="text-[var(--star-4)] hover:text-[var(--danger)] shrink-0"
         >
           <Icon name="close" size={13} />
         </button>
       )}
     </div>
     <div className="flex items-center justify-between gap-2">
-      <span className="label-xs text-[#64748b]">
+      <span className="label-xs text-[var(--star-4)]">
         Trust {ku.trust_score ?? 0}%
       </span>
       {canManage && (
@@ -511,7 +511,7 @@ const KUCard = ({
           disabled={isPending}
           onChange={(e) => onMove(e.target.value || null)}
           aria-label={`Mover ${ku.title} de carpeta`}
-          className="body-sm max-w-[140px] border border-[#1e293b] rounded-md px-1.5 py-1 bg-[var(--sky-2)] text-[#94a3b8] focus:outline-none focus:ring-1 focus:ring-[#3b82f6]"
+          className="body-sm max-w-[140px] border border-[var(--edge)] rounded-md px-1.5 py-1 bg-[var(--sky-2)] text-[var(--star-3)] focus:outline-none focus:ring-1 focus:ring-[#3b82f6]"
         >
           <option value="">Sin carpeta</option>
           {Array.from(folderNames.entries()).map(([id, name]) => (
@@ -552,7 +552,7 @@ const FolderAdder = ({
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
-      <span className="label-sm text-[#64748b]">NUEVA CARPETA</span>
+      <span className="label-sm text-[var(--star-4)]">NUEVA CARPETA</span>
       <input
         autoFocus
         value={name}
@@ -562,7 +562,7 @@ const FolderAdder = ({
           if (e.key === "Escape") setName("");
         }}
         placeholder="Nombre de la carpeta..."
-        className="w-64 body-sm border border-[#1e293b] rounded-lg px-3 py-2 bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
+        className="w-64 body-sm border border-[var(--edge)] rounded-lg px-3 py-2 bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
       />
       <button
         type="button"
@@ -608,7 +608,7 @@ export const ProjectAgents = ({
       </h2>
 
       {agents.length === 0 ? (
-        <p className="body-md text-[#64748b]">
+        <p className="body-md text-[var(--star-4)]">
           Este proyecto todavia no integra ningun agente.
         </p>
       ) : (
@@ -616,7 +616,7 @@ export const ProjectAgents = ({
           {agents.map((agent) => (
             <li
               key={agent.linkId}
-              className="flex items-center gap-3 p-3 rounded-lg border border-[#1e293b] flex-wrap"
+              className="flex items-center gap-3 p-3 rounded-lg border border-[var(--edge)] flex-wrap"
             >
               <Icon name="agents" size={18} className="text-[#3b82f6]" />
               <div className="flex-1 min-w-0">
@@ -626,7 +626,7 @@ export const ProjectAgents = ({
                 >
                   {agent.name}
                 </Link>
-                <p className="body-sm text-[#64748b] truncate">{agent.model}</p>
+                <p className="body-sm text-[var(--star-4)] truncate">{agent.model}</p>
               </div>
               <StatusBadge status={agent.status} size="sm" />
               {canManage && (
@@ -637,7 +637,7 @@ export const ProjectAgents = ({
                     run(() => removeAgentFromProject(projectId, agent.linkId))
                   }
                   aria-label={`Quitar ${agent.name} del proyecto`}
-                  className="label-sm px-2 py-1.5 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] transition-colors disabled:opacity-50"
+                  className="label-sm px-2 py-1.5 rounded-lg border border-[var(--edge)] text-[var(--star-3)] hover:bg-[var(--sky-1)] transition-colors disabled:opacity-50"
                 >
                   Quitar
                 </button>
@@ -721,8 +721,8 @@ const KnowledgeUnitAdder = ({
   if (candidates.length === 0) {
     return (
       <div className="space-y-2 pt-1">
-        <label className="label-sm text-[#64748b]">AGREGAR KNOWLEDGE UNIT</label>
-        <p className="body-sm text-[#64748b]">
+        <label className="label-sm text-[var(--star-4)]">AGREGAR KNOWLEDGE UNIT</label>
+        <p className="body-sm text-[var(--star-4)]">
           No quedan Knowledge Units disponibles para agregar.
         </p>
       </div>
@@ -731,23 +731,23 @@ const KnowledgeUnitAdder = ({
 
   return (
     <div className="space-y-2 pt-1">
-      <label className="label-sm text-[#64748b]">AGREGAR KNOWLEDGE UNIT</label>
+      <label className="label-sm text-[var(--star-4)]">AGREGAR KNOWLEDGE UNIT</label>
       <input
         type="text"
         placeholder="Buscar Knowledge Unit..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full body-sm border border-[#1e293b] rounded-lg px-3 py-2.5 bg-[var(--sky-2)] text-[#94a3b8] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
+        className="w-full body-sm border border-[var(--edge)] rounded-lg px-3 py-2.5 bg-[var(--sky-2)] text-[var(--star-3)] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
       />
       <div className="flex items-center gap-2">
-        <label htmlFor="ku-target-folder" className="label-xs text-[#64748b] shrink-0">
+        <label htmlFor="ku-target-folder" className="label-xs text-[var(--star-4)] shrink-0">
           A CARPETA
         </label>
         <select
           id="ku-target-folder"
           value={folderId}
           onChange={(e) => setFolderId(e.target.value)}
-          className="flex-1 body-sm border border-[#1e293b] rounded-lg px-2.5 py-2 bg-[var(--sky-2)] text-[#94a3b8] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
+          className="flex-1 body-sm border border-[var(--edge)] rounded-lg px-2.5 py-2 bg-[var(--sky-2)] text-[var(--star-3)] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
         >
           <option value="">Sin carpeta</option>
           {folders.map((f) => (
@@ -757,7 +757,7 @@ const KnowledgeUnitAdder = ({
           ))}
         </select>
       </div>
-      <div className="space-y-2 max-h-64 overflow-y-auto border border-[#1e293b] rounded-lg p-3 bg-[#07090e]">
+      <div className="space-y-2 max-h-64 overflow-y-auto border border-[var(--edge)] rounded-lg p-3 bg-[var(--sky-1)]">
         {filtered.slice(0, 5).map((ku) => (
           <label key={ku.id} className="flex items-center gap-2 cursor-pointer hover:bg-[var(--sky-2)] p-2 rounded transition-colors">
             <input
@@ -765,16 +765,16 @@ const KnowledgeUnitAdder = ({
               checked={selectedIds.has(ku.id)}
               onChange={() => handleToggle(ku.id)}
               disabled={isPending}
-              className="w-4 h-4 rounded border-[#1e293b] text-[#3b82f6] focus:ring-[#3b82f6]"
+              className="w-4 h-4 rounded border-[var(--edge)] text-[#3b82f6] focus:ring-[#3b82f6]"
             />
             <span className="flex-1 min-w-0">
               <p className="body-sm text-[var(--star-1)] truncate">{ku.title}</p>
-              <p className="label-xs text-[#64748b]">{ku.domain}</p>
+              <p className="label-xs text-[var(--star-4)]">{ku.domain}</p>
             </span>
           </label>
         ))}
         {filtered.length > 5 && (
-          <p className="label-xs text-[#64748b] text-center py-2">
+          <p className="label-xs text-[var(--star-4)] text-center py-2">
             Mostrando 5 de {filtered.length} resultados
           </p>
         )}
@@ -835,8 +835,8 @@ const AgentAdder = ({ projectId, candidates, isPending, run }: AgentAdderProps) 
   if (candidates.length === 0) {
     return (
       <div className="space-y-2 pt-1">
-        <label className="label-sm text-[#64748b]">INTEGRAR AGENTE</label>
-        <p className="body-sm text-[#64748b]">
+        <label className="label-sm text-[var(--star-4)]">INTEGRAR AGENTE</label>
+        <p className="body-sm text-[var(--star-4)]">
           No quedan agentes disponibles para integrar.
         </p>
       </div>
@@ -845,15 +845,15 @@ const AgentAdder = ({ projectId, candidates, isPending, run }: AgentAdderProps) 
 
   return (
     <div className="space-y-2 pt-1">
-      <label className="label-sm text-[#64748b]">INTEGRAR AGENTE</label>
+      <label className="label-sm text-[var(--star-4)]">INTEGRAR AGENTE</label>
       <input
         type="text"
         placeholder="Buscar agente..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="w-full body-sm border border-[#1e293b] rounded-lg px-3 py-2.5 bg-[var(--sky-2)] text-[#94a3b8] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
+        className="w-full body-sm border border-[var(--edge)] rounded-lg px-3 py-2.5 bg-[var(--sky-2)] text-[var(--star-3)] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]"
       />
-      <div className="space-y-2 max-h-64 overflow-y-auto border border-[#1e293b] rounded-lg p-3 bg-[#07090e]">
+      <div className="space-y-2 max-h-64 overflow-y-auto border border-[var(--edge)] rounded-lg p-3 bg-[var(--sky-1)]">
         {filtered.slice(0, 5).map((agent) => (
           <label key={agent.id} className="flex items-center gap-2 cursor-pointer hover:bg-[var(--sky-2)] p-2 rounded transition-colors">
             <input
@@ -861,7 +861,7 @@ const AgentAdder = ({ projectId, candidates, isPending, run }: AgentAdderProps) 
               checked={selectedIds.has(agent.id)}
               onChange={() => handleToggle(agent.id)}
               disabled={isPending}
-              className="w-4 h-4 rounded border-[#1e293b] text-[#3b82f6] focus:ring-[#3b82f6]"
+              className="w-4 h-4 rounded border-[var(--edge)] text-[#3b82f6] focus:ring-[#3b82f6]"
             />
             <span className="flex-1 min-w-0">
               <p className="body-sm text-[var(--star-1)]">{agent.name}</p>
@@ -869,7 +869,7 @@ const AgentAdder = ({ projectId, candidates, isPending, run }: AgentAdderProps) 
           </label>
         ))}
         {filtered.length > 5 && (
-          <p className="label-xs text-[#64748b] text-center py-2">
+          <p className="label-xs text-[var(--star-4)] text-center py-2">
             Mostrando 5 de {filtered.length} resultados
           </p>
         )}

@@ -30,8 +30,8 @@ export const LanguageSwitcher = () => {
           aria-pressed={l === locale}
           className={`rounded px-1.5 py-0.5 text-[10px] font-medium transition-colors ${
             l === locale
-              ? "bg-[#172554] text-[#3b82f6]"
-              : "text-[#64748b] hover:text-[var(--star-1)]"
+              ? "bg-[var(--azure-deep)] text-[#3b82f6]"
+              : "text-[var(--star-4)] hover:text-[var(--star-1)]"
           }`}
         >
           {labels[l]}

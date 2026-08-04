@@ -59,7 +59,7 @@ export default async function ProjectDetailPage({
           <Icon name="projects" size={19} className="text-[var(--azure-ink)]" />
         </div>
 
-        <nav aria-label="Migas de pan" className="min-w-0 body-md text-[#64748b]">
+        <nav aria-label="Migas de pan" className="min-w-0 body-md text-[var(--star-4)]">
           <Link href="/projects" className="hover:text-[var(--star-1)] transition-colors">
             Proyectos
           </Link>
@@ -86,16 +86,16 @@ export default async function ProjectDetailPage({
             description="Comparti el link del proyecto con quienes ya tienen acceso, o invitalos abajo."
             triggerIcon="link"
             triggerOnlyIcon
-            triggerClassName="flex h-8 w-8 items-center justify-center rounded-lg border border-[#1e293b] bg-[var(--sky-2)] text-[#94a3b8] hover:bg-[#07090e] transition-colors"
+            triggerClassName="flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] text-[var(--star-3)] hover:bg-[var(--sky-1)] transition-colors"
           />
           <StatusBadge status={status} size="sm" className="ml-1" />
         </div>
 
         <div className="flex-1" />
 
-        <p className="body-sm text-[#64748b] truncate">
+        <p className="body-sm text-[var(--star-4)] truncate">
           Responsable{" "}
-          <span className="font-semibold text-[#94a3b8]">
+          <span className="font-semibold text-[var(--star-3)]">
             {project.owner?.full_name ?? project.owner?.email ?? "—"}
           </span>
         </p>

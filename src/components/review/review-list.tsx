@@ -234,7 +234,7 @@ const ReviewCard = ({
           </p>
         ) : null}
 
-        <div className="rounded-lg border border-[#1e293b] bg-[#07090e] p-4">
+        <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] p-4">
           <CommentsThread
             kuId={ku.id}
             comments={comments}
@@ -245,12 +245,12 @@ const ReviewCard = ({
           />
         </div>
 
-        <div className="flex items-center justify-between pt-3 border-t border-[#1e293b] flex-wrap gap-2">
+        <div className="flex items-center justify-between pt-3 border-t border-[var(--edge)] flex-wrap gap-2">
           <div className="flex items-center gap-2">
-            <span className="body-sm text-[#64748b]">
+            <span className="body-sm text-[var(--star-4)]">
               {t("trustLabel")}
             </span>
-            <span className="label-sm font-medium text-[#94a3b8]">
+            <span className="label-sm font-medium text-[var(--star-3)]">
               {ku.trust_score}%
             </span>
           </div>
@@ -264,7 +264,7 @@ const ReviewCard = ({
                 size="sm"
                 onClick={handleReject}
                 disabled={isPending}
-                className="border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e]"
+                className="border-[var(--edge)] text-[var(--star-3)] hover:bg-[var(--sky-1)]"
               >
                 {t("reject")}
               </Button>
@@ -278,7 +278,7 @@ const ReviewCard = ({
               </Button>
             </div>
           ) : (
-            <p className="body-sm text-[#64748b]">{t("ownersOnly")}</p>
+            <p className="body-sm text-[var(--star-4)]">{t("ownersOnly")}</p>
           )}
         </div>
       </div>

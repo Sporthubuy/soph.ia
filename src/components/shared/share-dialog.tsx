@@ -69,7 +69,7 @@ export const ShareDialog = ({
         style={triggerStyle}
         className={
           triggerClassName ??
-          "label-sm px-3 py-1.5 rounded-lg border border-[#1e293b] text-[#94a3b8] hover:bg-[#07090e] transition-colors inline-flex items-center gap-1.5"
+          "label-sm px-3 py-1.5 rounded-lg border border-[var(--edge)] text-[var(--star-3)] hover:bg-[var(--sky-1)] transition-colors inline-flex items-center gap-1.5"
         }
       >
         {triggerIcon && <Icon name={triggerIcon} size={16} />}
@@ -102,7 +102,7 @@ export const ShareDialog = ({
                 </Button>
               </div>
             </div>
-            <p className="text-xs text-[#64748b]">
+            <p className="text-xs text-[var(--star-4)]">
               Tip: invite teammates from Settings or Project members for full
               collaboration.
             </p>

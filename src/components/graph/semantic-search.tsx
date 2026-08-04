@@ -56,7 +56,7 @@ export const SemanticSearch = ({
     <div className="space-y-4">
       {/* Search Input */}
       <div className="relative">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#64748b]">
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--star-4)]">
           <Icon name="search" size={18} />
         </span>
         <Input
@@ -66,7 +66,7 @@ export const SemanticSearch = ({
           onKeyDown={(e) => {
             if (e.key === "Enter") run();
           }}
-          className="pl-10 border-[#1e293b] bg-[var(--sky-2)] text-[#94a3b8] placeholder-[#64748b] focus:ring-[#3b82f6]"
+          className="pl-10 border-[var(--edge)] bg-[var(--sky-2)] text-[var(--star-3)] placeholder-[#64748b] focus:ring-[#3b82f6]"
         />
       </div>
 
@@ -86,7 +86,7 @@ export const SemanticSearch = ({
               <Link
                 key={r.id}
                 href={`/knowledge/${r.id}`}
-                className="panel block p-3 border border-[#1e293b] hover:bg-[#07090e] hover:border-[#3b82f6] transition-all group"
+                className="panel block p-3 border border-[var(--edge)] hover:bg-[var(--sky-1)] hover:border-[#3b82f6] transition-all group"
               >
                 <div className="flex items-start justify-between gap-3 mb-2">
                   <h4 className="body-sm font-medium text-[var(--star-1)] group-hover:text-[#3b82f6] transition-colors flex-1 line-clamp-1">
@@ -102,12 +102,12 @@ export const SemanticSearch = ({
                   </div>
                 </div>
 
-                <p className="body-xs text-[#64748b] line-clamp-2 mb-2">
+                <p className="body-xs text-[var(--star-4)] line-clamp-2 mb-2">
                   {r.content.slice(0, 160) || t("noContent")}
                 </p>
 
                 {/* Similarity bar */}
-                <div className="w-full h-1.5 rounded-full bg-[#1e293b] overflow-hidden">
+                <div className="w-full h-1.5 rounded-full bg-[var(--sky-3)] overflow-hidden">
                   <div
                     className="h-full bg-gradient-to-r from-[#3b82f6] to-[#60a5fa]"
                     style={{ width: `${similarity}%` }}
@@ -121,9 +121,9 @@ export const SemanticSearch = ({
 
       {/* No Results State */}
       {!pending && results.length === 0 && query.trim() && !error && (
-        <div className="rounded-lg border border-[#1e293b] bg-[#07090e] p-6 text-center">
-          <Icon name="search" size={24} className="mx-auto text-[#64748b] mb-2" />
-          <p className="body-sm text-[#64748b]">
+        <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] p-6 text-center">
+          <Icon name="search" size={24} className="mx-auto text-[var(--star-4)] mb-2" />
+          <p className="body-sm text-[var(--star-4)]">
             {t("semanticNoResults")}
           </p>
         </div>
@@ -131,10 +131,10 @@ export const SemanticSearch = ({
 
       {/* Loading State */}
       {pending && (
-        <div className="rounded-lg border border-[#1e293b] bg-[#07090e] p-4">
+        <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] p-4">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-[#3b82f6] animate-pulse" />
-            <p className="body-sm text-[#64748b]">{t("searching")}</p>
+            <p className="body-sm text-[var(--star-4)]">{t("searching")}</p>
           </div>
         </div>
       )}

@@ -4,6 +4,7 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toast";
+import { LanguageUpdater } from "@/components/shared/language-updater";
 import { routing } from "@/i18n/routing";
 import "../globals.css";
 
@@ -35,6 +36,7 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
+      <LanguageUpdater />
       <TooltipProvider>
         {children}
         <Toaster />

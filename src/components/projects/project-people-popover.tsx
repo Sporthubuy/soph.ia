@@ -102,7 +102,7 @@ export const ProjectPeoplePopover = ({
       <DropdownMenuTrigger
         title={`Participantes (${members.length})`}
         aria-label="Ver participantes del proyecto"
-        className="relative flex h-8 w-8 items-center justify-center rounded-lg border border-[#1e293b] bg-[var(--sky-2)] text-[#94a3b8] hover:bg-[#07090e] hover:text-[var(--star-1)] transition-colors outline-none data-[popup-open]:bg-[#07090e] data-[popup-open]:text-[var(--star-1)]"
+        className="relative flex h-8 w-8 items-center justify-center rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] text-[var(--star-3)] hover:bg-[var(--sky-1)] hover:text-[var(--star-1)] transition-colors outline-none data-[popup-open]:bg-[var(--sky-1)] data-[popup-open]:text-[var(--star-1)]"
       >
         <Icon name="people" size={15} />
         {members.length > 0 && (
@@ -129,20 +129,20 @@ export const ProjectPeoplePopover = ({
                 const mail = m.profiles?.email ?? "";
                 return (
                   <div key={m.id} className="flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-[var(--sky-2)]">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#172554] text-[#3b82f6] label-sm font-semibold">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--azure-deep)] text-[#3b82f6] label-sm font-semibold">
                       {initials(m.profiles?.full_name ?? null, mail)}
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="body-sm text-[var(--star-1)] font-medium truncate">
                         {name}
                         {isOwner && (
-                          <span className="ml-2 label-xs text-[#64748b] font-normal">
+                          <span className="ml-2 label-xs text-[var(--star-4)] font-normal">
                             Responsable
                           </span>
                         )}
                       </p>
                       {mail && name !== mail && (
-                        <p className="body-sm text-[#64748b] truncate">{mail}</p>
+                        <p className="body-sm text-[var(--star-4)] truncate">{mail}</p>
                       )}
                     </div>
                     {canManage && !isOwner ? (
@@ -156,7 +156,7 @@ export const ProjectPeoplePopover = ({
                             )
                           }
                           aria-label={`Rol de ${name}`}
-                          className="body-sm border border-[#1e293b] rounded-md px-1.5 py-1 bg-[var(--sky-2)] text-[#94a3b8] focus:outline-none focus:ring-1 focus:ring-[#3b82f6]"
+                          className="body-sm border border-[var(--edge)] rounded-md px-1.5 py-1 bg-[var(--sky-2)] text-[var(--star-3)] focus:outline-none focus:ring-1 focus:ring-[#3b82f6]"
                         >
                           {ROLES.map((r) => (
                             <option key={r.value} value={r.value}>
@@ -169,13 +169,13 @@ export const ProjectPeoplePopover = ({
                           disabled={isPending}
                           onClick={() => run(() => removeProjectMember(projectId, m.id))}
                           aria-label={`Quitar a ${name}`}
-                          className="text-[#64748b] hover:text-[var(--danger)]"
+                          className="text-[var(--star-4)] hover:text-[var(--danger)]"
                         >
                           <Icon name="close" size={14} />
                         </button>
                       </div>
                     ) : (
-                      <span className="label-sm shrink-0 px-2 py-0.5 rounded border border-[#1e293b] text-[#94a3b8]">
+                      <span className="label-sm shrink-0 px-2 py-0.5 rounded border border-[var(--edge)] text-[var(--star-3)]">
                         {roleLabel(m.role)}
                       </span>
                     )}
@@ -188,18 +188,18 @@ export const ProjectPeoplePopover = ({
           {invitations.length > 0 && (
             <DropdownMenuGroup>
               <DropdownMenuSeparator className="my-1.5" />
-              <p className="label-xs px-2 py-1 text-[#64748b]">
+              <p className="label-xs px-2 py-1 text-[var(--star-4)]">
                 PENDIENTES DE REGISTRARSE
               </p>
               <div className="space-y-1">
                 {invitations.map((inv) => (
                   <div key={inv.id} className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-[var(--sky-2)]">
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#07090e] text-[#64748b] label-sm font-semibold">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--sky-1)] text-[var(--star-4)] label-sm font-semibold">
                       <Icon name="clock" size={14} />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="body-sm text-[#94a3b8] truncate">{inv.email}</p>
-                      <p className="label-xs text-[#64748b]">
+                      <p className="body-sm text-[var(--star-3)] truncate">{inv.email}</p>
+                      <p className="label-xs text-[var(--star-4)]">
                         Se sumara como {roleLabel(inv.role)}
                       </p>
                     </div>
@@ -211,7 +211,7 @@ export const ProjectPeoplePopover = ({
                           run(() => cancelProjectInvitation(projectId, inv.id))
                         }
                         aria-label={`Cancelar invitacion a ${inv.email}`}
-                        className="text-[#64748b] hover:text-[var(--danger)] shrink-0"
+                        className="text-[var(--star-4)] hover:text-[var(--danger)] shrink-0"
                       >
                         <Icon name="close" size={14} />
                       </button>
@@ -226,7 +226,7 @@ export const ProjectPeoplePopover = ({
             <DropdownMenuGroup>
               <DropdownMenuSeparator className="my-1.5" />
               <form onSubmit={handleInvite} className="space-y-2 px-2 pb-1 pt-1">
-                <label htmlFor="people-invite-email" className="label-xs text-[#64748b]">
+                <label htmlFor="people-invite-email" className="label-xs text-[var(--star-4)]">
                   INVITAR POR EMAIL
                 </label>
                 <div className="flex gap-1.5">
@@ -236,13 +236,13 @@ export const ProjectPeoplePopover = ({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="persona@empresa.com"
-                    className="min-w-0 flex-1 body-sm border border-[#1e293b] rounded-lg px-2.5 py-1.5 bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#64748b] focus:outline-none focus:ring-1 focus:ring-[#3b82f6]"
+                    className="min-w-0 flex-1 body-sm border border-[var(--edge)] rounded-lg px-2.5 py-1.5 bg-[var(--sky-2)] text-[var(--star-1)] placeholder-[#64748b] focus:outline-none focus:ring-1 focus:ring-[#3b82f6]"
                   />
                   <select
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
                     aria-label="Permiso del invitado"
-                    className="body-sm border border-[#1e293b] rounded-lg px-1.5 py-1.5 bg-[var(--sky-2)] text-[#94a3b8] focus:outline-none focus:ring-1 focus:ring-[#3b82f6]"
+                    className="body-sm border border-[var(--edge)] rounded-lg px-1.5 py-1.5 bg-[var(--sky-2)] text-[var(--star-3)] focus:outline-none focus:ring-1 focus:ring-[#3b82f6]"
                   >
                     {ROLES.map((r) => (
                       <option key={r.value} value={r.value}>

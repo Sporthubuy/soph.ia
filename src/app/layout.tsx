@@ -1,4 +1,5 @@
 import { Outfit, Inter, JetBrains_Mono } from "next/font/google";
+import { ThemeProvider } from "@/components/shared/theme-provider";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -24,18 +25,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es" className="dark" suppressHydrationWarning>
+    <html lang="es" suppressHydrationWarning>
       <body className={`${outfit.variable} ${inter.variable} ${jetbrainsMono.variable} antialiased`}>
-        {/*
-          SOPH.IA — dark-first design system per DESIGN_SYSTEM.md.
-          Electric blue #3B82F6 + cyan #06B6D4 (gradient primary, glow), deep
-          navy canvas #07090E, glassmorphic cards. Typographic pairing: Outfit
-          for headings/display, Inter for body and editor, JetBrains Mono for
-          technical data (KU ids, hashes, versions). Lucide icons. Logo: "S"
-          isotype + lowercase "soph.ia" wordmark (isotype is a placeholder
-          pending the official SVG).
-        */}
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );

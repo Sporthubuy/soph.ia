@@ -115,11 +115,11 @@ export const CreateProjectModal = ({ isOpen, onClose, onSubmit }: CreateProjectM
       {/* Modal */}
       <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl bg-[var(--sky-2)] rounded-lg shadow-lg z-50">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#1e293b]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--edge)]">
           <h2 className="headline-lg text-[var(--star-1)]">Create Project</h2>
           <button
             onClick={onClose}
-            className="text-[#64748b] hover:text-[var(--star-1)] transition-colors"
+            className="text-[var(--star-4)] hover:text-[var(--star-1)] transition-colors"
           >
             <Icon name="close" size={18} />
           </button>
@@ -140,16 +140,16 @@ export const CreateProjectModal = ({ isOpen, onClose, onSubmit }: CreateProjectM
                       ? "bg-[#3b82f6] text-[var(--azure-ink)]"
                       : ["basic", "setup"].includes(s.step) && ["setup", "review"].includes(step)
                       ? "bg-[var(--verified)] text-[var(--azure-ink)]"
-                      : "bg-[#1e293b] text-[#64748b]"
+                      : "bg-[var(--sky-3)] text-[var(--star-4)]"
                   }`}
                 >
                   {step === s.step ? idx + 1 : ["basic", "setup"].includes(s.step) && ["setup", "review"].includes(step) ? <Icon name="check" size={14} strokeWidth={2.4} /> : idx + 1}
                 </div>
-                <span className={`ml-2 body-sm ${step === s.step ? "font-semibold text-[var(--star-1)]" : "text-[#64748b]"}`}>
+                <span className={`ml-2 body-sm ${step === s.step ? "font-semibold text-[var(--star-1)]" : "text-[var(--star-4)]"}`}>
                   {s.label}
                 </span>
                 {idx < 2 && (
-                  <div className={`flex-1 h-1 mx-4 ${["basic", "setup"].includes(s.step) && ["setup", "review"].includes(step) ? "bg-[var(--verified)]" : "bg-[#1e293b]"}`} />
+                  <div className={`flex-1 h-1 mx-4 ${["basic", "setup"].includes(s.step) && ["setup", "review"].includes(step) ? "bg-[var(--verified)]" : "bg-[var(--sky-3)]"}`} />
                 )}
               </div>
             ))}
@@ -171,8 +171,8 @@ export const CreateProjectModal = ({ isOpen, onClose, onSubmit }: CreateProjectM
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="e.g., Q4 Product Launch"
-                  className={`w-full px-3 py-2 border rounded-lg bg-[var(--sky-2)] text-[#94a3b8] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent ${
-                    errors.name ? "border-[rgb(239_68_68_/_0.5)]" : "border-[#1e293b]"
+                  className={`w-full px-3 py-2 border rounded-lg bg-[var(--sky-2)] text-[var(--star-3)] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent ${
+                    errors.name ? "border-[rgb(239_68_68_/_0.5)]" : "border-[var(--edge)]"
                   }`}
                 />
                 {errors.name && <p className="text-[var(--danger)] text-sm mt-1">{errors.name}</p>}
@@ -189,8 +189,8 @@ export const CreateProjectModal = ({ isOpen, onClose, onSubmit }: CreateProjectM
                   onChange={handleInputChange}
                   placeholder="What is this project about?"
                   rows={4}
-                  className={`w-full px-3 py-2 border rounded-lg bg-[var(--sky-2)] text-[#94a3b8] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent ${
-                    errors.description ? "border-[rgb(239_68_68_/_0.5)]" : "border-[#1e293b]"
+                  className={`w-full px-3 py-2 border rounded-lg bg-[var(--sky-2)] text-[var(--star-3)] placeholder-[#64748b] focus:outline-none focus:ring-2 focus:ring-[#3b82f6] focus:border-transparent ${
+                    errors.description ? "border-[rgb(239_68_68_/_0.5)]" : "border-[var(--edge)]"
                   }`}
                 />
                 {errors.description && <p className="text-[var(--danger)] text-sm mt-1">{errors.description}</p>}
@@ -218,8 +218,8 @@ export const CreateProjectModal = ({ isOpen, onClose, onSubmit }: CreateProjectM
                       onClick={() => setFormData((prev) => ({ ...prev, icon }))}
                       className={`p-3 rounded-lg border-2 transition-all ${
                         formData.icon === icon
-                          ? "border-[#3b82f6] bg-[#172554]"
-                          : "border-[#1e293b] hover:border-[#334155]"
+                          ? "border-[#3b82f6] bg-[var(--azure-deep)]"
+                          : "border-[var(--edge)] hover:border-[#334155]"
                       }`}
                     >
                       <span className="text-2xl">{icon}</span>
@@ -241,7 +241,7 @@ export const CreateProjectModal = ({ isOpen, onClose, onSubmit }: CreateProjectM
                       className={`p-4 rounded-lg border-2 transition-all ${
                         formData.color === colorOption.value
                           ? "border-[#3b82f6]"
-                          : "border-[#1e293b] hover:border-[#334155]"
+                          : "border-[var(--edge)] hover:border-[#334155]"
                       }`}
                       style={{ backgroundColor: colorOption.value }}
                     >
@@ -272,7 +272,7 @@ export const CreateProjectModal = ({ isOpen, onClose, onSubmit }: CreateProjectM
           {step === "review" && (
             <div className="space-y-4">
               <div>
-                <p className="label-sm text-[#64748b] mb-2">Project Preview</p>
+                <p className="label-sm text-[var(--star-4)] mb-2">Project Preview</p>
                 <div
                   className="p-6 rounded-lg border-2"
                   style={{ backgroundColor: formData.color }}
@@ -293,7 +293,7 @@ export const CreateProjectModal = ({ isOpen, onClose, onSubmit }: CreateProjectM
                       <h3 className="headline-md font-semibold text-[var(--star-1)] mb-1">
                         {formData.name || "Project Name"}
                       </h3>
-                      <p className="body-sm text-[#94a3b8]">
+                      <p className="body-sm text-[var(--star-3)]">
                         {formData.description || "Project description..."}
                       </p>
                     </div>
@@ -303,20 +303,20 @@ export const CreateProjectModal = ({ isOpen, onClose, onSubmit }: CreateProjectM
 
               <div className="panel p-4 space-y-3">
                 <div>
-                  <p className="label-sm text-[#64748b] mb-1">Project Name</p>
+                  <p className="label-sm text-[var(--star-4)] mb-1">Project Name</p>
                   <p className="body-md font-semibold text-[var(--star-1)]">{formData.name}</p>
                 </div>
                 <div>
-                  <p className="label-sm text-[#64748b] mb-1">Description</p>
+                  <p className="label-sm text-[var(--star-4)] mb-1">Description</p>
                   <p className="body-md text-[var(--star-1)]">{formData.description}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="label-sm text-[#64748b] mb-1">Icon</p>
+                    <p className="label-sm text-[var(--star-4)] mb-1">Icon</p>
                     <p className="body-md text-[var(--star-1)] capitalize">{formData.icon.replace(/_/g, " ")}</p>
                   </div>
                   <div>
-                    <p className="label-sm text-[#64748b] mb-1">Color</p>
+                    <p className="label-sm text-[var(--star-4)] mb-1">Color</p>
                     <p className="body-md text-[var(--star-1)]">{getColorLabel(formData.color)}</p>
                   </div>
                 </div>
@@ -332,12 +332,12 @@ export const CreateProjectModal = ({ isOpen, onClose, onSubmit }: CreateProjectM
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-[#1e293b]">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-[var(--edge)]">
           <div className="flex gap-2">
             {step !== "basic" && (
               <button
                 onClick={handlePrev}
-                className="px-4 py-2 border border-[#1e293b] rounded-lg text-[#94a3b8] hover:bg-[#07090e] transition-colors body-md"
+                className="px-4 py-2 border border-[var(--edge)] rounded-lg text-[var(--star-3)] hover:bg-[var(--sky-1)] transition-colors body-md"
               >
                 Back
               </button>
@@ -346,7 +346,7 @@ export const CreateProjectModal = ({ isOpen, onClose, onSubmit }: CreateProjectM
           <div className="flex gap-2">
             <button
               onClick={onClose}
-              className="px-4 py-2 border border-[#1e293b] rounded-lg text-[#94a3b8] hover:bg-[#07090e] transition-colors body-md"
+              className="px-4 py-2 border border-[var(--edge)] rounded-lg text-[var(--star-3)] hover:bg-[var(--sky-1)] transition-colors body-md"
             >
               Cancel
             </button>

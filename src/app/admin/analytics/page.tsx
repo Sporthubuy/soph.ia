@@ -34,7 +34,7 @@ export default function AnalyticsPage() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-[var(--star-1)]">Analytics</h1>
-        <p className="text-[#64748b] mt-1">Detailed insights and metrics</p>
+        <p className="text-[var(--star-4)] mt-1">Detailed insights and metrics</p>
       </div>
 
       {/* Key Metrics */}
@@ -62,7 +62,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Daily Metrics Chart */}
-      <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6">
+      <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-6">
         <h2 className="text-lg font-bold text-[var(--star-1)] mb-4">
           Daily Metrics Trend
         </h2>
@@ -105,7 +105,7 @@ export default function AnalyticsPage() {
       {/* Growth Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Area Chart */}
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6">
+        <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-6">
           <h2 className="text-lg font-bold text-[var(--star-1)] mb-4">
             User Growth
           </h2>
@@ -134,7 +134,7 @@ export default function AnalyticsPage() {
         </div>
 
         {/* Bar Chart */}
-        <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6">
+        <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-6">
           <h2 className="text-lg font-bold text-[var(--star-1)] mb-4">
             Agent Performance
           </h2>
@@ -161,27 +161,27 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Top Knowledge Units */}
-      <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6">
+      <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-6">
         <h2 className="text-lg font-bold text-[var(--star-1)] mb-4">
           Top Knowledge Units
         </h2>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#1e293b]">
-                <th className="px-4 py-3 text-left text-sm font-semibold text-[#94a3b8]">
+              <tr className="border-b border-[var(--edge)]">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-[var(--star-3)]">
                   Title
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-[var(--star-3)]">
                   Views
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-[var(--star-3)]">
                   Shares
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-[var(--star-3)]">
                   Rating
                 </th>
-                <th className="px-4 py-3 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-4 py-3 text-left text-sm font-semibold text-[var(--star-3)]">
                   Trend
                 </th>
               </tr>
@@ -190,15 +190,15 @@ export default function AnalyticsPage() {
               {topKUs.map((ku, index) => (
                 <tr
                   key={index}
-                  className="border-b border-[#1e293b] hover:bg-[#0f1117] transition-colors"
+                  className="border-b border-[var(--edge)] hover:bg-[var(--sky-2)] transition-colors"
                 >
-                  <td className="px-4 py-3 text-sm font-medium text-[#94a3b8]">
+                  <td className="px-4 py-3 text-sm font-medium text-[var(--star-3)]">
                     {ku.title}
                   </td>
-                  <td className="px-4 py-3 text-sm text-[#64748b]">
+                  <td className="px-4 py-3 text-sm text-[var(--star-4)]">
                     {ku.views.toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 text-sm text-[#64748b]">
+                  <td className="px-4 py-3 text-sm text-[var(--star-4)]">
                     {ku.shares.toLocaleString()}
                   </td>
                   <td className="px-4 py-3 text-sm">
@@ -215,21 +215,21 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Export Options */}
-      <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-6">
+      <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-6">
         <h2 className="text-lg font-bold text-[var(--star-1)] mb-4">
           Export Data
         </h2>
         <div className="flex gap-3">
-          <button className="px-4 py-2 rounded-lg border border-[#1e293b] text-[#94a3b8] font-medium hover:bg-[#1e293b] transition-colors text-sm">
+          <button className="px-4 py-2 rounded-lg border border-[var(--edge)] text-[var(--star-3)] font-medium hover:bg-[var(--sky-3)] transition-colors text-sm">
             📊 Export as CSV
           </button>
-          <button className="px-4 py-2 rounded-lg border border-[#1e293b] text-[#94a3b8] font-medium hover:bg-[#1e293b] transition-colors text-sm">
+          <button className="px-4 py-2 rounded-lg border border-[var(--edge)] text-[var(--star-3)] font-medium hover:bg-[var(--sky-3)] transition-colors text-sm">
             📄 Export as PDF
           </button>
-          <button className="px-4 py-2 rounded-lg border border-[#1e293b] text-[#94a3b8] font-medium hover:bg-[#1e293b] transition-colors text-sm">
+          <button className="px-4 py-2 rounded-lg border border-[var(--edge)] text-[var(--star-3)] font-medium hover:bg-[var(--sky-3)] transition-colors text-sm">
             📧 Email Report
           </button>
-          <button className="px-4 py-2 rounded-lg border border-[#1e293b] text-[#94a3b8] font-medium hover:bg-[#1e293b] transition-colors text-sm">
+          <button className="px-4 py-2 rounded-lg border border-[var(--edge)] text-[var(--star-3)] font-medium hover:bg-[var(--sky-3)] transition-colors text-sm">
             🔄 Schedule Report
           </button>
         </div>

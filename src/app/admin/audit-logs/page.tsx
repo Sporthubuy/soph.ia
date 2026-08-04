@@ -68,7 +68,7 @@ export default function AuditLogsPage() {
       {/* Header */}
       <div>
         <h1 className="text-4xl font-bold text-[var(--star-1)]">Audit Logs</h1>
-        <p className="text-[#64748b] mt-1">Track all system activities and changes</p>
+        <p className="text-[var(--star-4)] mt-1">Track all system activities and changes</p>
       </div>
 
       {/* Stats */}
@@ -92,24 +92,24 @@ export default function AuditLogsPage() {
       </div>
 
       {/* Activity Timeline */}
-      <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] overflow-hidden">
+      <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] overflow-hidden">
         <div className="p-6">
           <h2 className="text-lg font-bold text-[var(--star-1)] mb-6">Activity Timeline</h2>
 
           {loading ? (
-            <p className="text-center text-[#64748b]">Loading activity logs...</p>
+            <p className="text-center text-[var(--star-4)]">Loading activity logs...</p>
           ) : logs.length === 0 ? (
-            <p className="text-center text-[#64748b]">No activity logs found</p>
+            <p className="text-center text-[var(--star-4)]">No activity logs found</p>
           ) : (
             <div className="space-y-4">
               {logs.map((log) => (
                 <div
                   key={log.id}
-                  className="flex gap-4 pb-4 border-b border-[#1e293b] last:border-b-0"
+                  className="flex gap-4 pb-4 border-b border-[var(--edge)] last:border-b-0"
                 >
                   {/* Timeline dot */}
                   <div className="flex-shrink-0">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1e293b] text-lg">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--sky-3)] text-lg">
                       {getEntityIcon(log.entity_type)}
                     </div>
                   </div>
@@ -118,10 +118,10 @@ export default function AuditLogsPage() {
                   <div className="flex-1 pt-1">
                     <div className="flex items-start justify-between">
                       <div>
-                        <p className="text-sm font-medium text-[#94a3b8]">
+                        <p className="text-sm font-medium text-[var(--star-3)]">
                           {log.entity_title}
                         </p>
-                        <p className="text-xs text-[#64748b] mt-1">
+                        <p className="text-xs text-[var(--star-4)] mt-1">
                           {log.description || `${log.action_type} on ${log.entity_type}`}
                         </p>
                       </div>
@@ -131,7 +131,7 @@ export default function AuditLogsPage() {
                         {log.action_type.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")}
                       </span>
                     </div>
-                    <p className="text-xs text-[#64748b] mt-2">
+                    <p className="text-xs text-[var(--star-4)] mt-2">
                       {new Date(log.created_at).toLocaleString()}
                     </p>
                   </div>

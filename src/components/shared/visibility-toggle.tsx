@@ -79,8 +79,8 @@ export function VisibilityToggle({
           <Icon name={current.icon} size={18} />
         </span>
         <div>
-          <p className="label-md text-[#94a3b8]">Visibility</p>
-          <p className="body-sm text-[#64748b]">{current.description}</p>
+          <p className="label-md text-[var(--star-3)]">Visibility</p>
+          <p className="body-sm text-[var(--star-4)]">{current.description}</p>
         </div>
       </div>
 
@@ -103,17 +103,17 @@ export function VisibilityToggle({
             className={`p-3 rounded-[10px] border-2 transition-all flex flex-col items-center gap-2 cursor-pointer ${
               visibility === key
                 ? "border-[rgb(59_130_246_/_0.5)] bg-[rgb(59_130_246_/_0.12)] text-[var(--azure)]"
-                : "border-[#1e293b] text-[var(--star-3)] hover:border-[#334155]"
+                : "border-[var(--edge)] text-[var(--star-3)] hover:border-[#334155]"
             } ${isLoading || onlyOwner ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             <Icon name={icon} size={22} />
-            <span className="label-xs text-center text-[#94a3b8]">{label}</span>
+            <span className="label-xs text-center text-[var(--star-3)]">{label}</span>
           </button>
         ))}
       </div>
 
       {onlyOwner && (
-        <p className="text-xs text-[#64748b]">Only the owner can change visibility</p>
+        <p className="text-xs text-[var(--star-4)]">Only the owner can change visibility</p>
       )}
     </div>
   );

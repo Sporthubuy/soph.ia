@@ -57,7 +57,7 @@ export const GettingStartedChecklist = ({
 
   return (
     <div className="panel overflow-hidden">
-      <div className="border-b border-[#1e293b] bg-gradient-to-r from-[#172554]/60 to-transparent px-5 py-4">
+      <div className="border-b border-[var(--edge)] bg-gradient-to-r from-[#172554]/60 to-transparent px-5 py-4">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-medium uppercase tracking-wider text-[#3b82f6]">
@@ -68,7 +68,7 @@ export const GettingStartedChecklist = ({
                 ? t("gettingStartedWelcome")
                 : t("gettingStartedTitle")}
             </h2>
-            <p className="mt-1 text-xs text-[#64748b]">
+            <p className="mt-1 text-xs text-[var(--star-4)]">
               {complete
                 ? t("gettingStartedComplete")
                 : t("gettingStartedProgress", { done, total })}
@@ -76,10 +76,10 @@ export const GettingStartedChecklist = ({
           </div>
           <div className="text-right">
             <p className="text-2xl font-bold text-[#3b82f6]">{pct}%</p>
-            <p className="text-[10px] text-[#64748b]">{t("progress")}</p>
+            <p className="text-[10px] text-[var(--star-4)]">{t("progress")}</p>
           </div>
         </div>
-        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[#1e293b]">
+        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--sky-3)]">
           <div
             className="h-full rounded-full bg-[#3b82f6] transition-all"
             style={{ width: `${pct}%` }}
@@ -95,13 +95,13 @@ export const GettingStartedChecklist = ({
           return (
             <div
               key={step.id}
-              className="flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-[#07090e]"
+              className="flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-[var(--sky-1)]"
             >
               <div
                 className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
                   isDone
                     ? "bg-[rgb(16_185_129_/_0.16)] text-[var(--verified)]"
-                    : "bg-[#182032] text-[#64748b]"
+                    : "bg-[var(--sky-3)] text-[var(--star-4)]"
                 }`}
               >
                 {isDone ? <Icon name="check" size={14} strokeWidth={2.6} /> : i + 1}
@@ -110,12 +110,12 @@ export const GettingStartedChecklist = ({
                 <p className="text-sm font-medium text-[var(--star-1)]">
                   {tg(step.titleKey)}
                   {isOptional && (
-                    <span className="ml-2 text-[10px] font-normal text-[#64748b]">
+                    <span className="ml-2 text-[10px] font-normal text-[var(--star-4)]">
                       {tc("optional")}
                     </span>
                   )}
                 </p>
-                <p className="text-xs text-[#64748b]">{tg(step.descKey)}</p>
+                <p className="text-xs text-[var(--star-4)]">{tg(step.descKey)}</p>
               </div>
               {!isDone && (
                 <Button

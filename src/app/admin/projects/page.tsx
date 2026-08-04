@@ -71,7 +71,7 @@ export default function ProjectsPage() {
       {/* Header */}
       <div>
         <h1 className="text-4xl font-bold text-[var(--star-1)]">Projects</h1>
-        <p className="text-[#64748b] mt-1">Track and manage organization projects</p>
+        <p className="text-[var(--star-4)] mt-1">Track and manage organization projects</p>
       </div>
 
       {/* Stats */}
@@ -97,10 +97,10 @@ export default function ProjectsPage() {
       </div>
 
       {/* Filters */}
-      <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] p-4 space-y-4">
+      <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] p-4 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+            <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
               Search
             </label>
             <input
@@ -108,18 +108,18 @@ export default function ProjectsPage() {
               placeholder="Search by name or description..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] placeholder-[#64748b] focus:border-[#3b82f6] focus:outline-none"
+              className="w-full px-3 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] placeholder-[#64748b] focus:border-[#3b82f6] focus:outline-none"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#94a3b8] mb-2">
+            <label className="block text-sm font-medium text-[var(--star-3)] mb-2">
               Status
             </label>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-[#1e293b] bg-[#07090e] text-[#94a3b8] focus:border-[#3b82f6] focus:outline-none"
+              className="w-full px-3 py-2 rounded-lg border border-[var(--edge)] bg-[var(--sky-1)] text-[var(--star-3)] focus:border-[#3b82f6] focus:outline-none"
             >
               <option value="all">All Status</option>
               <option value="planning">Planning</option>
@@ -132,24 +132,24 @@ export default function ProjectsPage() {
       </div>
 
       {/* Projects Table */}
-      <div className="rounded-lg border border-[#1e293b] bg-[#0f1117] overflow-hidden">
+      <div className="rounded-lg border border-[var(--edge)] bg-[var(--sky-2)] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[#1e293b] bg-[#07090e]">
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+              <tr className="border-b border-[var(--edge)] bg-[var(--sky-1)]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--star-3)]">
                   Name
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--star-3)]">
                   Description
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--star-3)]">
                   Status
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--star-3)]">
                   Created
                 </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-[#94a3b8]">
+                <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--star-3)]">
                   Updated
                 </th>
               </tr>
@@ -157,13 +157,13 @@ export default function ProjectsPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center text-[#64748b]">
+                  <td colSpan={5} className="px-6 py-4 text-center text-[var(--star-4)]">
                     Loading projects...
                   </td>
                 </tr>
               ) : projects.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-4 text-center text-[#64748b]">
+                  <td colSpan={5} className="px-6 py-4 text-center text-[var(--star-4)]">
                     No projects found
                   </td>
                 </tr>
@@ -171,12 +171,12 @@ export default function ProjectsPage() {
                 projects.map((project) => (
                   <tr
                     key={project.id}
-                    className="border-b border-[#1e293b] hover:bg-[#1e293b]/30 transition-colors"
+                    className="border-b border-[var(--edge)] hover:bg-[var(--sky-3)]/30 transition-colors"
                   >
-                    <td className="px-6 py-4 text-sm font-medium text-[#94a3b8]">
+                    <td className="px-6 py-4 text-sm font-medium text-[var(--star-3)]">
                       {project.name}
                     </td>
-                    <td className="px-6 py-4 text-sm text-[#64748b] max-w-xs truncate">
+                    <td className="px-6 py-4 text-sm text-[var(--star-4)] max-w-xs truncate">
                       {project.description || "—"}
                     </td>
                     <td className="px-6 py-4 text-sm">
@@ -184,10 +184,10 @@ export default function ProjectsPage() {
                         {project.status.split("-").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-sm text-[#64748b]">
+                    <td className="px-6 py-4 text-sm text-[var(--star-4)]">
                       {new Date(project.created_at).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-4 text-sm text-[#64748b]">
+                    <td className="px-6 py-4 text-sm text-[var(--star-4)]">
                       {new Date(project.updated_at).toLocaleDateString()}
                     </td>
                   </tr>

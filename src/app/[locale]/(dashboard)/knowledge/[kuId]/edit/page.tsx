@@ -35,7 +35,7 @@ export default async function EditKnowledgeUnitPage({
 
   return (
     <div className="p-8 max-w-6xl mx-auto space-y-6">
-      <nav aria-label="Migas de pan" className="body-sm text-[#64748b]">
+      <nav aria-label="Migas de pan" className="body-sm text-[var(--star-4)]">
         <Link href="/knowledge" className="hover:text-[var(--star-1)] transition-colors">
           Knowledge Units
         </Link>
@@ -47,7 +47,7 @@ export default async function EditKnowledgeUnitPage({
           {ku.title}
         </Link>
         <span className="mx-2">/</span>
-        <span className="text-[#94a3b8]">Editar</span>
+        <span className="text-[var(--star-3)]">Editar</span>
       </nav>
 
       <h1 className="headline-xl text-[var(--star-1)] font-bold">

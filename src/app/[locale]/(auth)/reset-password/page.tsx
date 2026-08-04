@@ -50,7 +50,7 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#07090e] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-[var(--sky-1)] flex items-center justify-center px-4">
       <div className="absolute inset-0 dot-pattern opacity-20" />
 
       <div className="panel relative z-10 w-full max-w-sm p-8 space-y-6">
@@ -62,7 +62,7 @@ export default function ResetPasswordPage() {
             <LogoMark size={44} />
           </Link>
           <h1 className="headline-md text-[var(--star-1)] font-bold mt-4">Set new password</h1>
-          <p className="body-md text-[#94a3b8]">Choose a new password for your account</p>
+          <p className="body-md text-[var(--star-3)]">Choose a new password for your account</p>
         </div>
 
         <form onSubmit={handleUpdate} className="space-y-4">
@@ -119,7 +119,7 @@ export default function ResetPasswordPage() {
           </Button>
         </form>
 
-        <p className="text-center body-md text-[#94a3b8]">
+        <p className="text-center body-md text-[var(--star-3)]">
           <Link href="/login" className="font-semibold text-[#3b82f6] hover:underline">
             Back to sign in
           </Link>

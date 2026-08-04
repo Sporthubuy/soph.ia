@@ -4,9 +4,9 @@
 @custom-variant dark (&:is(.dark *));
 
 /* ═══════════════════════════════════════════════════════════════════
-   SOPH.IA — Design System (dark-first, electric blue + cyan)
-   Per DESIGN_SYSTEM.md. Token names are kept from the previous system so
-   the whole app re-skins by value; --azure now maps to brand electric blue.
+   SOPH.IA — Design System (Constellation v2.0)
+   Light-first on :root, dark tokens on .dark.
+   Token names are kept so the whole app re-skins by value.
    ═══════════════════════════════════════════════════════════════════ */
 
 :root {
@@ -14,45 +14,117 @@
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
   --font-display: var(--font-outfit), var(--font-sans);
 
-  /* ═════════════════════════════════════════════════════════════
-     SOPH.IA Brand Colors (Constellation Design System v1.0)
-     Reference: SOPH.IA_Brand_Guide_Oficial.md
-     ═════════════════════════════════════════════════════════════ */
+  /* ── Light Mode ─────────────────────────────────────────────────── */
 
-  /* Backgrounds & surfaces (Sky palette - dark-first) */
-  --sky-0: #080B12; /* deepest - canvas alternativo */
-  --sky-1: #0A0E17; /* canvas principal */
-  --sky-2: #0F1420; /* surfaces: panels, cards */
-  --sky-3: #151B2B; /* raised: inputs, hover, tiles */
-  --sky-4: #1B2233; /* higher: popovers, modals */
-  --glass: rgb(15 20 32 / 0.65); /* glassmorphism surface */
+  /* Backgrounds & surfaces (warm clean whites) */
+  --sky-0: #f4f6f9;  /* deepest - alt canvas */
+  --sky-1: #f8fafc;   /* canvas principal */
+  --sky-2: #ffffff;   /* surfaces: panels, cards */
+  --sky-3: #f1f5f9;   /* raised: inputs, hover, tiles */
+  --sky-4: #e4e8f0;   /* higher: popovers, modals */
+  --glass: rgb(255 255 255 / 0.75); /* glassmorphism */
 
   /* Borders & dividers */
-  --edge: #212A3E;        /* hairline edge - bordes sutiles */
-  --edge-strong: #2E3950; /* edge fuerte - énfasis, hover */
+  --edge: #e2e8f0;        /* hairline edge */
+  --edge-strong: #cbd5e1; /* edge fuerte */
 
-  /* Typography colors (Star palette - bright text) */
-  --star-1: #E8EDF7; /* primary - headings, énfasis */
-  --star-2: #B8C1D4; /* body - texto regular */
-  --star-3: #8B95AB; /* muted - hints, metadata */
-  --star-4: #5B6478; /* faint - disabled, subtle */
+  /* Typography (dark ink on white) */
+  --star-1: #0f172a; /* primary — headings, emphasis */
+  --star-2: #334155; /* body — regular text */
+  --star-3: #64748b; /* muted — hints, metadata */
+  --star-4: #94a3b8; /* faint — disabled, subtle */
 
-  /* Brand accents (Azure - official primary) */
-  --azure: #5B9BFF;        /* brand primary - acciones, enlaces */
-  --azure-bright: #82B4FF; /* hover/active emphasis */
-  --azure-deep: #3F7FE0;   /* pressed state */
+  /* Brand accent (electric blue, adjusted for light bg) */
+  --azure: #2563eb;        /* brand primary */
+  --azure-bright: #1d4ed8; /* hover / active */
+  --azure-deep: #1e40af;   /* pressed */
   --azure-ink: #ffffff;    /* text on brand fills */
 
   /* Secondary accents */
-  --cyan: #06b6d4;         /* connection lines */
-  --indigo: #6366f1;       /* secondary accent */
+  --cyan: #0891b2;
+  --indigo: #4f46e5;
 
-  /* Semantic status (official states) */
-  --verified: #34D399;  /* verde - aprobado */
-  --pending: #FBBF24;   /* amarillo - pendiente */
-  --draft: #93A4C4;     /* gris-azul - borrador */
-  --archived: #5B6478;  /* gris - inactivo */
-  --danger: #FB6A68;    /* rojo - error/riesgo */
+  /* Semantic status (adjusted for light backgrounds) */
+  --verified: #059669;
+  --pending: #d97706;
+  --draft: #8b95ab;
+  --archived: #9ca3af;
+  --danger: #dc2626;
+}
+
+/* ── Light Scope Override ─────────────────────────────────────────────
+   Forces light tokens onto a subtree regardless of `.dark` ancestor.
+   CSS custom properties resolve via the nearest ancestor, so re-declaring
+   on a wrapper div cascades to all descendants. Used by the landing page.
+   ────────────────────────────────────────────────────────────────────── */
+
+.light-scope {
+  --sky-0: #f4f6f9;
+  --sky-1: #f8fafc;
+  --sky-2: #ffffff;
+  --sky-3: #f1f5f9;
+  --sky-4: #e4e8f0;
+  --glass: rgb(255 255 255 / 0.75);
+
+  --edge: #e2e8f0;
+  --edge-strong: #cbd5e1;
+
+  --star-1: #0f172a;
+  --star-2: #334155;
+  --star-3: #64748b;
+  --star-4: #94a3b8;
+
+  --azure: #2563eb;
+  --azure-bright: #1d4ed8;
+  --azure-deep: #1e40af;
+  --azure-ink: #ffffff;
+
+  --cyan: #0891b2;
+  --indigo: #4f46e5;
+
+  --verified: #059669;
+  --pending: #d97706;
+  --draft: #8b95ab;
+  --archived: #9ca3af;
+  --danger: #dc2626;
+}
+
+/* ── Dark Mode Overrides ────────────────────────────────────────────── */
+
+.dark {
+  /* Backgrounds & surfaces (deep navy constellation) */
+  --sky-0: #080B12;
+  --sky-1: #0A0E17;
+  --sky-2: #0F1420;
+  --sky-3: #151B2B;
+  --sky-4: #1B2233;
+  --glass: rgb(15 20 32 / 0.65);
+
+  /* Borders & dividers */
+  --edge: #212A3E;
+  --edge-strong: #2E3950;
+
+  /* Typography (bright stars on dark) */
+  --star-1: #E8EDF7;
+  --star-2: #B8C1D4;
+  --star-3: #8B95AB;
+  --star-4: #5B6478;
+
+  /* Brand accent */
+  --azure: #5B9BFF;
+  --azure-bright: #82B4FF;
+  --azure-deep: #3F7FE0;
+
+  /* Secondary */
+  --cyan: #06b6d4;
+  --indigo: #6366f1;
+
+  /* Semantic */
+  --verified: #34D399;
+  --pending: #FBBF24;
+  --draft: #93A4C4;
+  --archived: #5B6478;
+  --danger: #FB6A68;
 }
 
 @theme inline {
@@ -121,7 +193,7 @@
     background-clip: padding-box;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #3b4763;
+    background: var(--edge-strong);
     background-clip: padding-box;
   }
 
@@ -134,12 +206,12 @@
     50% { opacity: 0.55; }
   }
   @keyframes glow-drift {
-    0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.5; }
-    50% { transform: translate3d(3%, -3%, 0) scale(1.06); opacity: 0.8; }
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.4; }
+    50% { transform: translate3d(3%, -3%, 0) scale(1.04); opacity: 0.7; }
   }
-  .anim-edge { stroke-dasharray: 4 8; animation: edge-flow 1.2s linear infinite; }
-  .anim-node { animation: node-pulse 2.4s ease-in-out infinite; }
-  .anim-glow { animation: glow-drift 9s ease-in-out infinite; }
+  .anim-edge { stroke-dasharray: 4 8; animation: edge-flow 1.6s linear infinite; }
+  .anim-node { animation: node-pulse 3s ease-in-out infinite; }
+  .anim-glow { animation: glow-drift 12s ease-in-out infinite; }
   @media (prefers-reduced-motion: reduce) {
     .anim-edge, .anim-node, .anim-glow { animation: none; }
   }
@@ -225,7 +297,7 @@
   background: var(--glass);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgb(30 41 59 / 0.8);
+  border: 1px solid var(--edge);
   border-radius: 16px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.16s ease;
 }
@@ -451,4 +523,108 @@
   color: var(--azure);
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Motion tokens — Apple-style physics-based easing
+   cubic-bezier(0.16, 1, 0.3, 1): slow exit, gentle arrival
+   ═══════════════════════════════════════════════════════════════════ */
+:root {
+  --ease-apple: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-apple-in-out: cubic-bezier(0.83, 0, 0.17, 1);
+  --dur-hover: 200ms;
+  --dur-modal: 400ms;
+  --dur-reveal: 800ms;
+  --dur-page: 500ms;
+}
+
+/* Scroll reveal — Apple-style fade + rise */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity var(--dur-reveal) var(--ease-apple),
+    transform var(--dur-reveal) var(--ease-apple);
+  will-change: opacity, transform;
+}
+.reveal-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Apple-scale display typography
+   Fluid clamp() scales — dramatic but balanced
+   ═══════════════════════════════════════════════════════════════════ */
+@utility display-hero {
+  font-family: var(--font-display);
+  font-size: clamp(2.75rem, 7vw, 6rem);
+  line-height: 1.05;
+  font-weight: 600;
+  letter-spacing: -0.022em;
+  font-feature-settings: "ss01";
+}
+@utility display-1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  line-height: 1.08;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+@utility display-2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  line-height: 1.15;
+  font-weight: 600;
+  letter-spacing: -0.018em;
+}
+@utility display-metric {
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 12vw, 9rem);
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  font-feature-settings: "tnum", "ss01";
+}
+@utility body-lead {
+  font-size: clamp(1.0625rem, 1.4vw, 1.1875rem);
+  line-height: 1.55;
+  font-weight: 400;
+  font-family: var(--font-sans);
+  letter-spacing: -0.005em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Premium texture — subtle grain overlay (Vercel / Apple)
+   Applied as a fixed, pointer-events-none film over the viewport.
+   ═══════════════════════════════════════════════════════════════════ */
+.grain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+@media (prefers-reduced-motion: reduce), (prefers-contrast: more) {
+  .grain-overlay {
+    display: none;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   Consistent keyboard focus ring (WCAG 2.4.13 / 2.4.7)
+   ───────────────────────────────────────────────────────────────────── */
+:where(a, button, summary, input, [role="button"]):focus-visible {
+  outline: 2px solid var(--azure);
+  outline-offset: 2px;
+  border-radius: 6px;
 }

@@ -111,7 +111,7 @@ export const ProjectMembers = ({
               key={m.id}
               className="flex items-center gap-3 p-3 rounded-lg border border-[var(--edge)] flex-wrap"
             >
-              <div className="w-9 h-9 rounded-full bg-[#172554] text-[var(--azure)] flex items-center justify-center label-sm font-semibold flex-shrink-0">
+              <div className="w-9 h-9 rounded-full bg-[var(--azure-deep)] text-[var(--azure)] flex items-center justify-center label-sm font-semibold flex-shrink-0">
                 {initials(m.profiles?.full_name ?? null, mail)}
               </div>
 
