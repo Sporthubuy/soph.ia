@@ -30,10 +30,10 @@ describe('Button Component', () => {
       expect(button).toBeDisabled()
     })
 
-    it('debe tener cursor not-allowed cuando está deshabilitado', () => {
+    it('debe tener pointer-events-none cuando está deshabilitado', () => {
       const { container } = render(<Button disabled>Disabled</Button>)
       const button = container.querySelector('button')
-      expect(button).toHaveClass('disabled:cursor-not-allowed')
+      expect(button).toHaveClass('disabled:pointer-events-none')
     })
   })
 
