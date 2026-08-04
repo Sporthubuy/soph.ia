@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
@@ -20,7 +20,7 @@ interface ComponentStory {
   description: string
   variants: {
     label: string
-    component: JSX.Element
+    component: React.ReactElement
   }[]
 }
 
@@ -63,10 +63,6 @@ export default function ComponentsPage() {
         {
           label: 'Size SM',
           component: <Button size="sm">Small</Button>
-        },
-        {
-          label: 'Size MD (default)',
-          component: <Button size="md">Medium</Button>
         },
         {
           label: 'Size LG',
@@ -400,7 +396,7 @@ function FeedbackFormDemo() {
  * Directrices según categoría
  */
 function GuidelineForCategory({ category }: { category: string }) {
-  const guidelines: Record<string, JSX.Element> = {
+  const guidelines: Record<string, React.ReactElement> = {
     buttons: (
       <div>
         <h4>Cuándo usar cada variante:</h4>

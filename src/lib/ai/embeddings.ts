@@ -40,4 +40,51 @@ export async function generateEmbeddingOrNull(
   }
 }
 
+interface SupabaseClient {
+  rpc: (name: string, params: Record<string, unknown>) => Promise<{ data: unknown; error: unknown }>;
+}
+
+/** Semantic search using vector similarity via Supabase pgvector. */
+export async function semanticSearch(
+  supabase: SupabaseClient,
+  queryEmbedding: number[],
+  limit = 10
+) {
+  try {
+    // Use Supabase RPC to call search function
+    const { data, error } = await supabase.rpc("search_agents_semantic", {
+      query_embedding: queryEmbedding,
+      limit_count: limit,
+    });
+
+    if (error) {
+      console.error("Semantic search error:", error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error("Semantic search failed:", error);
+    return [];
+  }
+}
+
+/** Calculate cosine similarity between two vectors. */
+export function cosineSimilarity(a: number[], b: number[]): number {
+  if (a.length !== b.length) return 0;
+
+  let dotProduct = 0;
+  let normA = 0;
+  let normB = 0;
+
+  for (let i = 0; i < a.length; i++) {
+    dotProduct += a[i] * b[i];
+    normA += a[i] * a[i];
+    normB += b[i] * b[i];
+  }
+
+  const denominator = Math.sqrt(normA) * Math.sqrt(normB);
+  return denominator === 0 ? 0 : dotProduct / denominator;
+}
+
 export { EMBEDDING_MODEL, EMBEDDING_DIMENSIONS };

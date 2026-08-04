@@ -2,7 +2,13 @@ import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Link } from "@/i18n/routing";
 import { createClient } from "@/lib/supabase/server";
-import { getAgent, getPublicAgent, getAgentReviews } from "@/lib/agents/actions";
+import {
+  getAgent,
+  getPublicAgent,
+  getAgentReviews,
+  getPublicAgents,
+  type PublicAgent,
+} from "@/lib/agents/actions";
 import { getKnowledgeUnits } from "@/lib/knowledge/actions";
 import { getCurrentOrganizationId } from "@/lib/organization/get-org";
 import { VisibilityToggle } from "@/components/shared/visibility-toggle";
@@ -11,6 +17,10 @@ import { StatusBadge } from "@/components/shared/status-badge";
 import { AgentRating } from "@/components/marketplace/agent-rating";
 import { CloneButton } from "@/components/marketplace/clone-button";
 import { AgentReviewsList } from "@/components/marketplace/agent-reviews-list";
+import {
+  AgentRecommendations,
+  findSimilarAgents,
+} from "@/components/marketplace/agent-recommendations";
 
 export default async function AgentPage({
   params,
@@ -47,6 +57,28 @@ export default async function AgentPage({
   // Fetch reviews only for public agents
   const reviews =
     agent.visibility === "public" ? await getAgentReviews(agentId) : [];
+
+  // Fetch similar agents for public agents
+  let similarAgents: PublicAgent[] = [];
+  if (agent.visibility === "public") {
+    const publicAgents = await getPublicAgents();
+    // Type cast agent to PublicAgent for recommendation engine
+    const agentAsPublic: PublicAgent = {
+      id: agent.id,
+      name: agent.name,
+      description: agent.description,
+      provider: agent.provider,
+      model: agent.model,
+      rating: agent.rating ?? 0,
+      ratings_count: agent.ratings_count ?? 0,
+      invocations: agent.invocations ?? 0,
+      tags: agent.tags ?? [],
+      organization_id: agent.organization_id,
+      created_at: agent.created_at,
+      organizations: agent.organization_id ? { name: "" } : null,
+    };
+    similarAgents = findSimilarAgents(agentAsPublic, publicAgents, 6);
+  }
 
   return (
     <div className="p-8 max-w-4xl mx-auto space-y-6">
@@ -179,6 +211,32 @@ export default async function AgentPage({
             </h2>
           </div>
           <AgentReviewsList reviews={reviews} />
+        </section>
+      )}
+
+      {/* Recommendations for public agents */}
+      {agent.visibility === "public" && similarAgents.length > 0 && (
+        <section className="panel p-6">
+          <AgentRecommendations
+            agent={
+              {
+                id: agent.id,
+                name: agent.name,
+                description: agent.description,
+                provider: agent.provider,
+                model: agent.model,
+                rating: agent.rating ?? 0,
+                ratings_count: agent.ratings_count ?? 0,
+                invocations: agent.invocations ?? 0,
+                tags: agent.tags ?? [],
+                organization_id: agent.organization_id,
+                created_at: agent.created_at,
+                organizations: agent.organization_id ? { name: "" } : null,
+              } as PublicAgent
+            }
+            similarAgents={similarAgents}
+            organizationId={organizationId || ""}
+          />
         </section>
       )}
     </div>

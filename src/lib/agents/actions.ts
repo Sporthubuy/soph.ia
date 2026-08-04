@@ -491,6 +491,75 @@ export interface FeaturedCollection {
   agents: PublicAgent[];
 }
 
+export interface AnalyticsData {
+  totalAgents: number;
+  averageRating: number;
+  totalInvocations: number;
+  topAgentInvocations: number;
+  averageRatingCount: number;
+  growthPercent: number;
+  cloneableAgents: number;
+}
+
+/** Get marketplace analytics data. */
+export async function getMarketplaceAnalytics(): Promise<AnalyticsData> {
+  const supabase = await createClient();
+
+  const { data: agents, error } = await supabase
+    .from("agents")
+    .select("id, rating, ratings_count, invocations, visibility, status, created_at")
+    .eq("visibility", "public")
+    .eq("status", "deployed");
+
+  if (error || !agents) {
+    console.error("Error fetching analytics:", error);
+    return {
+      totalAgents: 0,
+      averageRating: 0,
+      totalInvocations: 0,
+      topAgentInvocations: 0,
+      averageRatingCount: 0,
+      growthPercent: 0,
+      cloneableAgents: 0,
+    };
+  }
+
+  const totalAgents = agents.length;
+  const totalInvocations = agents.reduce((sum, a) => sum + (a.invocations ?? 0), 0);
+  const topAgentInvocations = Math.max(0, ...agents.map((a) => a.invocations ?? 0));
+  const averageRating = totalAgents > 0
+    ? agents.reduce((sum, a) => sum + (a.rating ?? 0), 0) / totalAgents
+    : 0;
+  const averageRatingCount = totalAgents > 0
+    ? agents.reduce((sum, a) => sum + (a.ratings_count ?? 0), 0) / totalAgents
+    : 0;
+
+  // Calculate month-over-month growth
+  const now = new Date();
+  const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const agentsLastMonth = agents.filter(
+    (a) => new Date(a.created_at) < lastMonth
+  ).length;
+  const growthPercent = agentsLastMonth > 0
+    ? ((totalAgents - agentsLastMonth) / agentsLastMonth) * 100
+    : 0;
+
+  // Cloneable = public + deployed
+  const cloneableAgents = agents.filter(
+    (a) => a.visibility === "public" && a.status === "deployed"
+  ).length;
+
+  return {
+    totalAgents,
+    averageRating: Math.round(averageRating * 100) / 100,
+    totalInvocations,
+    topAgentInvocations,
+    averageRatingCount: Math.round(averageRatingCount * 100) / 100,
+    growthPercent: Math.round(growthPercent * 100) / 100,
+    cloneableAgents,
+  };
+}
+
 /** Semantic search for agents using text query. */
 export async function semanticSearchAgents(query: string, limit = 10): Promise<PublicAgent[]> {
   if (!query.trim()) return [];
