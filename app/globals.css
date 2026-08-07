@@ -1,0 +1,208 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --slate-50: #f8fafc;
+    --slate-100: #f1f5f9;
+    --slate-200: #e2e8f0;
+    --slate-300: #cbd5e1;
+    --slate-400: #94a3b8;
+    --slate-500: #64748b;
+    --slate-600: #475569;
+    --slate-700: #334155;
+    --slate-800: #1e293b;
+    --slate-900: #0f172a;
+    --slate-950: #030712;
+    --azure-primary: #5B9BFF;
+    --azure-light: #8BB9FF;
+    --azure-dark: #3B7FFF;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #030712;
+    color: #f1f5f9;
+    font-family: 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    line-height: 1.625;
+  }
+}
+
+@layer components {
+  .text-azure {
+    color: #5B9BFF;
+  }
+
+  .bg-azure {
+    background-color: #5B9BFF;
+  }
+
+  .border-azure {
+    border-color: #5B9BFF;
+  }
+
+  .gradient-azure {
+    background: linear-gradient(to right, #5B9BFF, #8BB9FF);
+  }
+
+  .gradient-mesh {
+    background: linear-gradient(135deg, rgba(91, 155, 255, 0.2) 0%, rgb(3, 7, 18) 50%, rgba(244, 63, 94, 0.1) 100%);
+  }
+
+  .blur-backdrop {
+    backdrop-filter: blur(12px);
+    background-color: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(30, 41, 59, 0.5);
+  }
+
+  .card-base {
+    border-radius: 1rem;
+    border: 1px solid rgba(30, 41, 59, 0.5);
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.5) 0%, rgba(3, 7, 18, 0.5) 100%);
+    padding: 1.5rem;
+    transition: all 0.3s;
+  }
+
+  .card-base:hover {
+    border-color: rgba(91, 155, 255, 0.5);
+    box-shadow: 0 10px 25px -5px rgba(91, 155, 255, 0.2);
+  }
+
+  .button-primary {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    background-color: #5B9BFF;
+    color: #030712;
+    font-weight: 600;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+  }
+
+  .button-primary:hover {
+    background-color: #8BB9FF;
+    box-shadow: 0 10px 15px -3px rgba(91, 155, 255, 0.3);
+  }
+
+  .button-primary:active {
+    transform: scale(0.95);
+  }
+
+  .button-secondary {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    border: 1px solid rgb(55, 65, 81);
+    color: rgb(226, 232, 240);
+    font-weight: 600;
+    transition: all 0.2s;
+    cursor: pointer;
+    background-color: transparent;
+    font-family: inherit;
+  }
+
+  .button-secondary:hover {
+    border-color: #5B9BFF;
+    color: #5B9BFF;
+  }
+
+  .section-container {
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .section-container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .section-container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+
+  .hover-azure {
+    transition: color 0.2s;
+  }
+
+  .hover-azure:hover {
+    color: #8BB9FF;
+  }
+
+  .font-grotesk {
+    font-family: 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.animate-gradient {
+  animation: gradient 3s ease infinite;
+  background-size: 200% 200%;
+}
