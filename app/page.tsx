@@ -1,16 +1,22 @@
 import { Header } from './components/Header'
 import { Hero } from './components/Hero'
+import { HowItWorks } from './components/HowItWorks'
+import { ConnectionBanner } from './components/ConnectionBanner'
 import { Features } from './components/Features'
-import { Benefits } from './components/Benefits'
+import { FAQ } from './components/FAQ'
+import { FinalCTA } from './components/FinalCTA'
 import { Footer } from './components/Footer'
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-slate-950 text-slate-100 overflow-hidden">
+    <main className="min-h-screen bg-[var(--color-bg-primary)] text-[var(--color-text-primary)]">
       <Header />
       <Hero />
+      <HowItWorks />
+      <ConnectionBanner />
       <Features />
-      <Benefits />
+      <FAQ />
+      <FinalCTA />
       <Footer />
     </main>
   )

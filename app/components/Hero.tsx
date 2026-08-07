@@ -1,126 +1,55 @@
 'use client'
 
-import { ArrowRight, Sparkles } from 'lucide-react'
-import Link from 'next/link'
+import { ConstellationCanvas } from './ConstellationCanvas'
 
 export function Hero() {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+  }
+
   return (
-    <section className="relative min-h-screen pt-32 pb-20 overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 gradient-mesh opacity-40" />
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#5B9BFF]/10 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#F43F5E]/5 rounded-full blur-3xl" />
-
-      <div className="section-container relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/50 border border-slate-800 mb-8 text-slate-300 text-sm">
-            <Sparkles size={16} className="text-azure" />
-            <span>Welcome to the future of knowledge management</span>
-          </div>
-
-          {/* Main Headline */}
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6">
-            <span className="block text-slate-100">Knowledge OS</span>
-            <span className="block gradient-azure bg-clip-text text-transparent">for AI</span>
-          </h1>
-
-          {/* Subheading */}
-          <p className="text-lg md:text-xl text-slate-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Transform how your organization manages, shares, and leverages knowledge. Versionable Knowledge Units powered by advanced AI, built for enterprise collaboration.
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-            <Link href="/app" className="button-primary flex items-center justify-center gap-2 group">
-              Launch SOPH.IA
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
-            <button className="button-secondary">
-              View Documentation
-            </button>
-          </div>
-
-          {/* Feature Highlights */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20">
-            {[
-              {
-                icon: '📚',
-                title: 'Versionable KUs',
-                description: 'Track every iteration of your knowledge units with full version history'
-              },
-              {
-                icon: '🧠',
-                title: 'Knowledge Graph',
-                description: 'Visualize relationships between concepts and build intelligent connections'
-              },
-              {
-                icon: '⚡',
-                title: 'AI-Powered',
-                description: 'Leverage advanced AI for intelligent search, synthesis, and recommendations'
-              }
-            ].map((feature, idx) => (
-              <div key={idx} className="card-base group hover:border-azure/50 hover:bg-gradient-to-br hover:from-slate-900/80 hover:to-slate-950/50">
-                <div className="text-3xl mb-3">{feature.icon}</div>
-                <h3 className="text-lg font-semibold text-slate-100 mb-2">{feature.title}</h3>
-                <p className="text-slate-400 text-sm">{feature.description}</p>
-              </div>
-            ))}
-          </div>
+    <div className="relative overflow-hidden text-center bg-[var(--color-bg-secondary)] px-6 md:px-12 py-24 md:py-[130px]">
+      <ConstellationCanvas />
+      <div className="relative z-10 max-w-[740px] mx-auto">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[var(--color-bg-primary)] border border-[var(--color-border)] text-xs font-semibold text-[var(--color-text-secondary)] mb-7">
+          <span className="w-[7px] h-[7px] rounded-full bg-[var(--color-accent)] animate-pulse-dot" />
+          Próximamente · lista de espera abierta
         </div>
 
-        {/* Hero Visualization */}
-        <div className="mt-20 relative">
-          <div className="aspect-video bg-gradient-to-b from-slate-900/50 to-slate-950 rounded-2xl border border-slate-800 overflow-hidden">
-            <svg className="w-full h-full" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
-              {/* Grid Background */}
-              <defs>
-                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#334155" strokeWidth="0.5" opacity="0.3" />
-                </pattern>
-                <linearGradient id="nodeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#5B9BFF" />
-                  <stop offset="100%" stopColor="#8BB9FF" />
-                </linearGradient>
-              </defs>
+        <h1 className="mb-[22px] text-4xl md:text-[52px] font-bold leading-[1.15] text-[var(--color-primary)]">
+          Creá agentes de IA y conocimiento,{' '}
+          <span className="text-[var(--color-secondary)]">de forma colaborativa</span>
+        </h1>
 
-              {/* Grid */}
-              <rect width="1200" height="600" fill="url(#grid)" />
+        <p className="mx-auto mb-9 max-w-[560px] text-lg leading-relaxed text-[var(--color-text-secondary)]">
+          Soph.ia conecta a tu equipo para construir agentes inteligentes y bases de conocimiento compartidas: cada aporte se convierte en un nodo, y cada conexión hace más potente a todos los demás.
+        </p>
 
-              {/* Connection Lines */}
-              <g stroke="#5B9BFF" strokeWidth="2" opacity="0.4">
-                <line x1="300" y1="200" x2="600" y2="300" />
-                <line x1="600" y1="300" x2="900" y2="200" />
-                <line x1="600" y1="300" x2="400" y2="450" />
-                <line x1="600" y1="300" x2="800" y2="450" />
-              </g>
+        <form id="registro" onSubmit={handleSubmit} className="flex gap-3 justify-center flex-wrap mb-3.5">
+          <input
+            type="text"
+            name="name"
+            placeholder="Tu nombre"
+            className="w-[200px] px-3 py-2.5 text-sm border border-[var(--color-border)] rounded-[var(--radius-md)] bg-white text-[var(--color-text-primary)] outline-none focus:border-[var(--color-secondary)] transition-colors"
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="tu@empresa.com"
+            className="w-[240px] px-3 py-2.5 text-sm border border-[var(--color-border)] rounded-[var(--radius-md)] bg-white text-[var(--color-text-primary)] outline-none focus:border-[var(--color-secondary)] transition-colors"
+          />
+          <button
+            type="submit"
+            className="inline-flex items-center justify-center gap-2 font-semibold rounded-[var(--radius-md)] cursor-pointer transition-colors px-5 py-3 text-base bg-[var(--color-primary)] text-white hover:bg-[#1e293b]"
+          >
+            Quiero acceso anticipado
+          </button>
+        </form>
 
-              {/* Nodes */}
-              <g>
-                <circle cx="300" cy="200" r="20" fill="url(#nodeGradient)" opacity="0.8" />
-                <circle cx="600" cy="300" r="28" fill="#5B9BFF" opacity="1" />
-                <circle cx="900" cy="200" r="20" fill="url(#nodeGradient)" opacity="0.8" />
-                <circle cx="400" cy="450" r="18" fill="#8BB9FF" opacity="0.6" />
-                <circle cx="800" cy="450" r="18" fill="#8BB9FF" opacity="0.6" />
-
-                {/* Labels */}
-                <text x="300" y="205" textAnchor="middle" className="text-xs fill-slate-100" opacity="0.7">KU</text>
-                <text x="600" y="310" textAnchor="middle" className="text-sm fill-slate-900" opacity="0.9" fontWeight="bold">Core</text>
-                <text x="900" y="205" textAnchor="middle" className="text-xs fill-slate-100" opacity="0.7">KU</text>
-              </g>
-
-              {/* Decorative Elements */}
-              <g opacity="0.1">
-                <circle cx="200" cy="100" r="40" fill="#5B9BFF" />
-                <circle cx="1000" cy="500" r="60" fill="#F43F5E" />
-              </g>
-            </svg>
-
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent opacity-40" />
-          </div>
-        </div>
+        <p className="text-[13px] text-[var(--color-text-tertiary)]">
+          Sin spam. Solo un aviso cuando abramos el acceso.
+        </p>
       </div>
-    </section>
+    </div>
   )
 }

@@ -1,100 +1,46 @@
-'use client'
-
-import { Database, Brain, Lock, Zap, BarChart3, Users } from 'lucide-react'
-
-interface Feature {
-  icon: React.ReactNode
-  title: string
-  description: string
-  gradient?: boolean
-}
-
-const features: Feature[] = [
+const features = [
   {
-    icon: <Database className="w-6 h-6" />,
-    title: 'Knowledge Graph',
-    description: 'Connect and visualize relationships between all your knowledge units. Build an intelligent, interconnected knowledge base.',
-    gradient: true
+    title: 'Conocimiento compartido',
+    description: 'Una base común donde cada aporte queda conectado y disponible para todo el equipo.',
   },
   {
-    icon: <Brain className="w-6 h-6" />,
-    title: 'AI-Powered Intelligence',
-    description: 'Leverage advanced AI for semantic search, automatic categorization, and intelligent recommendations.',
-    gradient: true
+    title: 'Agentes reutilizables',
+    description: 'Un agente creado por una persona puede adaptarse y reutilizarse en otros equipos.',
   },
   {
-    icon: <Lock className="w-6 h-6" />,
-    title: 'Enterprise Security',
-    description: 'Built-in role-based access control, encryption, and compliance features for peace of mind.',
-    gradient: true
+    title: 'Historial de aportes',
+    description: 'Cada cambio queda registrado: se sabe quién sumó qué, y cuándo.',
   },
   {
-    icon: <Zap className="w-6 h-6" />,
-    title: 'Real-time Collaboration',
-    description: 'Work together in real-time with version control, comments, and team workflows.',
-    gradient: true
+    title: 'Comunidad activa',
+    description: 'Equipos y personas mejorando agentes en conjunto, no en silos aislados.',
   },
-  {
-    icon: <BarChart3 className="w-6 h-6" />,
-    title: 'Advanced Analytics',
-    description: 'Track knowledge usage, engagement, and impact with detailed insights and reporting.',
-    gradient: true
-  },
-  {
-    icon: <Users className="w-6 h-6" />,
-    title: 'Team Management',
-    description: 'Organize teams, manage permissions, and create workflows tailored to your organization.',
-    gradient: true
-  }
 ]
 
 export function Features() {
   return (
-    <section id="features" className="relative py-24 border-t border-slate-800">
-      <div className="section-container">
-        {/* Section Header */}
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Powerful Features
-            <span className="block text-azure">Built for Scale</span>
-          </h2>
-          <p className="text-lg text-slate-400 max-w-2xl mx-auto">
-            Everything you need to manage, organize, and leverage knowledge at enterprise scale.
-          </p>
-        </div>
-
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, idx) => (
-            <div
-              key={idx}
-              className="card-base group hover:border-azure/50 hover:shadow-lg hover:shadow-azure/20 cursor-pointer"
-            >
-              <div className="text-azure mb-4 group-hover:scale-110 transition-transform duration-300">
-                {feature.icon}
-              </div>
-              <h3 className="text-lg font-semibold text-slate-100 mb-3">
-                {feature.title}
-              </h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                {feature.description}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        {/* Decorative Element */}
-        <div className="mt-20 pt-20 border-t border-slate-800">
-          <div className="text-center">
-            <h3 className="text-2xl font-semibold mb-8 text-slate-100">
-              Ready to transform your knowledge management?
+    <div id="comunidad" className="px-6 md:px-12 py-24 md:py-[110px] max-w-[1180px] mx-auto">
+      <h2 className="mb-3 text-center text-3xl md:text-[36px] font-bold text-[var(--color-primary)]">
+        Pensado para construir en equipo
+      </h2>
+      <p className="mb-14 text-center text-base text-[var(--color-text-secondary)]">
+        Todo lo que necesitás para que el conocimiento colectivo se vuelva agentes útiles.
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
+        {features.map((feature) => (
+          <div
+            key={feature.title}
+            className="bg-white rounded-[var(--radius-md)] p-4 shadow-md"
+          >
+            <h3 className="mb-2 text-base font-semibold text-[var(--color-primary)]">
+              {feature.title}
             </h3>
-            <button className="button-primary text-lg px-8 py-4">
-              Start Your Journey
-            </button>
+            <p className="text-[13px] leading-[1.55] text-[var(--color-text-secondary)]">
+              {feature.description}
+            </p>
           </div>
-        </div>
+        ))}
       </div>
-    </section>
+    </div>
   )
 }
