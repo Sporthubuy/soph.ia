@@ -1,0 +1,46 @@
+import Link from 'next/link'
+import { LayoutGrid, Network, Plus } from 'lucide-react'
+
+const MODULES = [
+  { key: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
+  { key: 'knowledge-units', label: 'Knowledge units', href: '/knowledge-units', icon: Network },
+] as const
+
+export function AppSidebar({ active }: { active: (typeof MODULES)[number]['key'] }) {
+  return (
+    <div className="sticky top-16 flex h-[calc(100vh-64px)] w-60 flex-none flex-col gap-1.5 overflow-y-auto border-r border-[var(--color-border)] bg-[var(--color-bg-primary)] px-4 py-5">
+      <div className="px-2 pb-2.5 text-[11px] font-bold tracking-[.06em] text-[var(--color-text-tertiary)]">
+        MÓDULOS
+      </div>
+      {MODULES.map(({ key, label, href, icon: Icon }) =>
+        key === active ? (
+          <div
+            key={key}
+            className="flex items-center gap-2.5 rounded-[var(--radius-md)] bg-[var(--color-primary)] px-3 py-2.5 text-sm font-semibold text-white"
+          >
+            <Icon size={18} />
+            {label}
+          </div>
+        ) : (
+          <Link
+            key={key}
+            href={href}
+            className="flex items-center gap-2.5 rounded-[var(--radius-md)] px-3 py-2.5 text-sm font-medium text-[var(--color-text-secondary)] no-underline hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)]"
+          >
+            <Icon size={18} />
+            {label}
+          </Link>
+        )
+      )}
+      <div className="mt-auto border-t border-[var(--color-border-light)] pt-4">
+        <button
+          type="button"
+          className="flex w-full items-center gap-2.5 rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] px-3 py-2.5 text-[13px] font-medium text-[var(--color-text-tertiary)] hover:bg-[var(--color-bg-secondary)]"
+        >
+          <Plus size={16} />
+          Agregar módulo
+        </button>
+      </div>
+    </div>
+  )
+}
