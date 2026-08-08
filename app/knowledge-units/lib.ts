@@ -6,6 +6,7 @@ const TYPE_VISUALS: Record<string, { bg: string; color: string }> = {
   FAQ: { bg: 'rgba(6,182,212,0.12)', color: '#0891B2' },
   Documento: { bg: 'var(--color-bg-tertiary)', color: 'var(--color-text-secondary)' },
   Proceso: { bg: 'rgba(16,185,129,0.12)', color: '#059669' },
+  Dataset: { bg: 'rgba(99,102,241,0.12)', color: '#4F46E5' },
 }
 
 export function typeVisual(type: string) {
@@ -26,30 +27,37 @@ export type ApprovalStep = {
 
 export function approvalSteps(status: KUStatus, meta: { author: string; edited: string }): ApprovalStep[] {
   const created: ApprovalStep = { title: 'Creada', meta: `por ${meta.author}`, state: 'done' }
-  const review: ApprovalStep = {
-    title: 'Enviada a revisión',
-    meta: status === 'Borrador' ? 'pendiente' : meta.edited,
-    state: status === 'Borrador' ? 'pending' : 'done',
-  }
-  const approved: ApprovalStep = {
-    title: 'Aprobada',
-    meta: status === 'Publicado' || status === 'Archivado' ? meta.edited : 'pendiente',
-    state: status === 'Publicado' || status === 'Archivado' ? 'done' : 'pending',
-  }
-  const published: ApprovalStep = {
-    title: 'Publicada',
-    meta: status === 'Publicado' ? meta.edited : status === 'Archivado' ? 'luego archivada' : 'pendiente',
-    state: status === 'Publicado' ? 'done' : status === 'Archivado' ? 'done' : 'pending',
-  }
+  const review: ApprovalStep = { title: 'En revisión', meta: 'pendiente', state: 'pending' }
+  const approved: ApprovalStep = { title: 'Aprobada', meta: 'pendiente', state: 'pending' }
+  const published: ApprovalStep = { title: 'Publicada', meta: 'pendiente', state: 'pending' }
 
   if (status === 'Borrador') {
     review.state = 'current'
     return [created, review, approved, published]
   }
+
   if (status === 'En revisión') {
+    review.state = 'done'
+    review.meta = meta.edited
     approved.state = 'current'
     return [created, review, approved, published]
   }
+
+  if (status === 'Aprobada') {
+    review.state = 'done'
+    review.meta = meta.edited
+    approved.state = 'done'
+    approved.meta = meta.edited
+    published.state = 'current'
+    return [created, review, approved, published]
+  }
+
+  review.state = 'done'
+  review.meta = meta.edited
+  approved.state = 'done'
+  approved.meta = meta.edited
+  published.state = 'done'
+  published.meta = meta.edited
   return [created, review, approved, published]
 }
 

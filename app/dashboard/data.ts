@@ -1,12 +1,5 @@
 import type { BadgeTone } from '../components/dashboard/Badge'
 
-export const currentUser = {
-  firstName: 'Martín',
-  userName: 'Martín Rivas',
-  userEmail: 'martin@sporthub.com.uy',
-  initials: 'MR',
-}
-
 export const pending: {
   title: string
   meta: string
@@ -59,7 +52,7 @@ export const agents: { tag: string; name: string; meta: string; status: string; 
 ]
 
 export const units: { name: string; meta: string; status: string; tone: BadgeTone }[] = [
-  { name: 'Política de reembolsos', meta: 'Actualizado hace 12 min · v3', status: 'Publicado', tone: 'success' },
+  { name: 'Política de reembolsos', meta: 'Actualizado hace 12 min · v3', status: 'Publicada', tone: 'success' },
   { name: 'Onboarding de nuevos clientes', meta: 'En revisión · 2 comentarios', status: 'En revisión', tone: 'warning' },
   { name: 'Guía de instalación v2', meta: 'Editado por vos · borrador', status: 'Borrador', tone: 'neutral' },
 ]

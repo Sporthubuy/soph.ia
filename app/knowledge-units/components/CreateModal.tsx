@@ -9,12 +9,27 @@ export function CreateModal({
   onSave,
 }: {
   onClose: () => void
-  onSave: (draft: { name: string; type: string; area: string }) => void
+  onSave: (draft: { name: string; type: string; area: string }) => Promise<void>
 }) {
   const [name, setName] = useState('')
   const [type, setType] = useState(typeChoices[0].value)
   const [area, setArea] = useState(areas[1])
   const [visibility, setVisibility] = useState('team')
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function handleSave() {
+    if (!name.trim() || saving) return
+    setSaving(true)
+    setError(null)
+    try {
+      await onSave({ name: name.trim(), type, area })
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'No pudimos crear la knowledge unit.')
+    } finally {
+      setSaving(false)
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[rgba(15,23,42,0.42)] p-8">
@@ -106,6 +121,8 @@ export function CreateModal({
             <div className="text-xs text-[var(--color-text-tertiary)]">PDF, DOCX, Markdown, enlace a Drive o Notion · hasta 25 MB</div>
           </div>
 
+          {error && <p className="m-0 text-sm text-[var(--color-error)]">{error}</p>}
+
           <div className="flex items-start gap-2.5 rounded-[var(--radius-md)] bg-[rgba(59,130,246,0.07)] p-3.5">
             <Info size={17} className="mt-0.5 flex-none text-[#1D4FD7]" />
             <div className="text-[12.5px] leading-relaxed text-[#1D4FD7]">
@@ -126,11 +143,11 @@ export function CreateModal({
           </button>
           <button
             type="button"
-            disabled={!name.trim()}
-            onClick={() => name.trim() && onSave({ name: name.trim(), type, area })}
+            disabled={!name.trim() || saving}
+            onClick={handleSave}
             className="rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Guardar borrador
+            {saving ? 'Guardando…' : 'Guardar borrador'}
           </button>
         </div>
       </div>

@@ -1,14 +1,16 @@
 import Link from 'next/link'
-import { LayoutGrid, Network, Plus } from 'lucide-react'
+import { Bot, LayoutGrid, Network, Plus, Settings } from 'lucide-react'
 
 const MODULES = [
   { key: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
+  { key: 'agents', label: 'Agentes', href: '/agents', icon: Bot },
   { key: 'knowledge-units', label: 'Knowledge units', href: '/knowledge-units', icon: Network },
+  { key: 'settings', label: 'Configuración', href: '/settings', icon: Settings },
 ] as const
 
-export function AppSidebar({ active }: { active: (typeof MODULES)[number]['key'] }) {
+export function AppSidebar({ active }: { active: (typeof MODULES)[number]['key'] | 'profile' }) {
   return (
-    <div className="sticky top-16 flex h-[calc(100vh-64px)] w-60 flex-none flex-col gap-1.5 overflow-y-auto border-r border-[var(--color-border)] bg-[var(--color-bg-primary)] px-4 py-5">
+    <div className="sticky top-16 hidden h-[calc(100vh-64px)] w-60 flex-none flex-col gap-1.5 overflow-y-auto border-r border-[var(--color-border)] bg-[var(--color-bg-primary)] px-4 py-5 md:flex">
       <div className="px-2 pb-2.5 text-[11px] font-bold tracking-[.06em] text-[var(--color-text-tertiary)]">
         MÓDULOS
       </div>
@@ -35,10 +37,12 @@ export function AppSidebar({ active }: { active: (typeof MODULES)[number]['key']
       <div className="mt-auto border-t border-[var(--color-border-light)] pt-4">
         <button
           type="button"
+          disabled
+          title="Los módulos personalizados estarán disponibles próximamente."
           className="flex w-full items-center gap-2.5 rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] px-3 py-2.5 text-[13px] font-medium text-[var(--color-text-tertiary)] hover:bg-[var(--color-bg-secondary)]"
         >
           <Plus size={16} />
-          Agregar módulo
+          Agregar módulo (próximamente)
         </button>
       </div>
     </div>

@@ -16,12 +16,12 @@ export function DetailDrawer({
   const steps = approvalSteps(unit.status, { author: unit.author, edited: unit.edited })
 
   const meta = [
-    { k: 'Autor', v: unit.author },
     { k: 'Área', v: unit.area },
+    { k: 'Propietario', v: unit.author },
+    { k: 'Última edición', v: unit.edited },
     { k: 'Versión', v: `v${unit.version}` },
-    { k: 'Idioma', v: unit.language },
-    { k: 'Formato', v: unit.format },
-    { k: 'Creada', v: unit.created },
+    { k: 'Vence', v: unit.expires ?? 'Sin vencimiento' },
+    { k: 'Fuente', v: unit.source },
   ]
 
   return (
@@ -58,11 +58,13 @@ export function DetailDrawer({
           >
             Compartir
           </button>
-          <button
-            type="button"
-            className="rounded-[var(--radius-md)] border border-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--color-primary)] hover:bg-[var(--color-hover)]"
-          >
-            Editar
+            <button
+              type="button"
+              disabled
+              title="La edición estará disponible próximamente."
+              className="rounded-[var(--radius-md)] border border-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--color-primary)] hover:bg-[var(--color-hover)]"
+            >
+              Editar (próximamente)
           </button>
         </div>
 

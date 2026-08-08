@@ -1,9 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '../lib/supabase'
-
-type Status = 'idle' | 'loading' | 'success' | 'duplicate' | 'error'
+type Status = 'idle' | 'loading' | 'success' | 'error'
 
 export function WaitlistForm({ formId, source }: { formId: string; source: string }) {
   const [name, setName] = useState('')
@@ -16,20 +14,18 @@ export function WaitlistForm({ formId, source }: { formId: string; source: strin
 
     setStatus('loading')
 
-    const { error } = await supabase
-      .from('waitlist_signups')
-      .insert({ name: name.trim(), email: email.trim().toLowerCase(), source })
+    try {
+      const response = await fetch('/api/waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: name.trim(), email: email.trim(), source }),
+      })
 
-    if (!error) {
+      if (!response.ok) throw new Error('waitlist request failed')
       setStatus('success')
       setName('')
       setEmail('')
-      return
-    }
-
-    if (error.code === '23505') {
-      setStatus('duplicate')
-    } else {
+    } catch {
       setStatus('error')
     }
   }
@@ -72,11 +68,8 @@ export function WaitlistForm({ formId, source }: { formId: string; source: strin
         </button>
       </form>
 
-      {status === 'duplicate' && (
-        <p className="text-[13px] text-[var(--color-secondary)]">Ese email ya está en la lista de espera.</p>
-      )}
       {status === 'error' && (
-        <p className="text-[13px] text-red-500">Algo salió mal. Probá de nuevo en un momento.</p>
+        <p className="text-[13px] text-red-500">Algo salió mal. Probá de nuevo en unos minutos.</p>
       )}
     </div>
   )

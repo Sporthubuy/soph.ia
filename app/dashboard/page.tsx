@@ -1,47 +1,69 @@
 import { AppHeader } from '../components/shell/AppHeader'
 import { AppSidebar } from '../components/shell/AppSidebar'
+import { createClient } from '../lib/supabase/server'
+import { fetchCurrentProfile, getFirstName } from '../lib/profile'
+import { fetchKnowledgeUnits } from '../knowledge-units/db'
+import type { KnowledgeUnit } from '../knowledge-units/data'
 import { QuickActions } from './components/QuickActions'
 import { Invites } from './components/Invites'
 import { PendingList } from './components/PendingList'
 import { ActivityFeed } from './components/ActivityFeed'
 import { AgentsList } from './components/AgentsList'
 import { KnowledgeUnitsList } from './components/KnowledgeUnitsList'
-import { currentUser } from './data'
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const supabase = await createClient()
+
+  let profile = null
+  let units: KnowledgeUnit[] = []
+  let dataError: string | null = null
+
+  try {
+    ;[profile, units] = await Promise.all([fetchCurrentProfile(supabase), fetchKnowledgeUnits(supabase, 3)])
+  } catch (error) {
+    dataError = error instanceof Error ? error.message : 'No pudimos cargar tu panel en este momento.'
+  }
+
+  const firstName = getFirstName(profile?.full_name)
+
   return (
     <div className="min-h-screen bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)]">
       <AppHeader
-        userName={currentUser.userName}
-        userEmail={currentUser.userEmail}
-        initials={currentUser.initials}
+        userName={profile?.full_name ?? ''}
+        userEmail={profile?.email ?? ''}
+        initials={profile?.initials ?? ''}
       />
 
       <div className="flex items-start">
         <AppSidebar active="dashboard" />
 
         <div className="min-w-0 flex-1 px-8 pb-14 pt-8" style={{ maxWidth: 1200 }}>
-          <div className="mb-6">
-            <h1 className="m-0 mb-1.5 text-[28px] font-bold text-[var(--color-text-primary)]">
-              Hola, {currentUser.firstName}
-            </h1>
-            <p className="m-0 text-sm text-[var(--color-text-secondary)]">
-              Tenés 4 tareas pendientes y 2 invitaciones nuevas.
-            </p>
-          </div>
+          {dataError ? (
+            <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-error)] bg-[rgba(239,68,68,0.06)] px-4 py-3 text-sm text-[var(--color-error)]">
+              No pudimos cargar el panel por completo. Reintentá en unos segundos.{' '}
+              <span className="font-medium">{dataError}</span>
+            </div>
+          ) : (
+            <>
+              <div className="mb-6">
+                <h1 className="m-0 mb-1.5 text-[28px] font-bold text-[var(--color-text-primary)]">Hola, {firstName}</h1>
+                <p className="m-0 text-sm text-[var(--color-text-secondary)]">Tenés 4 tareas pendientes y 2 invitaciones nuevas.</p>
+              </div>
 
-          <QuickActions />
-          <Invites />
+              <QuickActions />
+              <Invites />
 
-          <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr]">
-            <PendingList />
-            <ActivityFeed />
-          </div>
+              <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr]">
+                <PendingList />
+                <ActivityFeed />
+              </div>
 
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            <AgentsList />
-            <KnowledgeUnitsList />
-          </div>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <AgentsList />
+                <KnowledgeUnitsList units={units} />
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

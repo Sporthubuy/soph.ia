@@ -1,14 +1,15 @@
 import { List, LayoutGrid, Search } from 'lucide-react'
 import type { KUStatus } from '../data'
 
-const STATUS_FILTERS: (KUStatus | 'Todas')[] = ['Todas', 'Publicado', 'En revisión', 'Borrador', 'Archivado']
+const STATUS_FILTERS: (KUStatus | 'Todas')[] = ['Todas', 'Publicada', 'En revisión', 'Borrador', 'Aprobada', 'Por vencer']
 
 const STATUS_PILL_ACTIVE: Record<KUStatus | 'Todas', { bg: string; color: string; border: string }> = {
   Todas: { bg: 'var(--color-primary)', color: '#fff', border: 'var(--color-primary)' },
-  Publicado: { bg: 'rgba(16,185,129,0.14)', color: '#059669', border: 'rgba(16,185,129,0.3)' },
+  Publicada: { bg: 'rgba(16,185,129,0.14)', color: '#059669', border: 'rgba(16,185,129,0.3)' },
   'En revisión': { bg: 'rgba(245,158,11,0.16)', color: '#B45309', border: 'rgba(245,158,11,0.3)' },
   Borrador: { bg: 'var(--color-bg-tertiary)', color: 'var(--color-text-secondary)', border: 'var(--color-border)' },
-  Archivado: { bg: 'var(--color-bg-tertiary)', color: 'var(--color-text-secondary)', border: 'var(--color-border)' },
+  Aprobada: { bg: 'rgba(59,130,246,0.14)', color: '#1D4FD7', border: 'rgba(59,130,246,0.3)' },
+  'Por vencer': { bg: 'rgba(107,114,128,0.14)', color: '#4B5563', border: 'rgba(107,114,128,0.3)' },
 }
 
 const INACTIVE_PILL = { bg: 'var(--color-bg-primary)', color: 'var(--color-text-secondary)', border: 'var(--color-border)' }

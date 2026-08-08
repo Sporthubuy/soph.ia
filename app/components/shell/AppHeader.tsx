@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Bell, Search, Settings, ChevronDown } from 'lucide-react'
 import { Logo } from '../Logo'
 import { Card } from '../dashboard/Card'
+import { createClient } from '../../lib/supabase/client'
 
 const NOTIFICATIONS = [
   { text: 'Lucía Fernández publicó una nueva versión de "Política de reembolsos"', when: 'hace 12 min' },
@@ -20,9 +22,19 @@ export function AppHeader({
   userEmail: string
   initials: string
 }) {
+  const router = useRouter()
   const [query, setQuery] = useState('')
   const [notifsOpen, setNotifsOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
+  const [signingOut, setSigningOut] = useState(false)
+
+  async function handleSignOut() {
+    setSigningOut(true)
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/login')
+    router.refresh()
+  }
 
   return (
     <div className="sticky top-0 z-40 flex h-16 items-center gap-6 border-b border-[var(--color-border)] bg-[var(--color-bg-primary)] px-6">
@@ -118,20 +130,33 @@ export function AppHeader({
                   <div className="px-1 text-[13px] font-semibold text-[var(--color-text-primary)]">{userName}</div>
                   <div className="px-1 text-xs text-[var(--color-text-tertiary)]">{userEmail}</div>
                 </div>
-                <div className="cursor-pointer rounded-[var(--radius-md)] px-3 py-2.5 text-[13px] text-[var(--color-text-primary)] hover:bg-[var(--color-hover)]">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProfileOpen(false)
+                    router.push('/profile')
+                  }}
+                  className="w-full cursor-pointer rounded-[var(--radius-md)] px-3 py-2.5 text-left text-[13px] text-[var(--color-text-primary)] hover:bg-[var(--color-hover)]"
+                >
                   Mi perfil
-                </div>
+                </button>
                 <div className="cursor-pointer rounded-[var(--radius-md)] px-3 py-2.5 text-[13px] text-[var(--color-text-primary)] hover:bg-[var(--color-hover)]">
                   Preferencias
                 </div>
-                <div className="cursor-pointer rounded-[var(--radius-md)] px-3 py-2.5 text-[13px] text-[var(--color-error)] hover:bg-[var(--color-hover)]">
-                  Cerrar sesión
-                </div>
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  disabled={signingOut}
+                  className="w-full cursor-pointer rounded-[var(--radius-md)] bg-transparent px-3 py-2.5 text-left font-[family-name:var(--font-sans)] text-[13px] text-[var(--color-error)] hover:bg-[var(--color-hover)] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {signingOut ? 'Saliendo…' : 'Cerrar sesión'}
+                </button>
               </Card>
             </div>
           )}
         </div>
       </div>
+
     </div>
   )
 }

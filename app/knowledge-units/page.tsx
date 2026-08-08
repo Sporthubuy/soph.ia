@@ -1,8 +1,10 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { AppHeader } from '../components/shell/AppHeader'
 import { AppSidebar } from '../components/shell/AppSidebar'
+import { createClient } from '../lib/supabase/client'
+import { fetchCurrentProfile, type Profile } from '../lib/profile'
 import { Toolbar } from './components/Toolbar'
 import { BulkActionsBar } from './components/BulkActionsBar'
 import { KUTable } from './components/KUTable'
@@ -11,10 +13,14 @@ import { EmptyState } from './components/EmptyState'
 import { DetailDrawer } from './components/DetailDrawer'
 import { CreateModal } from './components/CreateModal'
 import { ShareModal, type ShareTarget } from './components/ShareModal'
-import { areas, currentUser, units as initialUnits, type KnowledgeUnit, type KUStatus } from './data'
+import { fetchKnowledgeUnits, createKnowledgeUnit } from './db'
+import { areas, type KnowledgeUnit, type KUStatus } from './data'
 
 export default function KnowledgeUnitsPage() {
-  const [units, setUnits] = useState<KnowledgeUnit[]>(initialUnits)
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [units, setUnits] = useState<KnowledgeUnit[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [query, setQuery] = useState('')
   const [area, setArea] = useState(areas[0])
   const [sort, setSort] = useState('recent')
@@ -24,6 +30,32 @@ export default function KnowledgeUnitsPage() {
   const [detailUnit, setDetailUnit] = useState<KnowledgeUnit | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
   const [shareTarget, setShareTarget] = useState<ShareTarget | null>(null)
+
+  useEffect(() => {
+    const supabase = createClient()
+    let cancelled = false
+
+    async function load() {
+      try {
+        const [profileData, unitsData] = await Promise.all([
+          fetchCurrentProfile(supabase),
+          fetchKnowledgeUnits(supabase),
+        ])
+        if (cancelled) return
+        setProfile(profileData)
+        setUnits(unitsData)
+      } catch (e) {
+        if (!cancelled) setError(e instanceof Error ? e.message : 'No pudimos cargar las knowledge units.')
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+
+    load()
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const rows = useMemo(() => {
     let result = units.filter((u) => {
@@ -56,42 +88,41 @@ export default function KnowledgeUnitsPage() {
     })
   }
 
+  function toggleSelectAll() {
+    setSelected((prev) => {
+      const allSelected = rows.length > 0 && rows.every((r) => prev.has(r.id))
+      if (allSelected) return new Set()
+      return new Set(rows.map((r) => r.id))
+    })
+  }
+
   function resetFilters() {
     setQuery('')
     setArea(areas[0])
     setStatusFilter('Todas')
   }
 
-  function handleCreate(draft: { name: string; type: string; area: string }) {
-    const typeShort = draft.type.slice(0, 3).toUpperCase()
-    const newUnit: KnowledgeUnit = {
-      id: `ku-${Date.now()}`,
+  async function handleCreate(draft: { name: string; type: string; area: string }) {
+    if (!profile) return
+    const supabase = createClient()
+    const newUnit = await createKnowledgeUnit(supabase, {
       name: draft.name,
       type: draft.type,
-      typeShort,
       area: draft.area,
-      status: 'Borrador',
-      sub: 'v1 · Borrador',
-      edited: 'recién',
-      version: 1,
-      author: currentUser.userName,
-      language: 'Español',
-      format: 'Borrador',
-      created: 'hoy',
-      quality: 0,
-      usage: 0,
-      usageNote: 'Sin uso todavía',
-      tags: [],
-      shares: [{ i: currentUser.initials, name: currentUser.userName, scope: 'Autor', role: 'Puede editar' }],
-      history: [{ who: currentUser.userName, what: 'creó el borrador', when: 'recién' }],
-    }
+      organizationId: profile.organization_id,
+      authorId: profile.id,
+    })
     setUnits((prev) => [newUnit, ...prev])
     setCreateOpen(false)
   }
 
   return (
     <div className="min-h-screen bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)]">
-      <AppHeader userName={currentUser.userName} userEmail={currentUser.userEmail} initials={currentUser.initials} />
+      <AppHeader
+        userName={profile?.full_name ?? ''}
+        userEmail={profile?.email ?? ''}
+        initials={profile?.initials ?? ''}
+      />
 
       <div className="flex items-start">
         <AppSidebar active="knowledge-units" />
@@ -102,25 +133,34 @@ export default function KnowledgeUnitsPage() {
               <div className="min-w-[260px] flex-[1_1_280px]">
                 <h1 className="m-0 mb-1.5 text-[26px] font-bold text-[var(--color-text-primary)]">Knowledge units</h1>
                 <p className="m-0 text-sm text-[var(--color-text-secondary)]">
-                  {units.length} unidades · el conocimiento que usan tus agentes.
+                  Creá, aprobá y compartí el conocimiento que alimenta a tus agentes.
                 </p>
               </div>
               <div className="flex flex-none gap-2.5">
                 <button
                   type="button"
+                  disabled
+                  title="La importación estará disponible próximamente."
                   className="rounded-[var(--radius-md)] border border-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--color-primary)] hover:bg-[var(--color-hover)]"
                 >
-                  Importar
+                  Importar (próximamente)
                 </button>
                 <button
                   type="button"
                   onClick={() => setCreateOpen(true)}
-                  className="rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#001a2f]"
+                  disabled={!profile}
+                  className="rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#001a2f] disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   Crear knowledge unit
                 </button>
               </div>
             </div>
+
+            {error && (
+              <div className="mb-5 rounded-[var(--radius-md)] border border-[var(--color-error)] bg-[rgba(239,68,68,0.06)] px-4 py-3 text-sm text-[var(--color-error)]">
+                {error}
+              </div>
+            )}
 
             <div className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg-primary)]">
               <Toolbar
@@ -151,17 +191,21 @@ export default function KnowledgeUnitsPage() {
                 />
               )}
 
-              {rows.length === 0 ? (
+              {loading ? (
+                <div className="px-6 py-14 text-center text-sm text-[var(--color-text-secondary)]">Cargando…</div>
+              ) : rows.length === 0 ? (
                 <EmptyState onReset={resetFilters} />
               ) : view === 'list' ? (
-                <KUTable rows={rows} selected={selected} onToggleSelect={toggleSelect} onOpen={setDetailUnit} />
+                <KUTable rows={rows} selected={selected} onToggleSelect={toggleSelect} onSelectAll={toggleSelectAll} onOpen={setDetailUnit} />
               ) : (
                 <KUGrid rows={rows} onOpen={setDetailUnit} />
               )}
 
               <div className="flex items-center justify-between border-t border-[var(--color-border)] bg-[var(--color-bg-secondary)] px-4 py-3 text-xs text-[var(--color-text-tertiary)]">
-                <span>{rows.length} de {units.length} knowledge units</span>
-                <span>Última sincronización hace 4 minutos</span>
+                <span>
+                  {rows.length} de {units.length} knowledge units
+                </span>
+                <span className="hidden sm:inline">Última sincronización hace 4 minutos</span>
               </div>
             </div>
           </div>

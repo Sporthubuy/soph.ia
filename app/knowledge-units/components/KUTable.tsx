@@ -9,20 +9,35 @@ export function KUTable({
   rows,
   selected,
   onToggleSelect,
+  onSelectAll,
   onOpen,
 }: {
   rows: KnowledgeUnit[]
   selected: Set<string>
   onToggleSelect: (id: string) => void
+  onSelectAll: () => void
   onOpen: (unit: KnowledgeUnit) => void
 }) {
+  const allSelected = rows.length > 0 && rows.every((r) => selected.has(r.id))
+
   return (
     <div className="overflow-x-auto">
       <div
         className="grid min-w-[768px] items-center gap-3 border-b border-[var(--color-border)] bg-[var(--color-bg-secondary)] px-4 py-2.5 text-[11px] font-bold tracking-[.04em] text-[var(--color-text-tertiary)]"
         style={{ gridTemplateColumns: COLUMNS }}
       >
-        <span />
+        <button
+          type="button"
+          onClick={onSelectAll}
+          aria-label={allSelected ? 'Deseleccionar todo' : 'Seleccionar todo'}
+          className="flex h-[18px] w-[18px] items-center justify-center rounded-[5px]"
+          style={{
+            background: allSelected ? 'var(--color-primary)' : 'transparent',
+            border: `1.5px solid ${allSelected ? 'var(--color-primary)' : 'var(--color-border)'}`,
+          }}
+        >
+          <Check size={11} strokeWidth={3.5} className="text-white" style={{ opacity: allSelected ? 1 : 0 }} />
+        </button>
         <span>NOMBRE</span>
         <span>TIPO</span>
         <span>ÁREA</span>

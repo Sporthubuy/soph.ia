@@ -4,6 +4,7 @@ const TONES = {
   info: { bg: 'rgba(59,130,246,0.14)', color: '#1D4FD7' },
   submitted: { bg: 'rgba(139,92,246,0.14)', color: '#6D28D9' },
   neutral: { bg: 'var(--color-bg-tertiary)', color: 'var(--color-text-secondary)' },
+  expired: { bg: 'rgba(107,114,128,0.14)', color: '#4B5563' },
 } as const
 
 export type BadgeTone = keyof typeof TONES
