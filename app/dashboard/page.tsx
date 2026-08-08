@@ -3,7 +3,12 @@ import { AppSidebar } from '../components/shell/AppSidebar'
 import { createClient } from '../lib/supabase/server'
 import { fetchCurrentProfile, getFirstName } from '../lib/profile'
 import { fetchKnowledgeUnits } from '../knowledge-units/db'
-import type { KnowledgeUnit } from '../knowledge-units/data'
+import {
+  fetchDashboardStats,
+  fetchDashboardAgents,
+  fetchDashboardActivity,
+  fetchDashboardPending,
+} from './data'
 import { QuickActions } from './components/QuickActions'
 import { Invites } from './components/Invites'
 import { PendingList } from './components/PendingList'
@@ -15,16 +20,32 @@ export default async function DashboardPage() {
   const supabase = await createClient()
 
   let profile = null
-  let units: KnowledgeUnit[] = []
   let dataError: string | null = null
 
   try {
-    ;[profile, units] = await Promise.all([fetchCurrentProfile(supabase), fetchKnowledgeUnits(supabase, 3)])
+    profile = await fetchCurrentProfile(supabase)
   } catch (error) {
     dataError = error instanceof Error ? error.message : 'No pudimos cargar tu panel en este momento.'
   }
 
+  const [stats, agents, activity, pending, units] = await Promise.all([
+    fetchDashboardStats(supabase).catch(() => ({ agentCount: 0, kuCount: 0, pendingCount: 0 })),
+    fetchDashboardAgents(supabase).catch(() => []),
+    fetchDashboardActivity(supabase).catch(() => []),
+    fetchDashboardPending(supabase).catch(() => []),
+    fetchKnowledgeUnits(supabase, 3).catch(() => []),
+  ])
+
   const firstName = getFirstName(profile?.full_name)
+
+  const subtitleParts: string[] = []
+  if (stats.agentCount > 0) subtitleParts.push(`${stats.agentCount} agente${stats.agentCount !== 1 ? 's' : ''}`)
+  if (stats.kuCount > 0) subtitleParts.push(`${stats.kuCount} knowledge unit${stats.kuCount !== 1 ? 's' : ''}`)
+  if (pending.length > 0) subtitleParts.push(`${pending.length} pendiente${pending.length !== 1 ? 's' : ''}`)
+
+  const subtitle = subtitleParts.length > 0
+    ? `Tenés ${subtitleParts.join(', ')}.`
+    : 'Tu espacio de trabajo está listo para empezar.'
 
   return (
     <div className="min-h-screen bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)]">
@@ -46,20 +67,22 @@ export default async function DashboardPage() {
           ) : (
             <>
               <div className="mb-6">
-                <h1 className="m-0 mb-1.5 text-[28px] font-bold text-[var(--color-text-primary)]">Hola, {firstName}</h1>
-                <p className="m-0 text-sm text-[var(--color-text-secondary)]">Tenés 4 tareas pendientes y 2 invitaciones nuevas.</p>
+                <h1 className="m-0 mb-1.5 text-[28px] font-bold text-[var(--color-text-primary)]">
+                  Hola, {firstName}
+                </h1>
+                <p className="m-0 text-sm text-[var(--color-text-secondary)]">{subtitle}</p>
               </div>
 
               <QuickActions />
               <Invites />
 
               <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr]">
-                <PendingList />
-                <ActivityFeed />
+                <PendingList pending={pending} />
+                <ActivityFeed changes={activity} />
               </div>
 
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <AgentsList />
+                <AgentsList agents={agents} />
                 <KnowledgeUnitsList units={units} />
               </div>
             </>

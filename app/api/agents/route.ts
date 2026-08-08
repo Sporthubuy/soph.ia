@@ -1,6 +1,6 @@
-import { createClient } from '@/app/lib/supabase/server'
-import { fetchCurrentProfile } from '@/app/lib/profile'
-import { fetchAgents, createAgent } from '@/app/agents/db'
+import { createClient } from '../../lib/supabase/server'
+import { fetchCurrentProfile } from '../../lib/profile'
+import { fetchAgents, createAgent } from '../../agents/db'
 import { NextResponse } from 'next/server'
 
 export async function GET() {

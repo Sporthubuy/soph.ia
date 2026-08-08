@@ -1,12 +1,15 @@
 import { Card } from '../../components/dashboard/Card'
-import { changes } from '../data'
+import type { DashboardActivity } from '../data'
 
-export function ActivityFeed() {
+export function ActivityFeed({ changes }: { changes: DashboardActivity[] }) {
   return (
     <div>
       <h2 className="m-0 mb-3.5 text-base font-semibold text-[var(--color-text-primary)]">Últimos cambios</h2>
       <Card>
         <div className="flex flex-col gap-4">
+          {changes.length === 0 && (
+            <p className="m-0 text-sm text-[var(--color-text-secondary)]">Sin actividad reciente.</p>
+          )}
           {changes.map((c, i) => (
             <div key={i} className="flex items-start gap-3">
               <span className="flex h-7 w-7 flex-none items-center justify-center rounded-[var(--radius-full)] bg-[var(--color-bg-tertiary)] text-[10px] font-bold text-[var(--color-text-secondary)]">

@@ -1,4 +1,4 @@
-import { createClient as createClientBrowser } from '@/app/lib/supabase/client'
+import { createClient as createClientBrowser } from '../../lib/supabase/client'
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 

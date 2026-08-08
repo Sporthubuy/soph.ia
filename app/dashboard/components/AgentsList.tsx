@@ -1,19 +1,23 @@
+import Link from 'next/link'
 import { Card } from '../../components/dashboard/Card'
 import { Badge } from '../../components/dashboard/Badge'
-import { agents } from '../data'
+import type { DashboardAgent } from '../data'
 
-export function AgentsList() {
+export function AgentsList({ agents }: { agents: DashboardAgent[] }) {
   return (
     <div>
       <div className="mb-3.5 flex items-center justify-between">
         <h2 className="m-0 text-base font-semibold text-[var(--color-text-primary)]">Tus agentes</h2>
-        <a href="#" className="text-[13px] font-medium">
+        <Link href="/agents" className="text-[13px] font-medium">
           Ver todos
-        </a>
+        </Link>
       </div>
       <div className="flex flex-col gap-3">
-        {agents.map((agent, i) => (
-          <Card key={i}>
+        {agents.length === 0 && (
+          <p className="m-0 text-sm text-[var(--color-text-secondary)]">Todavía no creaste ningún agente.</p>
+        )}
+        {agents.map((agent) => (
+          <Card key={agent.id}>
             <div className="flex items-center gap-3.5">
               <span className="flex h-9 w-9 flex-none items-center justify-center rounded-[var(--radius-md)] bg-[var(--color-bg-tertiary)] text-xs font-bold text-[var(--color-primary)]">
                 {agent.tag}

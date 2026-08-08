@@ -1,6 +1,6 @@
-import { createClient } from '@/app/lib/supabase/server'
-import { fetchCurrentProfile } from '@/app/lib/profile'
-import { fetchAgentById, updateAgent, deleteAgent } from '@/app/agents/db'
+import { createClient } from '../../../lib/supabase/server'
+import { fetchCurrentProfile } from '../../../lib/profile'
+import { fetchAgentById, updateAgent, deleteAgent } from '../../../agents/db'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {

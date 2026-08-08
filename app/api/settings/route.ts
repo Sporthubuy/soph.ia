@@ -1,5 +1,5 @@
-import { createClient } from '@/app/lib/supabase/server'
-import { fetchCurrentProfile } from '@/app/lib/profile'
+import { createClient } from '../../lib/supabase/server'
+import { fetchCurrentProfile } from '../../lib/profile'
 import { NextResponse } from 'next/server'
 
 export async function GET() {
