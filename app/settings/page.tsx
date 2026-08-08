@@ -7,6 +7,7 @@ import { AppHeader } from '../components/shell/AppHeader'
 import { AppSidebar } from '../components/shell/AppSidebar'
 import { createClient } from '../lib/supabase/client'
 import { fetchCurrentProfile, type Profile } from '../lib/profile'
+import { applyTheme, type Theme } from '../lib/useTheme'
 
 export default function SettingsPage() {
   const router = useRouter()
@@ -76,6 +77,7 @@ export default function SettingsPage() {
 
       if (!response.ok) throw new Error('Error al guardar configuración')
 
+      applyTheme(userSettings.theme as Theme)
       setMessage('Configuración de usuario guardada')
       setTimeout(() => setMessage(null), 3000)
     } catch (error) {

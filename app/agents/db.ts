@@ -62,7 +62,7 @@ export async function fetchAgentById(supabase: SupabaseClient, id: string): Prom
 
 export async function createAgent(
   supabase: SupabaseClient,
-  input: { name: string; description?: string; type: string; model: string; organizationId: string }
+  input: { name: string; description?: string; type: string; model: string; organizationId: string; authorId: string }
 ): Promise<Agent> {
   const { data: created, error } = await supabase
     .from('agents')
@@ -72,6 +72,7 @@ export async function createAgent(
       type: input.type,
       model: input.model,
       organization_id: input.organizationId,
+      author_id: input.authorId,
     })
     .select('id')
     .single()

@@ -45,6 +45,32 @@
     --space-4: 16px;
   }
 
+  [data-theme="dark"] {
+    --color-bg-primary: #0F172A;
+    --color-bg-secondary: #0B1120;
+    --color-bg-tertiary: #1E293B;
+    --color-text-primary: #F1F5F9;
+    --color-text-secondary: #94A3B8;
+    --color-text-tertiary: #64748B;
+    --color-text-disabled: #475569;
+    --color-primary: #5B9BFF;
+    --color-secondary: #5B9BFF;
+    --color-accent: #22D3EE;
+    --color-border: #1E293B;
+    --color-border-light: #1A2436;
+    --color-hover: rgba(91, 155, 255, 0.08);
+    --color-active: rgba(91, 155, 255, 0.15);
+    --color-focus-ring: #5B9BFF;
+    --color-success: #34D399;
+    --color-warning: #FBBF24;
+    --color-error: #F87171;
+    --color-submitted: #A78BFA;
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+  }
+
   html {
     scroll-behavior: smooth;
   }

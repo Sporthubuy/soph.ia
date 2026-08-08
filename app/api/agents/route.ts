@@ -43,8 +43,9 @@ export async function POST(request: Request) {
       name,
       description,
       type,
-      model: model || 'claude-3.5-sonnet',
+      model: model || 'claude-sonnet-4-20250514',
       organizationId: profile.organization_id,
+      authorId: profile.id,
     })
 
     return NextResponse.json(agent, { status: 201 })
