@@ -3,18 +3,29 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  User, Globe, Bell, Shield, Save, LogOut, Loader2,
+  User, Globe, Bell, Shield, Key, Save, LogOut, Loader2, Trash2, Check, AlertCircle,
 } from 'lucide-react'
 import { AppHeader } from '../components/shell/AppHeader'
 import { AppSidebar } from '../components/shell/AppSidebar'
 import { createClient } from '../lib/supabase/client'
 import { fetchCurrentProfile, type Profile } from '../lib/profile'
 import { applyTheme, type Theme } from '../lib/useTheme'
+import { PROVIDERS, type Provider } from '../lib/providers'
+
+type ApiKeyInfo = {
+  id: string
+  provider: Provider
+  key_hint: string
+  is_valid: boolean
+  created_at: string
+  updated_at: string
+}
 
 const TABS = [
   { key: 'profile', label: 'Perfil', icon: User },
   { key: 'preferences', label: 'Preferencias', icon: Globe },
   { key: 'notifications', label: 'Notificaciones', icon: Bell },
+  { key: 'api-keys', label: 'API Keys', icon: Key },
   { key: 'security', label: 'Seguridad', icon: Shield },
 ] as const
 
@@ -140,6 +151,10 @@ export default function SettingsPage() {
     email_on_publish: false,
   })
 
+  const [apiKeys, setApiKeys] = useState<ApiKeyInfo[]>([])
+  const [keyInputs, setKeyInputs] = useState<Record<string, string>>({})
+  const [savingKey, setSavingKey] = useState<string | null>(null)
+
   function showToast(message: string, tone: 'success' | 'error' = 'success') {
     setToast({ message, tone })
     setTimeout(() => setToast(null), 3000)
@@ -191,6 +206,11 @@ export default function SettingsPage() {
 
         if (notifPrefs) {
           setNotifications((prev) => ({ ...prev, ...notifPrefs }))
+        }
+
+        const keysRes = await fetch('/api/keys')
+        if (keysRes.ok) {
+          setApiKeys(await keysRes.json())
         }
       } catch {
         showToast('Error al cargar configuración', 'error')
@@ -265,6 +285,51 @@ export default function SettingsPage() {
     } catch {
       showToast('Error al guardar notificaciones', 'error')
     } finally { setSaving(false) }
+  }
+
+  async function saveApiKey(provider: Provider) {
+    const rawKey = keyInputs[provider]?.trim()
+    if (!rawKey || rawKey.length < 10) {
+      showToast('La API key debe tener al menos 10 caracteres', 'error')
+      return
+    }
+    setSavingKey(provider)
+    try {
+      const res = await fetch('/api/keys', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider, api_key: rawKey }),
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Error')
+      }
+      const saved = await res.json()
+      setApiKeys((prev) => {
+        const filtered = prev.filter((k) => k.provider !== provider)
+        return [...filtered, saved].sort((a, b) => a.provider.localeCompare(b.provider))
+      })
+      setKeyInputs((prev) => ({ ...prev, [provider]: '' }))
+      showToast(`Key de ${PROVIDERS.find((p) => p.id === provider)?.name} guardada`)
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Error al guardar key', 'error')
+    } finally { setSavingKey(null) }
+  }
+
+  async function deleteApiKey(provider: Provider) {
+    setSavingKey(provider)
+    try {
+      const res = await fetch('/api/keys', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider }),
+      })
+      if (!res.ok) throw new Error()
+      setApiKeys((prev) => prev.filter((k) => k.provider !== provider))
+      showToast(`Key de ${PROVIDERS.find((p) => p.id === provider)?.name} eliminada`)
+    } catch {
+      showToast('Error al eliminar key', 'error')
+    } finally { setSavingKey(null) }
   }
 
   async function handleLogout() {
@@ -542,6 +607,85 @@ export default function SettingsPage() {
                   <SaveButton onClick={saveNotifications} saving={saving} label="Guardar notificaciones" />
                 </div>
               </SectionCard>
+            </div>
+          )}
+
+          {/* API Keys tab */}
+          {tab === 'api-keys' && (
+            <div className="space-y-4">
+              <SectionCard>
+                <div className="mb-1">
+                  <h2 className="text-lg font-semibold">Tus API Keys</h2>
+                  <p className="mt-1 text-sm text-[var(--color-text-secondary)]">
+                    Configurá las keys de cada proveedor de IA. Se usan cuando ejecutás agentes con ese modelo.
+                  </p>
+                </div>
+              </SectionCard>
+
+              {PROVIDERS.map((prov) => {
+                const existing = apiKeys.find((k) => k.provider === prov.id)
+                const inputVal = keyInputs[prov.id] ?? ''
+                const isSaving = savingKey === prov.id
+
+                return (
+                  <SectionCard key={prov.id}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] text-sm font-bold text-white ${
+                          prov.id === 'anthropic' ? 'bg-[#D97757]' :
+                          prov.id === 'openai' ? 'bg-[#10A37F]' :
+                          'bg-[#4285F4]'
+                        }`}>
+                          {prov.id === 'anthropic' ? 'A' : prov.id === 'openai' ? 'O' : 'G'}
+                        </div>
+                        <div>
+                          <div className="text-sm font-semibold text-[var(--color-text-primary)]">{prov.name}</div>
+                          {existing ? (
+                            <div className="flex items-center gap-1.5 text-xs">
+                              {existing.is_valid ? (
+                                <><Check size={12} className="text-emerald-400" /><span className="text-emerald-400">Configurada</span></>
+                              ) : (
+                                <><AlertCircle size={12} className="text-[var(--color-error)]" /><span className="text-[var(--color-error)]">Inválida</span></>
+                              )}
+                              <span className="ml-1 font-mono text-[var(--color-text-tertiary)]">{existing.key_hint}</span>
+                            </div>
+                          ) : (
+                            <div className="text-xs text-[var(--color-text-tertiary)]">No configurada</div>
+                          )}
+                        </div>
+                      </div>
+                      {existing && (
+                        <button
+                          onClick={() => deleteApiKey(prov.id)}
+                          disabled={isSaving}
+                          className="rounded-[var(--radius-md)] p-2 text-[var(--color-text-tertiary)] transition-colors hover:bg-[rgba(239,68,68,0.1)] hover:text-[var(--color-error)] disabled:opacity-50"
+                          title="Eliminar key"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="mt-4 flex gap-2">
+                      <input
+                        type="password"
+                        value={inputVal}
+                        onChange={(e) => setKeyInputs((p) => ({ ...p, [prov.id]: e.target.value }))}
+                        placeholder={existing ? 'Reemplazar key...' : prov.placeholder}
+                        className="flex-1 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-secondary)] px-3 py-2.5 font-mono text-sm text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-tertiary)] focus:border-[var(--color-focus-ring)]"
+                      />
+                      <button
+                        onClick={() => saveApiKey(prov.id)}
+                        disabled={isSaving || !inputVal.trim()}
+                        className="flex items-center gap-1.5 rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        {isSaving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+                        {existing ? 'Actualizar' : 'Guardar'}
+                      </button>
+                    </div>
+                  </SectionCard>
+                )
+              })}
             </div>
           )}
 
