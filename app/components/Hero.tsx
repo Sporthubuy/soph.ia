@@ -1,12 +1,9 @@
 'use client'
 
 import { ConstellationCanvas } from './ConstellationCanvas'
+import { WaitlistForm } from './WaitlistForm'
 
 export function Hero() {
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-  }
-
   return (
     <div className="relative overflow-hidden text-center bg-[var(--color-bg-secondary)] px-6 md:px-12 py-24 md:py-[130px]">
       <ConstellationCanvas />
@@ -25,26 +22,7 @@ export function Hero() {
           Soph.ia conecta a tu equipo para construir agentes inteligentes y bases de conocimiento compartidas: cada aporte se convierte en un nodo, y cada conexión hace más potente a todos los demás.
         </p>
 
-        <form id="registro" onSubmit={handleSubmit} className="flex gap-3 justify-center flex-wrap mb-3.5">
-          <input
-            type="text"
-            name="name"
-            placeholder="Tu nombre"
-            className="w-[200px] px-3 py-2.5 text-sm border border-[var(--color-border)] rounded-[var(--radius-md)] bg-white text-[var(--color-text-primary)] outline-none focus:border-[var(--color-secondary)] transition-colors"
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="tu@empresa.com"
-            className="w-[240px] px-3 py-2.5 text-sm border border-[var(--color-border)] rounded-[var(--radius-md)] bg-white text-[var(--color-text-primary)] outline-none focus:border-[var(--color-secondary)] transition-colors"
-          />
-          <button
-            type="submit"
-            className="inline-flex items-center justify-center gap-2 font-semibold rounded-[var(--radius-md)] cursor-pointer transition-colors px-5 py-3 text-base bg-[var(--color-primary)] text-white hover:bg-[#1e293b]"
-          >
-            Quiero acceso anticipado
-          </button>
-        </form>
+        <WaitlistForm formId="registro" source="hero" />
 
         <p className="text-[13px] text-[var(--color-text-tertiary)]">
           Sin spam. Solo un aviso cuando abramos el acceso.
