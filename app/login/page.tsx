@@ -19,19 +19,34 @@ function LoginForm() {
     setLoading(true)
     setError(null)
 
-    const supabase = createClient()
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password })
+    try {
+      const supabase = createClient()
 
-    if (error) {
-      setError(error.message === 'Invalid login credentials' ? 'Email o contraseña incorrectos.' : error.message)
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      })
+
+      if (error) {
+        if (error.message === 'Invalid login credentials') {
+          setError('Email o contraseña incorrectos.')
+        } else if (error.message === 'Email not confirmed') {
+          setError('Por favor confirma tu email antes de iniciar sesión.')
+        } else {
+          setError(error.message || 'Error al iniciar sesión')
+        }
+        setLoading(false)
+        return
+      }
+
+      const next = searchParams.get('next')
+      const destination = next && next.startsWith('/') && !next.startsWith('//') && !next.includes('\\') ? next : '/dashboard'
+      router.push(destination)
+      router.refresh()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error desconocido')
       setLoading(false)
-      return
     }
-
-    const next = searchParams.get('next')
-    const destination = next && next.startsWith('/') && !next.startsWith('//') && !next.includes('\\') ? next : '/dashboard'
-    router.push(destination)
-    router.refresh()
   }
 
   return (

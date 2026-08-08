@@ -140,9 +140,16 @@ export function AppHeader({
                 >
                   Mi perfil
                 </button>
-                <div className="cursor-pointer rounded-[var(--radius-md)] px-3 py-2.5 text-[13px] text-[var(--color-text-primary)] hover:bg-[var(--color-hover)]">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProfileOpen(false)
+                    router.push('/settings')
+                  }}
+                  className="w-full cursor-pointer rounded-[var(--radius-md)] px-3 py-2.5 text-left text-[13px] text-[var(--color-text-primary)] hover:bg-[var(--color-hover)]"
+                >
                   Preferencias
-                </div>
+                </button>
                 <button
                   type="button"
                   onClick={handleSignOut}

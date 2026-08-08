@@ -21,32 +21,99 @@ export default function SignupPage() {
     setLoading(true)
     setError(null)
 
-    const supabase = createClient()
-    const { data, error } = await supabase.auth.signUp({
-      email: email.trim(),
-      password,
-      options: {
-        data: {
-          full_name: fullName.trim(),
-          organization_name: organizationName.trim(),
+    try {
+      const supabase = createClient()
+
+      // Sign up the user
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          data: {
+            full_name: fullName.trim(),
+          },
         },
-      },
-    })
+      })
 
-    if (error) {
-      setError(error.message === 'User already registered' ? 'Ya existe una cuenta con ese email.' : error.message)
+      if (authError) {
+        setError(
+          authError.message === 'User already registered'
+            ? 'Ya existe una cuenta con ese email.'
+            : authError.message || 'Error al crear la cuenta'
+        )
+        setLoading(false)
+        return
+      }
+
+      if (!authData.user) {
+        setError('No se pudo crear la cuenta')
+        setLoading(false)
+        return
+      }
+
+      // Create organization
+      const { data: orgData, error: orgError } = await supabase
+        .from('organizations')
+        .insert({
+          name: organizationName.trim(),
+          slug: organizationName.trim().toLowerCase().replace(/[^a-z0-9]/g, '-'),
+        })
+        .select('id')
+        .single()
+
+      if (orgError) {
+        console.error('Error creating organization:', orgError)
+        setError('Error al crear la organización')
+        setLoading(false)
+        return
+      }
+
+      // Create profile
+      const initials = fullName
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
+
+      const { error: profileError } = await supabase.from('profiles').insert({
+        id: authData.user.id,
+        email: authData.user.email!,
+        full_name: fullName.trim(),
+        initials,
+        organization_id: orgData.id,
+      })
+
+      if (profileError) {
+        console.error('Error creating profile:', profileError)
+        // Profile error is not fatal
+      }
+
+      // Link user to organization
+      const { error: linkError } = await supabase.from('profiles_organizations').insert({
+        profile_id: authData.user.id,
+        organization_id: orgData.id,
+        role: 'admin',
+      })
+
+      if (linkError) {
+        console.error('Error linking user to organization:', linkError)
+      }
+
+      if (authData.session) {
+        // Auto-login on email confirmation
+        router.push('/dashboard')
+        router.refresh()
+        return
+      }
+
+      // Show email confirmation message
+      setCheckEmail(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error desconocido')
+    } finally {
       setLoading(false)
-      return
     }
-
-    if (data.session) {
-      router.push('/dashboard')
-      router.refresh()
-      return
-    }
-
-    setCheckEmail(true)
-    setLoading(false)
   }
 
   if (checkEmail) {
