@@ -1,4 +1,5 @@
-import { Check, MoreVertical } from 'lucide-react'
+import { useState } from 'react'
+import { Check, MoreVertical, Pencil, Trash2 } from 'lucide-react'
 import { Badge } from '../../components/dashboard/Badge'
 import { typeVisual } from '../lib'
 import { statusTone, type KnowledgeUnit } from '../data'
@@ -11,13 +12,18 @@ export function KUTable({
   onToggleSelect,
   onSelectAll,
   onOpen,
+  onEdit,
+  onDelete,
 }: {
   rows: KnowledgeUnit[]
   selected: Set<string>
   onToggleSelect: (id: string) => void
   onSelectAll: () => void
   onOpen: (unit: KnowledgeUnit) => void
+  onEdit: (unit: KnowledgeUnit) => void
+  onDelete: (unit: KnowledgeUnit) => void
 }) {
+  const [openMenu, setOpenMenu] = useState<string | null>(null)
   const allSelected = rows.length > 0 && rows.every((r) => selected.has(r.id))
 
   return (
@@ -109,14 +115,45 @@ export function KUTable({
 
             <span className="text-xs text-[var(--color-text-tertiary)]">{r.edited}</span>
 
-            <button
-              type="button"
-              onClick={(e) => e.stopPropagation()}
-              aria-label="Más acciones"
-              className="flex h-7 w-7 items-center justify-center rounded-[6px] text-[var(--color-text-tertiary)] hover:bg-[var(--color-active)]"
-            >
-              <MoreVertical size={16} />
-            </button>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setOpenMenu(openMenu === r.id ? null : r.id)
+                }}
+                aria-label="Más acciones"
+                className="flex h-7 w-7 items-center justify-center rounded-[6px] text-[var(--color-text-tertiary)] hover:bg-[var(--color-active)]"
+              >
+                <MoreVertical size={16} />
+              </button>
+              {openMenu === r.id && (
+                <div className="absolute right-0 top-8 z-20 min-w-[140px] rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-primary)] py-1 shadow-[var(--shadow-lg)]">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setOpenMenu(null)
+                      onEdit(r)
+                    }}
+                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
+                  >
+                    <Pencil size={14} /> Editar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setOpenMenu(null)
+                      onDelete(r)
+                    }}
+                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-[var(--color-error)] hover:bg-[var(--color-bg-secondary)]"
+                  >
+                    <Trash2 size={14} /> Eliminar
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         )
       })}

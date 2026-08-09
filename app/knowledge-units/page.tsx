@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { AppHeader } from '../components/shell/AppHeader'
 import { AppSidebar } from '../components/shell/AppSidebar'
 import { createClient } from '../lib/supabase/client'
@@ -13,10 +14,12 @@ import { EmptyState } from './components/EmptyState'
 import { DetailDrawer } from './components/DetailDrawer'
 import { CreateModal } from './components/CreateModal'
 import { ShareModal, type ShareTarget } from './components/ShareModal'
+import { DeleteKUModal } from './components/DeleteKUModal'
 import { fetchKnowledgeUnits, createKnowledgeUnit } from './db'
 import { areas, type KnowledgeUnit, type KUStatus } from './data'
 
 export default function KnowledgeUnitsPage() {
+  const router = useRouter()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [units, setUnits] = useState<KnowledgeUnit[]>([])
   const [loading, setLoading] = useState(true)
@@ -30,6 +33,7 @@ export default function KnowledgeUnitsPage() {
   const [detailUnit, setDetailUnit] = useState<KnowledgeUnit | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
   const [shareTarget, setShareTarget] = useState<ShareTarget | null>(null)
+  const [deleteUnit, setDeleteUnit] = useState<KnowledgeUnit | null>(null)
 
   useEffect(() => {
     const supabase = createClient()
@@ -112,8 +116,24 @@ export default function KnowledgeUnitsPage() {
       organizationId: profile.organization_id,
       authorId: profile.id,
     })
-    setUnits((prev) => [newUnit, ...prev])
     setCreateOpen(false)
+    router.push(`/knowledge-units/${newUnit.id}/edit`)
+  }
+
+  function handleEdit(unit: KnowledgeUnit) {
+    router.push(`/knowledge-units/${unit.id}/edit`)
+  }
+
+  async function handleDelete(unitId: string) {
+    try {
+      const res = await fetch(`/api/knowledge-units/${unitId}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error()
+      setUnits((prev) => prev.filter((u) => u.id !== unitId))
+      setDeleteUnit(null)
+      setDetailUnit(null)
+    } catch {
+      setError('No se pudo eliminar la knowledge unit')
+    }
   }
 
   return (
@@ -196,9 +216,9 @@ export default function KnowledgeUnitsPage() {
               ) : rows.length === 0 ? (
                 <EmptyState onReset={resetFilters} />
               ) : view === 'list' ? (
-                <KUTable rows={rows} selected={selected} onToggleSelect={toggleSelect} onSelectAll={toggleSelectAll} onOpen={setDetailUnit} />
+                <KUTable rows={rows} selected={selected} onToggleSelect={toggleSelect} onSelectAll={toggleSelectAll} onOpen={setDetailUnit} onEdit={handleEdit} onDelete={setDeleteUnit} />
               ) : (
-                <KUGrid rows={rows} onOpen={setDetailUnit} />
+                <KUGrid rows={rows} onOpen={setDetailUnit} onEdit={handleEdit} onDelete={setDeleteUnit} />
               )}
 
               <div className="flex items-center justify-between border-t border-[var(--color-border)] bg-[var(--color-bg-secondary)] px-4 py-3 text-xs text-[var(--color-text-tertiary)]">
@@ -215,6 +235,8 @@ export default function KnowledgeUnitsPage() {
               unit={detailUnit}
               onClose={() => setDetailUnit(null)}
               onShare={() => setShareTarget({ name: detailUnit.name, shares: detailUnit.shares })}
+              onEdit={() => handleEdit(detailUnit)}
+              onDelete={() => setDeleteUnit(detailUnit)}
             />
           )}
         </div>
@@ -222,6 +244,14 @@ export default function KnowledgeUnitsPage() {
 
       {createOpen && <CreateModal onClose={() => setCreateOpen(false)} onSave={handleCreate} />}
       {shareTarget && <ShareModal unit={shareTarget} onClose={() => setShareTarget(null)} />}
+      {deleteUnit && (
+        <DeleteKUModal
+          unitId={deleteUnit.id}
+          unitName={deleteUnit.name}
+          onClose={() => setDeleteUnit(null)}
+          onDeleted={() => handleDelete(deleteUnit.id)}
+        />
+      )}
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { X } from 'lucide-react'
+import { X, Trash2 } from 'lucide-react'
 import { Badge } from '../../components/dashboard/Badge'
 import { approvalSteps, qualityColor, stepDotColor, typeVisual } from '../lib'
 import { statusTone, type KnowledgeUnit } from '../data'
@@ -7,10 +7,14 @@ export function DetailDrawer({
   unit,
   onClose,
   onShare,
+  onEdit,
+  onDelete,
 }: {
   unit: KnowledgeUnit
   onClose: () => void
   onShare: () => void
+  onEdit: () => void
+  onDelete: () => void
 }) {
   const visual = typeVisual(unit.type)
   const steps = approvalSteps(unit.status, { author: unit.author, edited: unit.edited })
@@ -53,18 +57,25 @@ export function DetailDrawer({
         <div className="flex gap-2">
           <button
             type="button"
+            onClick={onEdit}
+            className="flex-1 rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#001a2f]"
+          >
+            Editar
+          </button>
+          <button
+            type="button"
             onClick={onShare}
-            className="rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#001a2f]"
+            className="rounded-[var(--radius-md)] border border-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--color-primary)] hover:bg-[var(--color-hover)]"
           >
             Compartir
           </button>
-            <button
-              type="button"
-              disabled
-              title="La edición estará disponible próximamente."
-              className="rounded-[var(--radius-md)] border border-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--color-primary)] hover:bg-[var(--color-hover)]"
-            >
-              Editar (próximamente)
+          <button
+            type="button"
+            onClick={onDelete}
+            className="rounded-[var(--radius-md)] border border-[var(--color-error)]/30 p-2.5 text-[var(--color-error)] hover:bg-[rgba(239,68,68,0.06)]"
+            aria-label="Eliminar"
+          >
+            <Trash2 size={16} />
           </button>
         </div>
 

@@ -91,6 +91,23 @@ export async function fetchKnowledgeUnits(supabase: SupabaseClient, limit?: numb
   return (data as unknown as KURow[]).map(toViewModel)
 }
 
+export async function fetchKnowledgeUnitById(supabase: SupabaseClient, id: string): Promise<KnowledgeUnit | null> {
+  const { data, error } = await supabase.from('knowledge_units').select(SELECT).eq('id', id).maybeSingle()
+  if (error) throw error
+  if (!data) return null
+  return toViewModel(data as unknown as KURow)
+}
+
+export async function fetchKnowledgeUnitRaw(supabase: SupabaseClient, id: string) {
+  const { data, error } = await supabase
+    .from('knowledge_units')
+    .select('id, name, type, area, status, format, language, version, quality, tags, content, expires_at, source, created_at, updated_at')
+    .eq('id', id)
+    .maybeSingle()
+  if (error) throw error
+  return data
+}
+
 export async function createKnowledgeUnit(
   supabase: SupabaseClient,
   input: { name: string; type: string; area: string; organizationId: string; authorId: string }
@@ -111,4 +128,33 @@ export async function createKnowledgeUnit(
   const { data, error: fetchError } = await supabase.from('knowledge_units').select(SELECT).eq('id', created.id).single()
   if (fetchError) throw fetchError
   return toViewModel(data as unknown as KURow)
+}
+
+export async function updateKnowledgeUnit(
+  supabase: SupabaseClient,
+  id: string,
+  fields: Partial<{
+    name: string
+    content: string
+    type: string
+    area: string
+    status: string
+    tags: string[]
+    format: string
+    language: string
+  }>
+) {
+  const { data, error } = await supabase
+    .from('knowledge_units')
+    .update(fields)
+    .eq('id', id)
+    .select('id, name, content, type, area, status, format, language, version, quality, tags, expires_at, source, updated_at')
+    .single()
+  if (error) throw error
+  return data
+}
+
+export async function deleteKnowledgeUnit(supabase: SupabaseClient, id: string) {
+  const { error } = await supabase.from('knowledge_units').delete().eq('id', id)
+  if (error) throw error
 }
