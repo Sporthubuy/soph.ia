@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { Logo } from './Logo'
 
 export function Header() {
@@ -8,19 +9,27 @@ export function Header() {
         <a href="#como-funciona" className="no-underline text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors">
           Cómo funciona
         </a>
-        <a href="#comunidad" className="no-underline text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors">
-          Beneficios
+        <a href="#caracteristicas" className="no-underline text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors">
+          Características
         </a>
         <a href="#faq" className="no-underline text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] transition-colors">
-          Preguntas frecuentes
+          FAQ
         </a>
       </div>
-      <a
-        href="#registro"
-        className="inline-flex items-center px-[18px] py-[10px] bg-[var(--color-primary)] text-white rounded-[var(--radius-md)] text-sm font-semibold no-underline"
-      >
-        Unirme a la lista
-      </a>
+      <div className="flex items-center gap-3">
+        <Link
+          href="/auth/login"
+          className="hidden sm:inline-flex items-center px-4 py-[10px] text-sm font-semibold text-[var(--color-text-secondary)] no-underline hover:text-[var(--color-primary)] transition-colors"
+        >
+          Iniciar sesión
+        </Link>
+        <Link
+          href="/auth/signup"
+          className="inline-flex items-center px-[18px] py-[10px] bg-[var(--color-primary)] text-white rounded-[var(--radius-md)] text-sm font-semibold no-underline hover:brightness-110 transition-all"
+        >
+          Crear cuenta
+        </Link>
+      </div>
     </div>
   )
 }

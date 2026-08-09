@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { Bot, Copy, Download, Network, Loader2 } from 'lucide-react'
 
 type Props = {
@@ -20,6 +21,7 @@ type Props = {
 }
 
 export function CommunityCard({
+  id,
   kind,
   name,
   description,
@@ -37,43 +39,46 @@ export function CommunityCard({
   const Icon = kind === 'agent' ? Bot : Network
   const kindLabel = kind === 'agent' ? 'Agente' : 'Knowledge Unit'
   const accentColor = kind === 'agent' ? 'var(--color-secondary)' : 'var(--color-accent)'
+  const detailHref = `/community/${kind === 'agent' ? 'agents' : 'kus'}/${id}`
 
   return (
     <div className="group flex flex-col rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg-primary)] transition-all hover:border-[var(--color-primary)]/40 hover:shadow-[var(--shadow-md)]">
-      {/* Header */}
-      <div className="flex items-start gap-3 px-4 pt-4 pb-3">
-        <div
-          className="flex h-10 w-10 flex-none items-center justify-center rounded-[var(--radius-md)]"
-          style={{ background: `color-mix(in srgb, ${accentColor} 15%, transparent)` }}
-        >
-          <Icon size={20} style={{ color: accentColor }} />
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <h3 className="m-0 truncate text-[14px] font-bold text-[var(--color-text-primary)]">{name}</h3>
+      {/* Header — clickable */}
+      <Link href={detailHref} className="no-underline">
+        <div className="flex items-start gap-3 px-4 pt-4 pb-3">
+          <div
+            className="flex h-10 w-10 flex-none items-center justify-center rounded-[var(--radius-md)]"
+            style={{ background: `color-mix(in srgb, ${accentColor} 15%, transparent)` }}
+          >
+            <Icon size={20} style={{ color: accentColor }} />
           </div>
-          <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-[var(--color-text-tertiary)]">
-            <span className="flex-none rounded bg-[var(--color-bg-secondary)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
-              {kindLabel}
-            </span>
-            <span>·</span>
-            <span className="truncate">{area}</span>
-            {meta && (
-              <>
-                <span className="flex-none">·</span>
-                <span className="truncate">{meta}</span>
-              </>
-            )}
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <h3 className="m-0 truncate text-[14px] font-bold text-[var(--color-text-primary)] group-hover:text-[var(--color-secondary)] transition-colors">{name}</h3>
+            </div>
+            <div className="mt-0.5 flex items-center gap-1.5 text-[11px] text-[var(--color-text-tertiary)]">
+              <span className="flex-none rounded bg-[var(--color-bg-secondary)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+                {kindLabel}
+              </span>
+              <span>·</span>
+              <span className="truncate">{area}</span>
+              {meta && (
+                <>
+                  <span className="flex-none">·</span>
+                  <span className="truncate">{meta}</span>
+                </>
+              )}
+            </div>
           </div>
         </div>
-      </div>
+      </Link>
 
-      {/* Description */}
-      <div className="flex-1 px-4 pb-3">
+      {/* Description — clickable */}
+      <Link href={detailHref} className="no-underline flex-1 px-4 pb-3">
         <p className="m-0 line-clamp-2 text-[12.5px] leading-relaxed text-[var(--color-text-secondary)]">
           {description || 'Sin descripción'}
         </p>
-      </div>
+      </Link>
 
       {/* Tags */}
       {tags.length > 0 && (
@@ -102,14 +107,14 @@ export function CommunityCard({
         </div>
 
         <div className="flex items-center gap-3 ml-auto text-[11px] text-[var(--color-text-tertiary)]">
-          <span className="flex items-center gap-1" title="Usos">
+          <span className="flex items-center gap-1" title="Clones">
             <Download size={11} />
             {cloneCount}
           </span>
 
           <button
             type="button"
-            onClick={onClone}
+            onClick={(e) => { e.stopPropagation(); onClone() }}
             disabled={cloning}
             className="flex items-center gap-1.5 rounded-[var(--radius-md)] bg-[var(--color-primary)] px-3 py-1.5 text-[11px] font-semibold text-white transition-colors hover:brightness-110 disabled:opacity-60"
           >

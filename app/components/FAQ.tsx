@@ -1,15 +1,23 @@
 const faqs = [
   {
     question: '¿Qué es Soph.ia?',
-    answer: 'Una plataforma para crear agentes de IA y conocimiento de forma colaborativa entre equipos y personas.',
-  },
-  {
-    question: '¿Cuándo abre el acceso?',
-    answer: 'Estamos en etapa previa al lanzamiento. Quienes se suman a la lista son los primeros en probarla.',
+    answer: 'Una plataforma para crear agentes de IA conectados a bases de conocimiento compartidas. Tu equipo sube documentos, crea Knowledge Units y construye agentes que responden con información verificada.',
   },
   {
     question: '¿Necesito saber programar?',
-    answer: 'No. Soph.ia está pensada para que cualquier persona del equipo pueda aportar conocimiento y construir agentes.',
+    answer: 'No. Todo se configura desde una interfaz visual: crear agentes, subir documentos, definir prompts y gestionar permisos. Sin código.',
+  },
+  {
+    question: '¿Qué modelos de IA puedo usar?',
+    answer: 'Soph.ia soporta múltiples proveedores: OpenAI (GPT), Anthropic (Claude), Google (Gemini) y más. Conectás tus propias API keys y elegís el modelo para cada agente.',
+  },
+  {
+    question: '¿Cómo funciona el marketplace?',
+    answer: 'Podés publicar agentes y Knowledge Units para que otros los clonen a su workspace. El contenido se copia, pero cada equipo usa sus propias API keys. Es código cerrado: el prompt del agente no se expone.',
+  },
+  {
+    question: '¿Mis datos están seguros?',
+    answer: 'Cada organización tiene su propio espacio aislado con Row-Level Security en PostgreSQL. La visibilidad de cada recurso es configurable: privado, equipo, organización o público.',
   },
 ]
 
