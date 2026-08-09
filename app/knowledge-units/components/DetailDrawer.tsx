@@ -1,7 +1,15 @@
-import { X, Trash2 } from 'lucide-react'
+import { X, Trash2, Send, CheckCircle2, RotateCcw } from 'lucide-react'
 import { Badge } from '../../components/dashboard/Badge'
 import { approvalSteps, qualityColor, stepDotColor, typeVisual } from '../lib'
-import { statusTone, type KnowledgeUnit } from '../data'
+import { statusTone, type KnowledgeUnit, type KUStatus } from '../data'
+
+const NEXT_ACTION: Record<KUStatus, { label: string; icon: React.ReactNode; nextStatus: KUStatus } | null> = {
+  Borrador: { label: 'Enviar a revisión', icon: <Send size={13} />, nextStatus: 'En revisión' },
+  'En revisión': { label: 'Aprobar', icon: <CheckCircle2 size={13} />, nextStatus: 'Aprobada' },
+  Aprobada: { label: 'Publicar', icon: <CheckCircle2 size={13} />, nextStatus: 'Publicada' },
+  Publicada: null,
+  'Por vencer': { label: 'Renovar aprobación', icon: <RotateCcw size={13} />, nextStatus: 'Aprobada' },
+}
 
 export function DetailDrawer({
   unit,
@@ -9,12 +17,14 @@ export function DetailDrawer({
   onShare,
   onEdit,
   onDelete,
+  onStatusChange,
 }: {
   unit: KnowledgeUnit
   onClose: () => void
   onShare: () => void
   onEdit: () => void
   onDelete: () => void
+  onStatusChange: (newStatus: KUStatus) => void
 }) {
   const visual = typeVisual(unit.type)
   const steps = approvalSteps(unit.status, { author: unit.author, edited: unit.edited })
@@ -85,6 +95,16 @@ export function DetailDrawer({
             <Badge tone={statusTone[unit.status]}>{unit.status}</Badge>
             <span className="text-xs text-[var(--color-text-secondary)]">Editada {unit.edited}</span>
           </div>
+          {NEXT_ACTION[unit.status] && (
+            <button
+              type="button"
+              onClick={() => onStatusChange(NEXT_ACTION[unit.status]!.nextStatus)}
+              className="mb-3 flex w-full items-center justify-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--color-primary)] bg-[var(--color-primary)]/8 px-3 py-2 text-xs font-semibold text-[var(--color-primary)] hover:bg-[var(--color-primary)]/15"
+            >
+              {NEXT_ACTION[unit.status]!.icon}
+              {NEXT_ACTION[unit.status]!.label}
+            </button>
+          )}
           <div className="flex flex-col gap-2.5">
             {steps.map((st, i) => {
               const colors = stepDotColor(st.state)

@@ -2,6 +2,7 @@ import { createClient } from '../../../../lib/supabase/server'
 import { fetchCurrentProfile } from '../../../../lib/profile'
 import { decrypt } from '../../../../lib/crypto'
 import { getProviderForModel } from '../../../../lib/providers'
+import { embedTexts } from '../../../../lib/embeddings'
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string }
 
@@ -89,21 +90,34 @@ async function streamGoogle(apiKey: string, model: string, messages: ChatMessage
 
 function createSSEStream(
   upstreamBody: ReadableStream<Uint8Array>,
-  provider: string
+  provider: string,
+  onComplete?: (fullText: string) => Promise<void> | void
 ): ReadableStream {
   const decoder = new TextDecoder()
   let buffer = ''
+  let fullText = ''
 
   return new ReadableStream({
     async start(controller) {
       const reader = upstreamBody.getReader()
 
+      async function finish() {
+        controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'))
+        controller.close()
+        if (onComplete) {
+          try {
+            await onComplete(fullText)
+          } catch (err) {
+            console.error('onComplete error:', err)
+          }
+        }
+      }
+
       try {
         while (true) {
           const { done, value } = await reader.read()
           if (done) {
-            controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'))
-            controller.close()
+            await finish()
             return
           }
 
@@ -115,8 +129,7 @@ function createSSEStream(
             if (!line.startsWith('data: ')) continue
             const payload = line.slice(6).trim()
             if (payload === '[DONE]') {
-              controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n'))
-              controller.close()
+              await finish()
               return
             }
 
@@ -135,6 +148,7 @@ function createSSEStream(
               }
 
               if (text) {
+                fullText += text
                 const sseData = JSON.stringify({ text })
                 controller.enqueue(new TextEncoder().encode(`data: ${sseData}\n\n`))
               }
@@ -164,7 +178,10 @@ export async function POST(
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 })
     }
 
-    const { messages } = (await request.json()) as { messages: ChatMessage[] }
+    const { messages, conversation_id } = (await request.json()) as {
+      messages: ChatMessage[]
+      conversation_id?: string
+    }
     if (!messages?.length) {
       return new Response(JSON.stringify({ error: 'No messages' }), { status: 400 })
     }
@@ -207,20 +224,68 @@ export async function POST(
 
     const kuIds = (kuLinks ?? []).map((row) => row.knowledge_unit_id)
     let kuContext = ''
-    if (kuIds.length > 0) {
-      const { data: kus } = await supabase
-        .from('knowledge_units')
-        .select('name, type, area, content')
-        .in('id', kuIds)
 
-      if (kus && kus.length > 0) {
-        kuContext = kus
-          .map((ku) => {
-            const header = `### ${ku.name} (${ku.type} · ${ku.area})`
-            const body = (ku.content as string | null)?.trim() || '(sin contenido)'
-            return `${header}\n${body}`
-          })
-          .join('\n\n---\n\n')
+    if (kuIds.length > 0) {
+      // Try semantic search first (RAG). Falls back to naive full-content
+      // injection if no chunks exist yet or OpenAI key is missing.
+      const lastUserMsg = [...messages].reverse().find((m) => m.role === 'user')?.content ?? ''
+
+      let usedRag = false
+      if (lastUserMsg.trim()) {
+        const { data: openaiKeyRow } = await supabase
+          .from('api_keys')
+          .select('encrypted_key')
+          .eq('profile_id', profile.id)
+          .eq('provider', 'openai')
+          .maybeSingle()
+
+        if (openaiKeyRow) {
+          try {
+            const openaiKey = decrypt(openaiKeyRow.encrypted_key)
+            const [queryEmbedding] = await embedTexts(openaiKey, [lastUserMsg])
+
+            const { data: matches } = await supabase.rpc('match_ku_chunks', {
+              query_embedding: queryEmbedding as unknown as string,
+              ku_ids: kuIds,
+              match_count: 6,
+            })
+
+            if (matches && matches.length > 0) {
+              const { data: kuNames } = await supabase
+                .from('knowledge_units')
+                .select('id, name')
+                .in('id', kuIds)
+              const nameById = new Map((kuNames ?? []).map((k) => [k.id, k.name]))
+
+              kuContext = (matches as { ku_id: string; content: string; similarity: number }[])
+                .map((m) => {
+                  const name = nameById.get(m.ku_id) ?? 'KU'
+                  return `### ${name} (similaridad ${(m.similarity * 100).toFixed(0)}%)\n${m.content}`
+                })
+                .join('\n\n---\n\n')
+              usedRag = true
+            }
+          } catch (e) {
+            console.error('RAG search failed, falling back to full content:', e)
+          }
+        }
+      }
+
+      if (!usedRag) {
+        const { data: kus } = await supabase
+          .from('knowledge_units')
+          .select('name, type, area, content')
+          .in('id', kuIds)
+
+        if (kus && kus.length > 0) {
+          kuContext = kus
+            .map((ku) => {
+              const header = `### ${ku.name} (${ku.type} · ${ku.area})`
+              const body = (ku.content as string | null)?.trim() || '(sin contenido)'
+              return `${header}\n${body}`
+            })
+            .join('\n\n---\n\n')
+        }
       }
     }
 
@@ -274,15 +339,60 @@ export async function POST(
       .update({ usage_count: (agent.usage_count ?? 0) + 1 })
       .eq('id', agentId)
 
-    const stream = createSSEStream(upstreamBody, provider)
+    let convId = conversation_id || null
+    if (!convId) {
+      const firstUserMsg = messages.find((m) => m.role === 'user')?.content ?? ''
+      const title = firstUserMsg.slice(0, 60) || null
+      const { data: newConv, error: convErr } = await supabase
+        .from('conversations')
+        .insert({
+          agent_id: agentId,
+          profile_id: profile.id,
+          organization_id: profile.organization_id,
+          title,
+        })
+        .select('id')
+        .single()
+      if (convErr) {
+        console.error('Failed to create conversation:', convErr)
+      } else {
+        convId = newConv.id
+      }
+    }
 
-    return new Response(stream, {
-      headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-      },
+    if (convId) {
+      const lastUserMsg = messages[messages.length - 1]
+      if (lastUserMsg?.role === 'user') {
+        await supabase.from('messages').insert({
+          conversation_id: convId,
+          role: 'user',
+          content: lastUserMsg.content,
+        })
+      }
+    }
+
+    const stream = createSSEStream(upstreamBody, provider, async (fullText) => {
+      if (convId && fullText.trim()) {
+        await supabase.from('messages').insert({
+          conversation_id: convId,
+          role: 'assistant',
+          content: fullText,
+        })
+        await supabase
+          .from('conversations')
+          .update({ updated_at: new Date().toISOString() })
+          .eq('id', convId)
+      }
     })
+
+    const headers: HeadersInit = {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+    }
+    if (convId) headers['x-conversation-id'] = convId
+
+    return new Response(stream, { headers })
   } catch (err) {
     const msg = err instanceof Error ? err.message : 'Error interno'
     return new Response(JSON.stringify({ error: msg }), { status: 500 })

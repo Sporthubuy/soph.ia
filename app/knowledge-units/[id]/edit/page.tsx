@@ -86,6 +86,7 @@ export default function KUEditorPage() {
     setError(null)
     try {
       const body = fields ?? { name, content, type, area, status, tags }
+      const contentChanged = !fields || 'content' in body
       const res = await fetch(`/api/knowledge-units/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -100,6 +101,11 @@ export default function KUEditorPage() {
       setDirty(false)
       setSaved(true)
       setTimeout(() => setSaved(false), 2000)
+
+      // Best-effort reindex when content changed. Silent if OpenAI key missing.
+      if (contentChanged) {
+        fetch(`/api/knowledge-units/${id}/reindex`, { method: 'POST' }).catch(() => {})
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error al guardar')
     } finally {

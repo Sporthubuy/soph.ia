@@ -58,6 +58,16 @@ export async function PATCH(
       return NextResponse.json({ error: 'No fields to update' }, { status: 400 })
     }
 
+    let previousStatus: string | null = null
+    if ('status' in updates) {
+      const { data: current } = await supabase
+        .from('knowledge_units')
+        .select('status')
+        .eq('id', id)
+        .maybeSingle()
+      previousStatus = current?.status ?? null
+    }
+
     const { data, error } = await supabase
       .from('knowledge_units')
       .update(updates)
@@ -66,6 +76,15 @@ export async function PATCH(
       .single()
 
     if (error) throw error
+
+    if (previousStatus && previousStatus !== data.status) {
+      await supabase.from('knowledge_unit_history').insert({
+        knowledge_unit_id: id,
+        actor_id: profile.id,
+        action: `cambió el estado de "${previousStatus}" a "${data.status}"`,
+      })
+    }
+
     return NextResponse.json(data)
   } catch (error) {
     console.error('Error updating knowledge unit:', error)

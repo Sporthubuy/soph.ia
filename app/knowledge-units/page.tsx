@@ -136,6 +136,21 @@ export default function KnowledgeUnitsPage() {
     }
   }
 
+  async function handleStatusChange(unitId: string, newStatus: KUStatus) {
+    try {
+      const res = await fetch(`/api/knowledge-units/${unitId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      })
+      if (!res.ok) throw new Error()
+      setUnits((prev) => prev.map((u) => (u.id === unitId ? { ...u, status: newStatus } : u)))
+      setDetailUnit((prev) => (prev && prev.id === unitId ? { ...prev, status: newStatus } : prev))
+    } catch {
+      setError('No se pudo actualizar el estado')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)]">
       <AppHeader
@@ -207,6 +222,13 @@ export default function KnowledgeUnitsPage() {
                       shares: selectedUnits.flatMap((u) => u.shares),
                     })
                   }}
+                  onApprove={async () => {
+                    const ids = Array.from(selected)
+                    for (const id of ids) {
+                      await handleStatusChange(id, 'Aprobada')
+                    }
+                    setSelected(new Set())
+                  }}
                   onClear={() => setSelected(new Set())}
                 />
               )}
@@ -237,6 +259,7 @@ export default function KnowledgeUnitsPage() {
               onShare={() => setShareTarget({ name: detailUnit.name, shares: detailUnit.shares })}
               onEdit={() => handleEdit(detailUnit)}
               onDelete={() => setDeleteUnit(detailUnit)}
+              onStatusChange={(newStatus) => handleStatusChange(detailUnit.id, newStatus)}
             />
           )}
         </div>
