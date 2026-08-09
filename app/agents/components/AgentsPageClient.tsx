@@ -1,11 +1,9 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Plus } from 'lucide-react'
 import type { Agent } from '../data'
 import { AgentsGrid } from './AgentsGrid'
-import { AgentModal } from './AgentModal'
 
 export function AgentsPageClient({
   agents,
@@ -15,7 +13,6 @@ export function AgentsPageClient({
   dataError: string | null
 }) {
   const router = useRouter()
-  const [showCreate, setShowCreate] = useState(false)
 
   function handleRefresh() {
     router.refresh()
@@ -32,7 +29,7 @@ export function AgentsPageClient({
         </div>
         <button
           type="button"
-          onClick={() => setShowCreate(true)}
+          onClick={() => router.push('/agents/new')}
           className="flex items-center gap-2 rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-white hover:opacity-90"
         >
           <Plus size={18} />
@@ -57,7 +54,7 @@ export function AgentsPageClient({
           </p>
           <button
             type="button"
-            onClick={() => setShowCreate(true)}
+            onClick={() => router.push('/agents/new')}
             className="rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
           >
             Crear primer agente
@@ -66,16 +63,6 @@ export function AgentsPageClient({
       )}
 
       {!dataError && agents.length > 0 && <AgentsGrid agents={agents} onRefresh={handleRefresh} />}
-
-      {showCreate && (
-        <AgentModal
-          onClose={() => setShowCreate(false)}
-          onSaved={() => {
-            setShowCreate(false)
-            handleRefresh()
-          }}
-        />
-      )}
     </div>
   )
 }

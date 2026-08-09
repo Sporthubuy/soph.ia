@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Zap, MoreVertical, Play, Pencil, Trash2 } from 'lucide-react'
 import type { Agent } from '../data'
-import { AgentModal } from './AgentModal'
 import { DeleteAgentModal } from './DeleteAgentModal'
 
 export function AgentsGrid({
@@ -15,7 +14,6 @@ export function AgentsGrid({
   onRefresh: () => void
 }) {
   const router = useRouter()
-  const [editAgent, setEditAgent] = useState<Agent | null>(null)
   const [deleteAgent, setDeleteAgent] = useState<Agent | null>(null)
   const [openMenu, setOpenMenu] = useState<string | null>(null)
 
@@ -78,7 +76,7 @@ export function AgentsGrid({
                       type="button"
                       onClick={() => {
                         setOpenMenu(null)
-                        setEditAgent(agent)
+                        router.push(`/agents/${agent.id}/edit`)
                       }}
                       className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]"
                     >
@@ -126,7 +124,7 @@ export function AgentsGrid({
             <div className="flex gap-2">
               <button
                 type="button"
-                onClick={() => setEditAgent(agent)}
+                onClick={() => router.push(`/agents/${agent.id}/edit`)}
                 className="flex-1 rounded-[var(--radius-md)] border border-[var(--color-border)] px-3 py-2 text-xs font-medium text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)]"
               >
                 Editar
@@ -143,17 +141,6 @@ export function AgentsGrid({
           </div>
         ))}
       </div>
-
-      {editAgent && (
-        <AgentModal
-          agent={editAgent}
-          onClose={() => setEditAgent(null)}
-          onSaved={() => {
-            setEditAgent(null)
-            onRefresh()
-          }}
-        />
-      )}
 
       {deleteAgent && (
         <DeleteAgentModal

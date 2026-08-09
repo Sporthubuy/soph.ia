@@ -5,7 +5,9 @@ import { getProviderForModel } from '../../../../lib/providers'
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string }
 
-async function streamAnthropic(apiKey: string, model: string, messages: ChatMessage[], systemPrompt: string) {
+type ModelParams = { maxTokens: number; temperature: number }
+
+async function streamAnthropic(apiKey: string, model: string, messages: ChatMessage[], systemPrompt: string, params: ModelParams) {
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -15,7 +17,8 @@ async function streamAnthropic(apiKey: string, model: string, messages: ChatMess
     },
     body: JSON.stringify({
       model,
-      max_tokens: 4096,
+      max_tokens: params.maxTokens,
+      temperature: params.temperature,
       system: systemPrompt,
       messages: messages.map((m) => ({ role: m.role, content: m.content })),
       stream: true,
@@ -30,7 +33,7 @@ async function streamAnthropic(apiKey: string, model: string, messages: ChatMess
   return res.body
 }
 
-async function streamOpenAI(apiKey: string, model: string, messages: ChatMessage[], systemPrompt: string) {
+async function streamOpenAI(apiKey: string, model: string, messages: ChatMessage[], systemPrompt: string, params: ModelParams) {
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -39,7 +42,8 @@ async function streamOpenAI(apiKey: string, model: string, messages: ChatMessage
     },
     body: JSON.stringify({
       model,
-      max_tokens: 4096,
+      max_tokens: params.maxTokens,
+      temperature: params.temperature,
       messages: [
         { role: 'system', content: systemPrompt },
         ...messages.map((m) => ({ role: m.role, content: m.content })),
@@ -56,7 +60,7 @@ async function streamOpenAI(apiKey: string, model: string, messages: ChatMessage
   return res.body
 }
 
-async function streamGoogle(apiKey: string, model: string, messages: ChatMessage[], systemPrompt: string) {
+async function streamGoogle(apiKey: string, model: string, messages: ChatMessage[], systemPrompt: string, params: ModelParams) {
   const contents = messages.map((m) => ({
     role: m.role === 'assistant' ? 'model' : 'user',
     parts: [{ text: m.content }],
@@ -70,7 +74,7 @@ async function streamGoogle(apiKey: string, model: string, messages: ChatMessage
       body: JSON.stringify({
         system_instruction: { parts: [{ text: systemPrompt }] },
         contents,
-        generationConfig: { maxOutputTokens: 4096 },
+        generationConfig: { maxOutputTokens: params.maxTokens, temperature: params.temperature },
       }),
     }
   )
@@ -167,7 +171,7 @@ export async function POST(
 
     const { data: agent, error: agentErr } = await supabase
       .from('agents')
-      .select('id, name, description, model, type')
+      .select('id, name, description, model, type, prompt, restrict_to_kus, temperature, max_tokens, usage_count')
       .eq('id', agentId)
       .single()
 
@@ -196,20 +200,69 @@ export async function POST(
 
     const apiKey = decrypt(keyRow.encrypted_key)
 
-    const systemPrompt = [
-      `Sos "${agent.name}", un agente de tipo ${agent.type} en la plataforma Soph.ia.`,
-      agent.description ? `Tu propósito: ${agent.description}` : '',
-      'Respondé de forma clara, concisa y profesional. Usá español rioplatense.',
-    ].filter(Boolean).join(' ')
+    const { data: kuLinks } = await supabase
+      .from('agents_knowledge_units')
+      .select('knowledge_unit_id')
+      .eq('agent_id', agentId)
+
+    const kuIds = (kuLinks ?? []).map((row) => row.knowledge_unit_id)
+    let kuContext = ''
+    if (kuIds.length > 0) {
+      const { data: kus } = await supabase
+        .from('knowledge_units')
+        .select('name, type, area, content')
+        .in('id', kuIds)
+
+      if (kus && kus.length > 0) {
+        kuContext = kus
+          .map((ku) => {
+            const header = `### ${ku.name} (${ku.type} · ${ku.area})`
+            const body = (ku.content as string | null)?.trim() || '(sin contenido)'
+            return `${header}\n${body}`
+          })
+          .join('\n\n---\n\n')
+      }
+    }
+
+    const systemParts: string[] = []
+    if (agent.prompt?.trim()) {
+      systemParts.push(agent.prompt.trim())
+    } else {
+      systemParts.push(`Sos "${agent.name}", un agente de tipo ${agent.type} en Soph.ia.`)
+      if (agent.description) systemParts.push(`Tu propósito: ${agent.description}`)
+      systemParts.push('Respondé de forma clara, concisa y profesional. Usá español rioplatense.')
+    }
+
+    if (kuContext) {
+      systemParts.push(
+        `\n---\nContexto disponible (Knowledge Units asignadas por el usuario). Usalo cuando sea relevante:\n\n${kuContext}`
+      )
+      if (agent.restrict_to_kus) {
+        systemParts.push(
+          '\nIMPORTANTE: solo podés responder usando la información del contexto de arriba. Si la pregunta no puede responderse con ese contexto, decí honestamente que no tenés esa información en tus fuentes.'
+        )
+      }
+    } else if (agent.restrict_to_kus) {
+      systemParts.push(
+        '\nIMPORTANTE: este agente está configurado para responder solo con Knowledge Units, pero no tiene ninguna asignada. Aclaralo al usuario y pedile que asigne KUs desde la edición del agente.'
+      )
+    }
+
+    const systemPrompt = systemParts.join(' ')
+
+    const params: ModelParams = {
+      maxTokens: typeof agent.max_tokens === 'number' ? agent.max_tokens : 4096,
+      temperature: typeof agent.temperature === 'number' ? agent.temperature : 0.7,
+    }
 
     let upstreamBody: ReadableStream<Uint8Array> | null = null
 
     if (provider === 'anthropic') {
-      upstreamBody = await streamAnthropic(apiKey, agent.model, messages, systemPrompt)
+      upstreamBody = await streamAnthropic(apiKey, agent.model, messages, systemPrompt, params)
     } else if (provider === 'openai') {
-      upstreamBody = await streamOpenAI(apiKey, agent.model, messages, systemPrompt)
+      upstreamBody = await streamOpenAI(apiKey, agent.model, messages, systemPrompt, params)
     } else if (provider === 'google') {
-      upstreamBody = await streamGoogle(apiKey, agent.model, messages, systemPrompt)
+      upstreamBody = await streamGoogle(apiKey, agent.model, messages, systemPrompt, params)
     }
 
     if (!upstreamBody) {
@@ -218,7 +271,7 @@ export async function POST(
 
     await supabase
       .from('agents')
-      .update({ usage_count: (agent as Record<string, unknown>).usage_count as number || 0 + 1 })
+      .update({ usage_count: (agent.usage_count ?? 0) + 1 })
       .eq('id', agentId)
 
     const stream = createSSEStream(upstreamBody, provider)
