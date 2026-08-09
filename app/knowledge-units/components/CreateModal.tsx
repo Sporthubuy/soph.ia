@@ -2,10 +2,25 @@
 
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Info, X, Upload, FileText, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
-import { areas, typeChoices } from '../data'
+import { Info, X, Upload, FileText, Loader2, CheckCircle2, AlertCircle, Plus } from 'lucide-react'
+import { areas as defaultAreas, typeChoices } from '../data'
 
 type UploadResult = { id?: string; name: string; error?: string }
+
+const VISIBILITY_OPTIONS = [
+  { value: 'private', label: 'Solo yo',          hint: 'Solo vos podés verla' },
+  { value: 'team',    label: 'Mi equipo',         hint: 'Los miembros del equipo' },
+  { value: 'org',     label: 'Mi organización',   hint: 'Toda la organización' },
+  { value: 'public',  label: 'Toda la comunidad', hint: 'Cualquier usuario de Soph.ia' },
+]
+
+function fileToKUName(filename: string): string {
+  return filename
+    .replace(/\.[^.]+$/, '')        // quita extensión
+    .replace(/[-_]+/g, ' ')         // guiones/underscores → espacio
+    .replace(/\b\w/g, (c) => c.toUpperCase()) // Title Case
+    .trim()
+}
 
 export function CreateModal({
   onClose,
@@ -21,16 +36,30 @@ export function CreateModal({
 
   const [name, setName] = useState('')
   const [type, setType] = useState(typeChoices[0].value)
-  const [area, setArea] = useState(areas[1])
+  const [customAreas, setCustomAreas] = useState<string[]>([])
+  const [area, setArea] = useState(defaultAreas[1])
+  const [newArea, setNewArea] = useState('')
+  const [showNewArea, setShowNewArea] = useState(false)
   const [visibility, setVisibility] = useState('team')
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const allAreas = [...defaultAreas.filter((a) => a !== 'Todas las áreas'), ...customAreas]
 
   const [dragActive, setDragActive] = useState(false)
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [uploading, setUploading] = useState(false)
   const [uploadResults, setUploadResults] = useState<UploadResult[] | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  function addCustomArea() {
+    const trimmed = newArea.trim()
+    if (!trimmed || allAreas.includes(trimmed)) return
+    setCustomAreas((prev) => [...prev, trimmed])
+    setArea(trimmed)
+    setNewArea('')
+    setShowNewArea(false)
+  }
 
   async function handleSave() {
     if (!name.trim() || saving) return
@@ -45,16 +74,21 @@ export function CreateModal({
     }
   }
 
+  function addFiles(files: File[]) {
+    if (files.length === 0) return
+    setSelectedFiles((prev) => [...prev, ...files])
+    // auto-fill name from first file if blank tab hasn't been touched
+    if (!name && files.length === 1) setName(fileToKUName(files[0].name))
+  }
+
   function handleDrop(e: React.DragEvent) {
     e.preventDefault()
     setDragActive(false)
-    const files = Array.from(e.dataTransfer.files)
-    if (files.length > 0) setSelectedFiles((prev) => [...prev, ...files])
+    addFiles(Array.from(e.dataTransfer.files))
   }
 
   function handleFileInput(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files ?? [])
-    if (files.length > 0) setSelectedFiles((prev) => [...prev, ...files])
+    addFiles(Array.from(e.target.files ?? []))
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
 
@@ -180,15 +214,40 @@ export function CreateModal({
               <div className="grid grid-cols-2 gap-3.5">
                 <div>
                   <label className="mb-1.5 block text-[12.5px] font-semibold text-[var(--color-text-primary)]">Área</label>
-                  <select
-                    value={area}
-                    onChange={(e) => setArea(e.target.value)}
-                    className="w-full cursor-pointer rounded-[var(--radius-md)] border border-[var(--color-border)] px-3 py-2.5 font-[family-name:var(--font-sans)] text-[13px] text-[var(--color-text-primary)] outline-none"
-                  >
-                    {areas.map((a) => (
-                      <option key={a} value={a}>{a}</option>
-                    ))}
-                  </select>
+                  {showNewArea ? (
+                    <div className="flex gap-1.5">
+                      <input
+                        autoFocus
+                        type="text"
+                        value={newArea}
+                        onChange={(e) => setNewArea(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') addCustomArea(); if (e.key === 'Escape') setShowNewArea(false) }}
+                        placeholder="Nueva área…"
+                        className="min-w-0 flex-1 rounded-[var(--radius-md)] border border-[var(--color-primary)] px-3 py-2.5 text-[13px] text-[var(--color-text-primary)] outline-none"
+                      />
+                      <button type="button" onClick={addCustomArea} className="rounded-[var(--radius-md)] bg-[var(--color-primary)] px-3 text-white text-xs font-semibold">OK</button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-1.5">
+                      <select
+                        value={area}
+                        onChange={(e) => setArea(e.target.value)}
+                        className="min-w-0 flex-1 cursor-pointer rounded-[var(--radius-md)] border border-[var(--color-border)] px-3 py-2.5 text-[13px] text-[var(--color-text-primary)] outline-none"
+                      >
+                        {allAreas.map((a) => (
+                          <option key={a} value={a}>{a}</option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() => setShowNewArea(true)}
+                        title="Crear área"
+                        className="flex items-center justify-center rounded-[var(--radius-md)] border border-[var(--color-border)] px-2.5 text-[var(--color-text-tertiary)] hover:border-[var(--color-primary)] hover:text-[var(--color-primary)]"
+                      >
+                        <Plus size={15} />
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="mb-1.5 block text-[12.5px] font-semibold text-[var(--color-text-primary)]">Visibilidad</label>
@@ -197,10 +256,13 @@ export function CreateModal({
                     onChange={(e) => setVisibility(e.target.value)}
                     className="w-full cursor-pointer rounded-[var(--radius-md)] border border-[var(--color-border)] px-3 py-2.5 font-[family-name:var(--font-sans)] text-[13px] text-[var(--color-text-primary)] outline-none"
                   >
-                    <option value="private">Solo yo</option>
-                    <option value="team">Mi equipo</option>
-                    <option value="org">Toda la organización</option>
+                    {VISIBILITY_OPTIONS.map((v) => (
+                      <option key={v.value} value={v.value}>{v.label}</option>
+                    ))}
                   </select>
+                  <p className="mt-1 text-[11px] text-[var(--color-text-tertiary)]">
+                    {VISIBILITY_OPTIONS.find((v) => v.value === visibility)?.hint}
+                  </p>
                 </div>
               </div>
 

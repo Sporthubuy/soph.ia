@@ -632,12 +632,11 @@ export default function SettingsPage() {
                   <SectionCard key={prov.id}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className={`flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] text-sm font-bold text-white ${
-                          prov.id === 'anthropic' ? 'bg-[#D97757]' :
-                          prov.id === 'openai' ? 'bg-[#10A37F]' :
-                          'bg-[#4285F4]'
-                        }`}>
-                          {prov.id === 'anthropic' ? 'A' : prov.id === 'openai' ? 'O' : 'G'}
+                        <div
+                          className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] text-sm font-bold text-white"
+                          style={{ backgroundColor: prov.color }}
+                        >
+                          {prov.initial}
                         </div>
                         <div>
                           <div className="text-sm font-semibold text-[var(--color-text-primary)]">{prov.name}</div>
