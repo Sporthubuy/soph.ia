@@ -21,6 +21,8 @@ import {
 } from 'lucide-react'
 import { MODELS, PROVIDERS, type Provider } from '../../lib/providers'
 
+type AgentVisibility = 'private' | 'team' | 'org' | 'public'
+
 type AgentDraft = {
   name: string
   description: string
@@ -33,7 +35,15 @@ type AgentDraft = {
   web_search: boolean
   knowledge_unit_ids: string[]
   status: 'draft' | 'published' | 'archived'
+  visibility: AgentVisibility
 }
+
+const VISIBILITY_OPTIONS = [
+  { value: 'private', label: 'Solo yo',           hint: 'Solo vos podés ver este agente' },
+  { value: 'team',    label: 'Mi equipo',          hint: 'Los miembros de tu equipo' },
+  { value: 'org',     label: 'Mi organización',    hint: 'Toda tu organización' },
+  { value: 'public',  label: 'Toda la comunidad',  hint: 'Visible en el marketplace' },
+]
 
 type KUOption = {
   id: string
@@ -81,6 +91,7 @@ export function AgentBuilder({ agentId }: { agentId?: string }) {
     web_search: false,
     knowledge_unit_ids: [],
     status: 'draft',
+    visibility: 'team',
   })
 
   const [loading, setLoading] = useState(isEditing)
@@ -140,6 +151,7 @@ export function AgentBuilder({ agentId }: { agentId?: string }) {
           web_search: !!agent.web_search,
           knowledge_unit_ids: Array.isArray(agentKus) ? agentKus.map((k: { knowledge_unit_id: string }) => k.knowledge_unit_id) : [],
           status: agent.status || 'draft',
+          visibility: agent.visibility || 'team',
         })
       })
       .catch(() => setError('No se pudo cargar el agente'))
@@ -192,6 +204,7 @@ export function AgentBuilder({ agentId }: { agentId?: string }) {
         web_search: draft.web_search,
         knowledge_unit_ids: draft.knowledge_unit_ids,
         status: draft.status,
+        visibility: draft.visibility,
       }
 
       const url = isEditing ? `/api/agents/${agentId}` : '/api/agents'
@@ -567,6 +580,17 @@ export function AgentBuilder({ agentId }: { agentId?: string }) {
                     </select>
                   </Field>
                 )}
+                <Field label="Visibilidad" hint={VISIBILITY_OPTIONS.find((v) => v.value === draft.visibility)?.hint}>
+                  <select
+                    value={draft.visibility}
+                    onChange={(e) => update('visibility', e.target.value as AgentVisibility)}
+                    className="w-56 cursor-pointer rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-primary)] px-3 py-2 text-sm text-[var(--color-text-primary)] outline-none"
+                  >
+                    {VISIBILITY_OPTIONS.map((v) => (
+                      <option key={v.value} value={v.value}>{v.label}</option>
+                    ))}
+                  </select>
+                </Field>
               </div>
             )}
           </Section>

@@ -14,7 +14,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
 
     const { data, error } = await supabase
       .from('agents')
-      .select('id, name, description, type, status, model, prompt, temperature, max_tokens, restrict_to_kus, web_search, version, usage_count, tags, created_at, updated_at')
+      .select('id, name, description, type, status, visibility, model, prompt, temperature, max_tokens, restrict_to_kus, web_search, version, usage_count, tags, created_at, updated_at')
       .eq('id', id)
       .maybeSingle()
 
@@ -42,7 +42,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     }
 
     const body = await request.json()
-    const allowed = ['name', 'description', 'type', 'status', 'model', 'prompt', 'temperature', 'max_tokens', 'restrict_to_kus', 'web_search'] as const
+    const allowed = ['name', 'description', 'type', 'status', 'model', 'prompt', 'temperature', 'max_tokens', 'restrict_to_kus', 'web_search', 'visibility'] as const
     const updates: Record<string, unknown> = {}
     for (const key of allowed) {
       if (key in body) updates[key] = body[key]
