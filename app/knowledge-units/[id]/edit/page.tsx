@@ -4,16 +4,27 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import {
   ArrowLeft,
-  Save,
-  Loader2,
-  FileText,
-  Eye,
-  Pencil,
+  Bold,
+  CheckCircle2,
   ChevronDown,
+  Clock,
+  Code,
+  Eye,
+  FileText,
+  Heading1,
+  Heading2,
+  Heading3,
+  Italic,
+  Link2,
+  List,
+  ListOrdered,
+  Loader2,
+  Minus,
+  Pencil,
+  Quote,
+  Save,
   Tag,
   X,
-  Clock,
-  CheckCircle2,
 } from 'lucide-react'
 
 type KUData = {
@@ -280,11 +291,13 @@ export default function KUEditorPage() {
         {/* Editor area */}
         <div className="flex min-w-0 flex-1 flex-col">
           {mode === 'edit' ? (
-            <textarea
-              ref={textareaRef}
-              value={content}
-              onChange={(e) => handleContentChange(e.target.value)}
-              placeholder="Escribí el contenido de tu knowledge unit en Markdown...
+            <>
+              <MarkdownToolbar textareaRef={textareaRef} onInsert={(val) => { handleContentChange(val) }} content={content} />
+              <textarea
+                ref={textareaRef}
+                value={content}
+                onChange={(e) => handleContentChange(e.target.value)}
+                placeholder="Escribí el contenido de tu knowledge unit en Markdown...
 
 # Título
 
@@ -295,9 +308,10 @@ Tu conocimiento va acá. Podés usar:
 - `código inline` y bloques de código
 - [enlaces](https://ejemplo.com)
 - Tablas, citas, y más"
-              className="flex-1 resize-none bg-[var(--color-bg-secondary)] p-6 font-mono text-sm leading-relaxed text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-tertiary)]"
-              spellCheck
-            />
+                className="flex-1 resize-none bg-[var(--color-bg-secondary)] p-6 font-mono text-sm leading-relaxed text-[var(--color-text-primary)] outline-none placeholder:text-[var(--color-text-tertiary)]"
+                spellCheck
+              />
+            </>
           ) : (
             <div className="flex-1 overflow-y-auto bg-[var(--color-bg-secondary)] p-6">
               <div className="prose-custom mx-auto max-w-3xl">
@@ -464,6 +478,96 @@ Tu conocimiento va acá. Podés usar:
           </div>
         </div>
       </div>
+    </div>
+  )
+}
+
+function MarkdownToolbar({
+  textareaRef,
+  onInsert,
+  content,
+}: {
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>
+  onInsert: (value: string) => void
+  content: string
+}) {
+  function wrap(before: string, after: string) {
+    const ta = textareaRef.current
+    if (!ta) return
+    const start = ta.selectionStart
+    const end = ta.selectionEnd
+    const selected = content.slice(start, end)
+    const replacement = selected ? `${before}${selected}${after}` : `${before}texto${after}`
+    const next = content.slice(0, start) + replacement + content.slice(end)
+    onInsert(next)
+    requestAnimationFrame(() => {
+      ta.focus()
+      const cursorPos = selected ? start + replacement.length : start + before.length
+      const cursorEnd = selected ? cursorPos : cursorPos + 5
+      ta.setSelectionRange(cursorPos, cursorEnd)
+    })
+  }
+
+  function prefix(pfx: string) {
+    const ta = textareaRef.current
+    if (!ta) return
+    const start = ta.selectionStart
+    const lineStart = content.lastIndexOf('\n', start - 1) + 1
+    const next = content.slice(0, lineStart) + pfx + content.slice(lineStart)
+    onInsert(next)
+    requestAnimationFrame(() => {
+      ta.focus()
+      ta.setSelectionRange(start + pfx.length, start + pfx.length)
+    })
+  }
+
+  function insertBlock(block: string) {
+    const ta = textareaRef.current
+    if (!ta) return
+    const start = ta.selectionStart
+    const before = start > 0 && content[start - 1] !== '\n' ? '\n' : ''
+    const next = content.slice(0, start) + before + block + content.slice(start)
+    onInsert(next)
+    requestAnimationFrame(() => {
+      ta.focus()
+      ta.setSelectionRange(start + before.length + block.length, start + before.length + block.length)
+    })
+  }
+
+  const buttons = [
+    { icon: Bold, title: 'Negrita (⌘B)', action: () => wrap('**', '**') },
+    { icon: Italic, title: 'Cursiva (⌘I)', action: () => wrap('*', '*') },
+    { icon: Code, title: 'Código inline', action: () => wrap('`', '`') },
+    null,
+    { icon: Heading1, title: 'Título H1', action: () => prefix('# ') },
+    { icon: Heading2, title: 'Título H2', action: () => prefix('## ') },
+    { icon: Heading3, title: 'Título H3', action: () => prefix('### ') },
+    null,
+    { icon: List, title: 'Lista', action: () => prefix('- ') },
+    { icon: ListOrdered, title: 'Lista numerada', action: () => prefix('1. ') },
+    { icon: Quote, title: 'Cita', action: () => prefix('> ') },
+    { icon: Minus, title: 'Separador', action: () => insertBlock('\n---\n') },
+    null,
+    { icon: Link2, title: 'Enlace', action: () => wrap('[', '](url)') },
+  ]
+
+  return (
+    <div className="flex items-center gap-0.5 border-b border-[var(--color-border)] bg-[var(--color-bg-primary)] px-4 py-1.5">
+      {buttons.map((btn, i) =>
+        btn === null ? (
+          <div key={i} className="mx-1 h-5 w-px bg-[var(--color-border)]" />
+        ) : (
+          <button
+            key={btn.title}
+            type="button"
+            title={btn.title}
+            onClick={btn.action}
+            className="rounded p-1.5 text-[var(--color-text-tertiary)] hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+          >
+            <btn.icon size={15} />
+          </button>
+        )
+      )}
     </div>
   )
 }

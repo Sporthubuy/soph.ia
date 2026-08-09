@@ -1,11 +1,12 @@
 import Link from 'next/link'
-import { Bot, Globe, LayoutGrid, Network, Plus, Settings } from 'lucide-react'
+import { Bot, Globe, LayoutGrid, Network, Plus, Settings, Users } from 'lucide-react'
 
 const MODULES = [
   { key: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
   { key: 'agents', label: 'Agentes', href: '/agents', icon: Bot },
   { key: 'knowledge-units', label: 'Knowledge units', href: '/knowledge-units', icon: Network },
   { key: 'community', label: 'Comunidad', href: '/community', icon: Globe },
+  { key: 'team', label: 'Equipo', href: '/team', icon: Users },
 ] as const
 
 type SidebarKey = (typeof MODULES)[number]['key'] | 'settings' | 'profile'
