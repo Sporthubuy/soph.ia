@@ -3,8 +3,9 @@ import { fetchCurrentProfile } from '../../../lib/profile'
 import { fetchAgentById, updateAgent, deleteAgent } from '../../../agents/db'
 import { NextResponse } from 'next/server'
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const supabase = await createClient()
     const profile = await fetchCurrentProfile(supabase)
 
@@ -12,7 +13,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const agent = await fetchAgentById(supabase, params.id)
+    const agent = await fetchAgentById(supabase, id)
     if (!agent) {
       return NextResponse.json({ error: 'Agent not found' }, { status: 404 })
     }
@@ -27,8 +28,9 @@ export async function GET(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const supabase = await createClient()
     const profile = await fetchCurrentProfile(supabase)
 
@@ -37,7 +39,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     }
 
     const body = await request.json()
-    const agent = await updateAgent(supabase, params.id, body)
+    const agent = await updateAgent(supabase, id, body)
 
     return NextResponse.json(agent)
   } catch (error) {
@@ -49,8 +51,9 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params
     const supabase = await createClient()
     const profile = await fetchCurrentProfile(supabase)
 
@@ -58,7 +61,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    await deleteAgent(supabase, params.id)
+    await deleteAgent(supabase, id)
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Error deleting agent:', error)

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Zap, MoreVertical, Play, Pencil, Trash2 } from 'lucide-react'
 import type { Agent } from '../data'
 import { AgentModal } from './AgentModal'
@@ -13,6 +14,7 @@ export function AgentsGrid({
   agents: Agent[]
   onRefresh: () => void
 }) {
+  const router = useRouter()
   const [editAgent, setEditAgent] = useState<Agent | null>(null)
   const [deleteAgent, setDeleteAgent] = useState<Agent | null>(null)
   const [openMenu, setOpenMenu] = useState<string | null>(null)
@@ -131,6 +133,7 @@ export function AgentsGrid({
               </button>
               <button
                 type="button"
+                onClick={() => router.push(`/agents/${agent.id}/chat`)}
                 className="rounded-[var(--radius-md)] border border-[var(--color-border)] px-3 py-2 hover:bg-[var(--color-bg-secondary)]"
                 aria-label="Ejecutar"
               >
