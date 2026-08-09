@@ -232,9 +232,9 @@ export function AgentBuilder({ agentId }: { agentId?: string }) {
     () =>
       PROVIDERS.filter((p) => configuredProviders.includes(p.id)).map((p) => ({
         ...p,
-        models: MODELS.filter((m) => m.provider === p.id),
+        models: availableModels.filter((m) => m.provider === p.id),
       })),
-    [configuredProviders]
+    [configuredProviders, availableModels]
   )
   const unavailableProviders = PROVIDERS.filter((p) => !configuredProviders.includes(p.id))
   const noKeysConfigured = !loadingKeys && configuredProviders.length === 0

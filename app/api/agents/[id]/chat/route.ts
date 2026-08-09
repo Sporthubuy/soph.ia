@@ -169,10 +169,10 @@ function createSSEStream(
 
 export async function POST(
   request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: agentId } = await params
+    const { id: agentId } = await context.params
     const supabase = await createClient()
     const profile = await fetchCurrentProfile(supabase)
     if (!profile) {
