@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  User, Globe, Bell, Shield, Key, Save, LogOut, Loader2, Trash2, Check, AlertCircle,
+  User, Globe, Bell, Shield, Key, Save, LogOut, Loader2, Trash2, Check, AlertCircle, Gauge,
 } from 'lucide-react'
 import { AppHeader } from '../components/shell/AppHeader'
 import { AppSidebar } from '../components/shell/AppSidebar'
@@ -26,6 +26,7 @@ const TABS = [
   { key: 'preferences', label: 'Preferencias', icon: Globe },
   { key: 'notifications', label: 'Notificaciones', icon: Bell },
   { key: 'api-keys', label: 'API Keys', icon: Key },
+  { key: 'usage', label: 'Uso', icon: Gauge },
   { key: 'security', label: 'Seguridad', icon: Shield },
 ] as const
 
@@ -362,7 +363,7 @@ export default function SettingsPage() {
       <div className="flex items-start">
         <AppSidebar active="settings" />
 
-        <div className="min-w-0 flex-1 px-8 pb-14 pt-8" style={{ maxWidth: 1200 }}>
+        <div className="min-w-0 flex-1 px-4 pb-14 pt-6 sm:px-6 md:px-8 md:pt-8" style={{ maxWidth: 1200 }}>
           <div className="mb-6">
             <h1 className="m-0 mb-1.5 text-[28px] font-bold">Configuración</h1>
             <p className="m-0 text-sm text-[var(--color-text-secondary)]">Administrá tu cuenta y preferencias</p>
@@ -690,6 +691,8 @@ export default function SettingsPage() {
           )}
 
           {/* Security tab */}
+          {tab === 'usage' && <UsageTab />}
+
           {tab === 'security' && (
             <div className="space-y-6">
               <SectionCard>
@@ -730,6 +733,83 @@ export default function SettingsPage() {
           )}
         </div>
       </div>
+    </div>
+  )
+}
+
+function UsageTab() {
+  const [data, setData] = useState<{
+    messages_today: number
+    daily_limit: number
+    remaining: number
+    totals: { conversations: number; knowledge_units: number; agents: number }
+  } | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetch('/api/usage')
+      .then((r) => r.json())
+      .then(setData)
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-12">
+        <Loader2 size={20} className="animate-spin text-[var(--color-text-tertiary)]" />
+      </div>
+    )
+  }
+
+  if (!data) {
+    return (
+      <div className="rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg-primary)] p-6 text-sm text-[var(--color-error)]">
+        No se pudo cargar el uso.
+      </div>
+    )
+  }
+
+  const percent = Math.min(100, Math.round((data.messages_today / data.daily_limit) * 100))
+  const barColor = percent > 90 ? 'var(--color-error)' : percent > 70 ? 'var(--color-warning)' : 'var(--color-primary)'
+
+  return (
+    <div className="space-y-6">
+      <SectionCard>
+        <h2 className="mb-1 text-lg font-semibold">Mensajes de hoy</h2>
+        <p className="mb-4 text-sm text-[var(--color-text-secondary)]">
+          Cada mensaje que le mandás a un agente cuenta contra tu límite diario. Se resetea cada 24 horas.
+        </p>
+        <div className="mb-2 flex items-baseline justify-between">
+          <span className="text-2xl font-bold text-[var(--color-text-primary)]">
+            {data.messages_today} <span className="text-sm font-normal text-[var(--color-text-tertiary)]">/ {data.daily_limit}</span>
+          </span>
+          <span className="text-sm text-[var(--color-text-secondary)]">
+            {data.remaining} {data.remaining === 1 ? 'restante' : 'restantes'}
+          </span>
+        </div>
+        <div className="h-2 overflow-hidden rounded-full bg-[var(--color-bg-tertiary)]">
+          <div className="h-full rounded-full transition-all" style={{ width: `${percent}%`, background: barColor }} />
+        </div>
+      </SectionCard>
+
+      <SectionCard>
+        <h2 className="mb-5 text-lg font-semibold">Tus totales</h2>
+        <div className="grid grid-cols-3 gap-4">
+          <StatBlock label="Conversaciones" value={data.totals.conversations} />
+          <StatBlock label="Knowledge units" value={data.totals.knowledge_units} />
+          <StatBlock label="Agentes" value={data.totals.agents} />
+        </div>
+      </SectionCard>
+    </div>
+  )
+}
+
+function StatBlock({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-secondary)] p-4">
+      <div className="text-2xl font-bold text-[var(--color-text-primary)]">{value}</div>
+      <div className="text-xs text-[var(--color-text-tertiary)]">{label}</div>
     </div>
   )
 }

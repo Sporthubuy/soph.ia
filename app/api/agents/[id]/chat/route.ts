@@ -3,6 +3,7 @@ import { fetchCurrentProfile } from '../../../../lib/profile'
 import { decrypt } from '../../../../lib/crypto'
 import { getProviderForModel } from '../../../../lib/providers'
 import { embedTexts } from '../../../../lib/embeddings'
+import { DAILY_CHAT_LIMIT, since24h } from '../../../../lib/usage'
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string }
 
@@ -184,6 +185,29 @@ export async function POST(
     }
     if (!messages?.length) {
       return new Response(JSON.stringify({ error: 'No messages' }), { status: 400 })
+    }
+
+    const { data: userConvIds } = await supabase
+      .from('conversations')
+      .select('id')
+      .eq('profile_id', profile.id)
+
+    if (userConvIds && userConvIds.length > 0) {
+      const { count } = await supabase
+        .from('messages')
+        .select('id', { count: 'exact', head: true })
+        .in('conversation_id', userConvIds.map((c) => c.id))
+        .eq('role', 'user')
+        .gte('created_at', since24h())
+
+      if ((count ?? 0) >= DAILY_CHAT_LIMIT) {
+        return new Response(
+          JSON.stringify({
+            error: `Alcanzaste el límite diario de ${DAILY_CHAT_LIMIT} mensajes. Volvé a intentar en unas horas.`,
+          }),
+          { status: 429 }
+        )
+      }
     }
 
     const { data: agent, error: agentErr } = await supabase

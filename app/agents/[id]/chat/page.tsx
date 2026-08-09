@@ -54,7 +54,10 @@ export default function ChatPage() {
   const [streaming, setStreaming] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    if (typeof window === 'undefined') return true
+    return window.innerWidth >= 768
+  })
   const [loadingMessages, setLoadingMessages] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
@@ -254,9 +257,17 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-screen bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)]">
+      {/* Mobile backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       {sidebarOpen && (
-        <aside className="flex w-64 flex-none flex-col border-r border-[var(--color-border)] bg-[var(--color-bg-primary)]">
+        <aside className="fixed left-0 top-0 z-40 flex h-full w-72 max-w-[85vw] flex-none flex-col border-r border-[var(--color-border)] bg-[var(--color-bg-primary)] md:static md:z-auto md:h-auto md:w-64 md:max-w-none">
           <div className="border-b border-[var(--color-border)] p-3">
             <button
               onClick={newConversation}

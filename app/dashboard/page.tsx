@@ -58,7 +58,7 @@ export default async function DashboardPage() {
       <div className="flex items-start">
         <AppSidebar active="dashboard" />
 
-        <div className="min-w-0 flex-1 px-8 pb-14 pt-8" style={{ maxWidth: 1200 }}>
+        <div className="min-w-0 flex-1 px-4 pb-14 pt-6 sm:px-6 md:px-8 md:pt-8" style={{ maxWidth: 1200 }}>
           {dataError ? (
             <div className="mb-6 rounded-[var(--radius-md)] border border-[var(--color-error)] bg-[rgba(239,68,68,0.06)] px-4 py-3 text-sm text-[var(--color-error)]">
               No pudimos cargar el panel por completo. Reintentá en unos segundos.{' '}

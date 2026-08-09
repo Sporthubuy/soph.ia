@@ -19,7 +19,7 @@ export function AgentsPageClient({
   }
 
   return (
-    <div className="min-w-0 flex-1 px-8 pb-14 pt-8" style={{ maxWidth: 1200 }}>
+    <div className="min-w-0 flex-1 px-4 pb-14 pt-6 sm:px-6 md:px-8 md:pt-8" style={{ maxWidth: 1200 }}>
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="m-0 mb-1.5 text-[28px] font-bold text-[var(--color-text-primary)]">Agentes</h1>

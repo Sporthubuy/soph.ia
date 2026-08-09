@@ -99,7 +99,7 @@ export default function TeamPage() {
       />
       <div className="flex items-start">
         <AppSidebar active="settings" />
-        <div className="min-w-0 flex-1 px-8 pb-14 pt-8" style={{ maxWidth: 900 }}>
+        <div className="min-w-0 flex-1 px-4 pb-14 pt-6 sm:px-6 md:px-8 md:pt-8" style={{ maxWidth: 900 }}>
           <div className="mb-6">
             <Link href="/settings" className="mb-3 inline-flex items-center gap-1.5 text-xs text-[var(--color-text-tertiary)] hover:text-[var(--color-text-primary)]">
               <ArrowLeft size={12} />

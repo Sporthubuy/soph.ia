@@ -276,7 +276,7 @@ export default function KUEditorPage() {
       )}
 
       {/* Main */}
-      <div className="flex min-h-0 flex-1">
+      <div className="flex min-h-0 flex-1 flex-col md:flex-row">
         {/* Editor area */}
         <div className="flex min-w-0 flex-1 flex-col">
           {mode === 'edit' ? (
@@ -322,7 +322,7 @@ Tu conocimiento va acá. Podés usar:
         </div>
 
         {/* Right sidebar - metadata */}
-        <div className="w-[280px] flex-none overflow-y-auto border-l border-[var(--color-border)] bg-[var(--color-bg-primary)]">
+        <div className="max-h-64 flex-none overflow-y-auto border-t border-[var(--color-border)] bg-[var(--color-bg-primary)] md:max-h-none md:w-[280px] md:border-l md:border-t-0">
           <div className="flex flex-col gap-5 p-4">
             {/* Status */}
             <div>
