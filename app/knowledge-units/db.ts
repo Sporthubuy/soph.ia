@@ -110,7 +110,7 @@ export async function fetchKnowledgeUnitRaw(supabase: SupabaseClient, id: string
 
 export async function createKnowledgeUnit(
   supabase: SupabaseClient,
-  input: { name: string; type: string; area: string; organizationId: string; authorId: string }
+  input: { name: string; type: string; area: string; visibility?: string; organizationId: string; authorId: string }
 ): Promise<KnowledgeUnit> {
   const { data: created, error } = await supabase
     .from('knowledge_units')
@@ -118,6 +118,7 @@ export async function createKnowledgeUnit(
       name: input.name,
       type: input.type,
       area: input.area,
+      visibility: input.visibility || 'team',
       organization_id: input.organizationId,
       author_id: input.authorId,
     })

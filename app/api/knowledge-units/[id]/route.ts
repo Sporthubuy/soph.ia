@@ -16,7 +16,7 @@ export async function GET(
 
     const { data, error } = await supabase
       .from('knowledge_units')
-      .select('id, name, type, area, status, format, language, version, quality, usage_count, tags, content, expires_at, source, created_at, updated_at')
+      .select('id, name, type, area, status, format, language, visibility, version, quality, usage_count, tags, content, expires_at, source, created_at, updated_at')
       .eq('id', id)
       .maybeSingle()
 
@@ -48,7 +48,7 @@ export async function PATCH(
     }
 
     const body = await request.json()
-    const allowed = ['name', 'content', 'type', 'area', 'status', 'tags', 'format', 'language'] as const
+    const allowed = ['name', 'content', 'type', 'area', 'status', 'tags', 'format', 'language', 'visibility'] as const
     const updates: Record<string, unknown> = {}
     for (const key of allowed) {
       if (key in body) updates[key] = body[key]
@@ -72,7 +72,7 @@ export async function PATCH(
       .from('knowledge_units')
       .update(updates)
       .eq('id', id)
-      .select('id, name, content, type, area, status, format, language, version, quality, tags, updated_at')
+      .select('id, name, content, type, area, status, format, language, visibility, version, quality, tags, updated_at')
       .single()
 
     if (error) throw error

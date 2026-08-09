@@ -2,7 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 const PROTECTED_PREFIXES = ['/dashboard', '/knowledge-units', '/agents', '/profile', '/settings']
-const AUTH_PREFIXES = ['/login', '/signup']
+const AUTH_PREFIXES = ['/login', '/signup', '/forgot-password']
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request })

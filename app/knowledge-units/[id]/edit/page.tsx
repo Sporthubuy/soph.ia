@@ -25,6 +25,7 @@ type KUData = {
   status: string
   format: string
   language: string
+  visibility: string
   version: number
   quality: number
   tags: string[]
@@ -53,6 +54,7 @@ export default function KUEditorPage() {
   const [type, setType] = useState('')
   const [area, setArea] = useState('')
   const [status, setStatus] = useState('')
+  const [visibility, setVisibility] = useState('team')
   const [tags, setTags] = useState<string[]>([])
   const [tagInput, setTagInput] = useState('')
   const [mode, setMode] = useState<'edit' | 'preview'>('edit')
@@ -74,18 +76,19 @@ export default function KUEditorPage() {
         setType(data.type)
         setArea(data.area)
         setStatus(data.status)
+        setVisibility(data.visibility || 'team')
         setTags(data.tags || [])
       })
       .catch(() => setError('No se pudo cargar la knowledge unit'))
       .finally(() => setLoading(false))
   }, [id])
 
-  const save = useCallback(async (fields?: Partial<{ name: string; content: string; type: string; area: string; status: string; tags: string[] }>) => {
+  const save = useCallback(async (fields?: Partial<{ name: string; content: string; type: string; area: string; status: string; tags: string[]; visibility: string }>) => {
     setSaving(true)
     setSaved(false)
     setError(null)
     try {
-      const body = fields ?? { name, content, type, area, status, tags }
+      const body = fields ?? { name, content, type, area, status, tags, visibility }
       const contentChanged = !fields || 'content' in body
       const res = await fetch(`/api/knowledge-units/${id}`, {
         method: 'PATCH',
@@ -111,7 +114,7 @@ export default function KUEditorPage() {
     } finally {
       setSaving(false)
     }
-  }, [id, name, content, type, area, status, tags])
+  }, [id, name, content, type, area, status, tags, visibility])
 
   function scheduleAutosave() {
     if (saveTimeoutRef.current) clearTimeout(saveTimeoutRef.current)
@@ -382,6 +385,23 @@ Tu conocimiento va acá. Podés usar:
                 <option value="Producto">Producto</option>
                 <option value="Operaciones">Operaciones</option>
                 <option value="General">General</option>
+              </select>
+            </div>
+
+            {/* Visibility */}
+            <div>
+              <label className="mb-1.5 block text-[11px] font-bold tracking-[.05em] text-[var(--color-text-tertiary)]">VISIBILIDAD</label>
+              <select
+                value={visibility}
+                onChange={(e) => {
+                  setVisibility(e.target.value)
+                  setDirty(true)
+                }}
+                className="w-full cursor-pointer rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-bg-secondary)] px-3 py-2 text-xs text-[var(--color-text-primary)] outline-none"
+              >
+                <option value="private">Solo yo</option>
+                <option value="team">Mi equipo</option>
+                <option value="org">Toda la organización</option>
               </select>
             </div>
 

@@ -106,13 +106,14 @@ export default function KnowledgeUnitsPage() {
     setStatusFilter('Todas')
   }
 
-  async function handleCreate(draft: { name: string; type: string; area: string }) {
+  async function handleCreate(draft: { name: string; type: string; area: string; visibility: string }) {
     if (!profile) return
     const supabase = createClient()
     const newUnit = await createKnowledgeUnit(supabase, {
       name: draft.name,
       type: draft.type,
       area: draft.area,
+      visibility: draft.visibility,
       organizationId: profile.organization_id,
       authorId: profile.id,
     })
@@ -265,7 +266,17 @@ export default function KnowledgeUnitsPage() {
         </div>
       </div>
 
-      {createOpen && <CreateModal onClose={() => setCreateOpen(false)} onSave={handleCreate} />}
+      {createOpen && (
+        <CreateModal
+          onClose={() => setCreateOpen(false)}
+          onSave={handleCreate}
+          onUploaded={async () => {
+            const supabase = createClient()
+            const fresh = await fetchKnowledgeUnits(supabase)
+            setUnits(fresh)
+          }}
+        />
+      )}
       {shareTarget && <ShareModal unit={shareTarget} onClose={() => setShareTarget(null)} />}
       {deleteUnit && (
         <DeleteKUModal

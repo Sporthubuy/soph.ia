@@ -73,7 +73,12 @@ function LoginForm() {
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-[12.5px] font-semibold text-[var(--color-text-primary)]">Contraseña</label>
+              <div className="mb-1.5 flex items-center justify-between">
+                <label className="block text-[12.5px] font-semibold text-[var(--color-text-primary)]">Contraseña</label>
+                <Link href="/forgot-password" className="text-xs font-semibold text-[var(--color-secondary)]">
+                  Olvidé mi contraseña
+                </Link>
+              </div>
               <input
                 type="password"
                 required
