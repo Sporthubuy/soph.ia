@@ -15,6 +15,7 @@ import { PendingList } from './components/PendingList'
 import { ActivityFeed } from './components/ActivityFeed'
 import { AgentsList } from './components/AgentsList'
 import { KnowledgeUnitsList } from './components/KnowledgeUnitsList'
+import { OnboardingChecklist } from './components/OnboardingChecklist'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -73,6 +74,7 @@ export default async function DashboardPage() {
                 <p className="m-0 text-sm text-[var(--color-text-secondary)]">{subtitle}</p>
               </div>
 
+              <OnboardingChecklist />
               <QuickActions />
               <Invites />
 
