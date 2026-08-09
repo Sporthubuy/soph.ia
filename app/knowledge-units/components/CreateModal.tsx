@@ -14,7 +14,7 @@ const VISIBILITY_OPTIONS = [
   { value: 'public',  label: 'Toda la comunidad', hint: 'Cualquier usuario de Soph.ia' },
 ]
 
-function fileToKUName(filename: string): string {
+function fileNameToKUName(filename: string): string {
   return filename
     .replace(/\.[^.]+$/, '')        // quita extensión
     .replace(/[-_]+/g, ' ')         // guiones/underscores → espacio
@@ -78,7 +78,7 @@ export function CreateModal({
     if (files.length === 0) return
     setSelectedFiles((prev) => [...prev, ...files])
     // auto-fill name from first file if blank tab hasn't been touched
-    if (!name && files.length === 1) setName(fileToKUName(files[0].name))
+    if (!name && files.length === 1) setName(fileNameToKUName(files[0].name))
   }
 
   function handleDrop(e: React.DragEvent) {

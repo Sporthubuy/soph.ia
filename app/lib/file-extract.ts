@@ -6,8 +6,16 @@ export type ExtractResult = {
   format: 'Markdown' | 'PDF' | 'DOCX' | 'Texto'
 }
 
+function fileNameToKUName(filename: string): string {
+  return filename
+    .replace(/\.[^.]+$/, '')        // quita extensión
+    .replace(/[-_]+/g, ' ')         // guiones/underscores → espacio
+    .replace(/\b\w/g, (c) => c.toUpperCase()) // Title Case
+    .trim()
+}
+
 export async function extractFromFile(file: File): Promise<ExtractResult> {
-  const name = file.name.replace(/\.[^/.]+$/, '')
+  const name = fileNameToKUName(file.name)
   const lower = file.name.toLowerCase()
   const buffer = Buffer.from(await file.arrayBuffer())
 
