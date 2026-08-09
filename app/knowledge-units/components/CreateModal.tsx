@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Info, X, Upload, FileText, Loader2, CheckCircle2, AlertCircle, Plus } from 'lucide-react'
+import { Info, X, Upload, FileText, Loader2, CheckCircle2, AlertCircle, Plus, FileDown } from 'lucide-react'
 import { areas as defaultAreas, typeChoices } from '../data'
 
 type UploadResult = { id?: string; name: string; error?: string }
@@ -12,6 +12,19 @@ const VISIBILITY_OPTIONS = [
   { value: 'team',    label: 'Mi equipo',         hint: 'Los miembros del equipo' },
   { value: 'org',     label: 'Mi organización',   hint: 'Toda la organización' },
   { value: 'public',  label: 'Toda la comunidad', hint: 'Cualquier usuario de Soph.ia' },
+]
+
+const STATUS_OPTIONS = [
+  { value: 'Borrador', label: 'Borrador' },
+  { value: 'En revisión', label: 'En revisión' },
+  { value: 'Aprobada', label: 'Aprobada' },
+  { value: 'Publicada', label: 'Publicada' },
+  { value: 'Por vencer', label: 'Por vencer' },
+]
+
+const CONTENT_OPTIONS = [
+  { id: 'write', label: 'Escribir contenido', icon: FileText },
+  { id: 'upload', label: 'Subir archivo', icon: Upload },
 ]
 
 function fileNameToKUName(filename: string): string {
@@ -28,29 +41,35 @@ export function CreateModal({
   onUploaded,
 }: {
   onClose: () => void
-  onSave: (draft: { name: string; type: string; area: string; visibility: string }) => Promise<void>
+  onSave: (draft: { name: string; type: string; area: string; visibility: string; status: string; content?: string }) => Promise<void>
   onUploaded?: () => void
 }) {
   const router = useRouter()
-  const [tab, setTab] = useState<'blank' | 'upload'>('blank')
 
+  // Step 1: Basic info
   const [name, setName] = useState('')
-  const [type, setType] = useState(typeChoices[0].value)
-  const [customAreas, setCustomAreas] = useState<string[]>([])
   const [area, setArea] = useState(defaultAreas[1])
+  const [customAreas, setCustomAreas] = useState<string[]>([])
   const [newArea, setNewArea] = useState('')
   const [showNewArea, setShowNewArea] = useState(false)
   const [visibility, setVisibility] = useState('team')
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [status, setStatus] = useState('Borrador')
 
-  const allAreas = [...defaultAreas.filter((a) => a !== 'Todas las áreas'), ...customAreas]
+  // Step 2: Content mode
+  const [contentMode, setContentMode] = useState<'write' | 'upload' | null>(null)
+  const [content, setContent] = useState('')
 
+  // Upload state
   const [dragActive, setDragActive] = useState(false)
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [uploading, setUploading] = useState(false)
   const [uploadResults, setUploadResults] = useState<UploadResult[] | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const allAreas = [...defaultAreas.filter((a) => a !== 'Todas las áreas'), ...customAreas]
 
   function addCustomArea() {
     const trimmed = newArea.trim()
@@ -61,12 +80,13 @@ export function CreateModal({
     setShowNewArea(false)
   }
 
-  async function handleSave() {
+  async function handleSaveBlank() {
     if (!name.trim() || saving) return
     setSaving(true)
     setError(null)
     try {
-      await onSave({ name: name.trim(), type, area, visibility })
+      await onSave({ name: name.trim(), type: 'Documento', area, visibility, status, content })
+      onClose()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No pudimos crear la knowledge unit.')
     } finally {
@@ -77,8 +97,6 @@ export function CreateModal({
   function addFiles(files: File[]) {
     if (files.length === 0) return
     setSelectedFiles((prev) => [...prev, ...files])
-    // auto-fill name from first file if blank tab hasn't been touched
-    if (!name && files.length === 1) setName(fileNameToKUName(files[0].name))
   }
 
   function handleDrop(e: React.DragEvent) {
@@ -133,8 +151,12 @@ export function CreateModal({
       <div className="max-h-[88vh] w-full max-w-[620px] overflow-y-auto rounded-[var(--radius-lg)] bg-[var(--color-bg-primary)] shadow-[var(--shadow-xl)]">
         <div className="flex items-center gap-3 border-b border-[var(--color-border)] px-6 py-5">
           <div className="flex-1">
-            <div className="text-[17px] font-bold text-[var(--color-text-primary)]">Crear knowledge unit</div>
-            <div className="text-[12.5px] text-[var(--color-text-secondary)]">Empezá desde cero o subí un archivo.</div>
+            <div className="text-[17px] font-bold text-[var(--color-text-primary)]">
+              {contentMode === null ? 'Crear knowledge unit' : 'Agregar contenido'}
+            </div>
+            <div className="text-[12.5px] text-[var(--color-text-secondary)]">
+              {contentMode === null ? 'Completá los datos básicos' : contentMode === 'write' ? 'Escribí o pegá el contenido' : 'Subí un archivo para crear la KU'}
+            </div>
           </div>
           <button
             type="button"
@@ -146,36 +168,13 @@ export function CreateModal({
           </button>
         </div>
 
-        <div className="flex border-b border-[var(--color-border)] px-6">
-          <button
-            type="button"
-            onClick={() => setTab('blank')}
-            className={`border-b-2 px-3 py-3 text-sm font-semibold transition-colors ${
-              tab === 'blank'
-                ? 'border-[var(--color-primary)] text-[var(--color-primary)]'
-                : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
-            }`}
-          >
-            En blanco
-          </button>
-          <button
-            type="button"
-            onClick={() => setTab('upload')}
-            className={`border-b-2 px-3 py-3 text-sm font-semibold transition-colors ${
-              tab === 'upload'
-                ? 'border-[var(--color-primary)] text-[var(--color-primary)]'
-                : 'border-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'
-            }`}
-          >
-            Subir archivo
-          </button>
-        </div>
-
-        {tab === 'blank' ? (
-          <>
-            <div className="flex flex-col gap-5 px-6 py-5.5">
+        <div className="flex flex-col gap-5 px-6 py-5.5">
+          {contentMode === null ? (
+            <>
               <div>
-                <label className="mb-1.5 block text-[12.5px] font-semibold text-[var(--color-text-primary)]">Nombre</label>
+                <label className="mb-1.5 block text-[12.5px] font-semibold text-[var(--color-text-primary)]">
+                  Título *
+                </label>
                 <input
                   type="text"
                   value={name}
@@ -183,32 +182,6 @@ export function CreateModal({
                   placeholder="Ej. Política de devoluciones 2026"
                   className="w-full rounded-[var(--radius-md)] border border-[var(--color-border)] px-3 py-2.5 font-[family-name:var(--font-sans)] text-[13.5px] text-[var(--color-text-primary)] outline-none"
                 />
-              </div>
-
-              <div>
-                <div className="mb-2 text-[12.5px] font-semibold text-[var(--color-text-primary)]">Tipo de contenido</div>
-                <div className="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2">
-                  {typeChoices.map((tc) => {
-                    const active = tc.value === type
-                    return (
-                      <button
-                        key={tc.value}
-                        type="button"
-                        onClick={() => setType(tc.value)}
-                        className="rounded-[var(--radius-md)] p-3 text-left"
-                        style={{
-                          background: active ? 'rgba(59,130,246,0.08)' : 'var(--color-bg-primary)',
-                          border: `1.5px solid ${active ? 'var(--color-secondary)' : 'var(--color-border)'}`,
-                        }}
-                      >
-                        <div className="text-[12.5px] font-semibold" style={{ color: active ? 'var(--color-secondary)' : 'var(--color-text-primary)' }}>
-                          {tc.label}
-                        </div>
-                        <div className="mt-0.5 text-[11px] text-[var(--color-text-tertiary)]">{tc.hint}</div>
-                      </button>
-                    )
-                  })}
-                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3.5">
@@ -221,11 +194,16 @@ export function CreateModal({
                         type="text"
                         value={newArea}
                         onChange={(e) => setNewArea(e.target.value)}
-                        onKeyDown={(e) => { if (e.key === 'Enter') addCustomArea(); if (e.key === 'Escape') setShowNewArea(false) }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') addCustomArea()
+                          if (e.key === 'Escape') setShowNewArea(false)
+                        }}
                         placeholder="Nueva área…"
                         className="min-w-0 flex-1 rounded-[var(--radius-md)] border border-[var(--color-primary)] px-3 py-2.5 text-[13px] text-[var(--color-text-primary)] outline-none"
                       />
-                      <button type="button" onClick={addCustomArea} className="rounded-[var(--radius-md)] bg-[var(--color-primary)] px-3 text-white text-xs font-semibold">OK</button>
+                      <button type="button" onClick={addCustomArea} className="rounded-[var(--radius-md)] bg-[var(--color-primary)] px-3 text-white text-xs font-semibold">
+                        OK
+                      </button>
                     </div>
                   ) : (
                     <div className="flex gap-1.5">
@@ -235,7 +213,9 @@ export function CreateModal({
                         className="min-w-0 flex-1 cursor-pointer rounded-[var(--radius-md)] border border-[var(--color-border)] px-3 py-2.5 text-[13px] text-[var(--color-text-primary)] outline-none"
                       >
                         {allAreas.map((a) => (
-                          <option key={a} value={a}>{a}</option>
+                          <option key={a} value={a}>
+                            {a}
+                          </option>
                         ))}
                       </select>
                       <button
@@ -249,6 +229,7 @@ export function CreateModal({
                     </div>
                   )}
                 </div>
+
                 <div>
                   <label className="mb-1.5 block text-[12.5px] font-semibold text-[var(--color-text-primary)]">Visibilidad</label>
                   <select
@@ -257,7 +238,9 @@ export function CreateModal({
                     className="w-full cursor-pointer rounded-[var(--radius-md)] border border-[var(--color-border)] px-3 py-2.5 font-[family-name:var(--font-sans)] text-[13px] text-[var(--color-text-primary)] outline-none"
                   >
                     {VISIBILITY_OPTIONS.map((v) => (
-                      <option key={v.value} value={v.value}>{v.label}</option>
+                      <option key={v.value} value={v.value}>
+                        {v.label}
+                      </option>
                     ))}
                   </select>
                   <p className="mt-1 text-[11px] text-[var(--color-text-tertiary)]">
@@ -266,38 +249,67 @@ export function CreateModal({
                 </div>
               </div>
 
+              <div>
+                <label className="mb-1.5 block text-[12.5px] font-semibold text-[var(--color-text-primary)]">Estado</label>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="w-full cursor-pointer rounded-[var(--radius-md)] border border-[var(--color-border)] px-3 py-2.5 font-[family-name:var(--font-sans)] text-[13px] text-[var(--color-text-primary)] outline-none"
+                >
+                  {STATUS_OPTIONS.map((s) => (
+                    <option key={s.value} value={s.value}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <div className="mb-2 text-[12.5px] font-semibold text-[var(--color-text-primary)]">¿Cómo querés agregar contenido?</div>
+                <div className="grid grid-cols-2 gap-2">
+                  {CONTENT_OPTIONS.map((opt) => {
+                    const Icon = opt.icon
+                    return (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => setContentMode(opt.id as 'write' | 'upload')}
+                        className="flex flex-col items-center gap-2 rounded-[var(--radius-md)] border-[1.5px] border-[var(--color-border)] p-4 text-center transition-all hover:border-[var(--color-primary)] hover:bg-[var(--color-hover)]"
+                      >
+                        <Icon size={20} className="text-[var(--color-secondary)]" />
+                        <div className="text-xs font-semibold text-[var(--color-text-primary)]">{opt.label}</div>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
               {error && <p className="m-0 text-sm text-[var(--color-error)]">{error}</p>}
+            </>
+          ) : contentMode === 'write' ? (
+            <>
+              <div>
+                <label className="mb-1.5 block text-[12.5px] font-semibold text-[var(--color-text-primary)]">Contenido (opcional)</label>
+                <textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  placeholder="Pegá o escribí el contenido. Podés editarlo después."
+                  rows={8}
+                  className="w-full rounded-[var(--radius-md)] border border-[var(--color-border)] px-3 py-2.5 font-[family-name:var(--font-sans)] text-[13px] text-[var(--color-text-primary)] outline-none resize-none"
+                />
+              </div>
 
               <div className="flex items-start gap-2.5 rounded-[var(--radius-md)] bg-[rgba(59,130,246,0.07)] p-3.5">
                 <Info size={17} className="mt-0.5 flex-none text-[#1D4FD7]" />
                 <div className="text-[12.5px] leading-relaxed text-[#1D4FD7]">
-                  Al guardar, la unidad queda en <strong className="font-bold">borrador</strong>. Enviala a aprobación cuando esté lista.
+                  Podés editar el contenido después de crear la KU. Si no agregar nada ahora, podés hacerlo luego.
                 </div>
               </div>
-            </div>
 
-            <div className="flex items-center gap-2.5 border-t border-[var(--color-border)] bg-[var(--color-bg-secondary)] px-6 py-4">
-              <span className="flex-1 text-xs text-[var(--color-text-tertiary)]">Podés seguir editándola después de guardar.</span>
-              <button
-                type="button"
-                onClick={onClose}
-                className="rounded-[var(--radius-md)] border border-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--color-primary)] hover:bg-[var(--color-hover)]"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                disabled={!name.trim() || saving}
-                onClick={handleSave}
-                className="rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {saving ? 'Guardando…' : 'Guardar borrador'}
-              </button>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="flex flex-col gap-4 px-6 py-5.5">
+              {error && <p className="m-0 text-sm text-[var(--color-error)]">{error}</p>}
+            </>
+          ) : (
+            <>
               <div
                 onDrop={handleDrop}
                 onDragOver={(e) => {
@@ -313,12 +325,8 @@ export function CreateModal({
                 }`}
               >
                 <Upload size={28} className="text-[var(--color-text-tertiary)]" />
-                <div className="text-sm font-semibold text-[var(--color-text-primary)]">
-                  Arrastrá archivos acá o hacé click
-                </div>
-                <div className="text-xs text-[var(--color-text-tertiary)]">
-                  PDF, DOCX, Markdown, TXT · hasta 25MB por archivo
-                </div>
+                <div className="text-sm font-semibold text-[var(--color-text-primary)]">Arrastrá archivos acá o hacé click</div>
+                <div className="text-xs text-[var(--color-text-tertiary)]">PDF, DOCX, Markdown, TXT · hasta 25MB por archivo</div>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -331,14 +339,9 @@ export function CreateModal({
 
               {selectedFiles.length > 0 && (
                 <div className="flex flex-col gap-1.5">
-                  <div className="text-[11px] font-bold uppercase tracking-wide text-[var(--color-text-tertiary)]">
-                    Seleccionados ({selectedFiles.length})
-                  </div>
+                  <div className="text-[11px] font-bold uppercase tracking-wide text-[var(--color-text-tertiary)]">Seleccionados ({selectedFiles.length})</div>
                   {selectedFiles.map((file, i) => (
-                    <div
-                      key={i}
-                      className="flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--color-border)] px-3 py-2"
-                    >
+                    <div key={i} className="flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--color-border)] px-3 py-2">
                       <FileText size={14} className="flex-none text-[var(--color-text-tertiary)]" />
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-sm text-[var(--color-text-primary)]">{file.name}</div>
@@ -365,9 +368,7 @@ export function CreateModal({
                     <div
                       key={i}
                       className={`flex items-center gap-2 rounded-[var(--radius-md)] px-3 py-2 text-xs ${
-                        r.id
-                          ? 'bg-emerald-500/10 text-emerald-500'
-                          : 'bg-[rgba(239,68,68,0.06)] text-[var(--color-error)]'
+                        r.id ? 'bg-emerald-500/10 text-emerald-500' : 'bg-[rgba(239,68,68,0.06)] text-[var(--color-error)]'
                       }`}
                     >
                       {r.id ? <CheckCircle2 size={14} /> : <AlertCircle size={14} />}
@@ -381,32 +382,63 @@ export function CreateModal({
               )}
 
               {error && <p className="m-0 text-sm text-[var(--color-error)]">{error}</p>}
-            </div>
+            </>
+          )}
+        </div>
 
-            <div className="flex items-center gap-2.5 border-t border-[var(--color-border)] bg-[var(--color-bg-secondary)] px-6 py-4">
-              <span className="flex-1 text-xs text-[var(--color-text-tertiary)]">
-                Cada archivo se convierte en una KU editable.
-              </span>
-              <button
-                type="button"
-                onClick={onClose}
-                disabled={uploading}
-                className="rounded-[var(--radius-md)] border border-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--color-primary)] hover:bg-[var(--color-hover)] disabled:opacity-50"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                disabled={selectedFiles.length === 0 || uploading}
-                onClick={handleUpload}
-                className="flex items-center gap-1.5 rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {uploading && <Loader2 size={14} className="animate-spin" />}
-                {uploading ? 'Subiendo…' : `Subir ${selectedFiles.length || ''}`}
-              </button>
-            </div>
-          </>
-        )}
+        <div className="flex items-center gap-2.5 border-t border-[var(--color-border)] bg-[var(--color-bg-secondary)] px-6 py-4">
+          <span className="flex-1 text-xs text-[var(--color-text-tertiary)]">
+            {contentMode === null ? 'Completá el título para continuar' : 'Podés seguir editando después'}
+          </span>
+
+          {contentMode !== null && (
+            <button
+              type="button"
+              onClick={() => setContentMode(null)}
+              className="rounded-[var(--radius-md)] border border-[var(--color-border)] px-4 py-2.5 text-sm font-semibold text-[var(--color-text-primary)] hover:bg-[var(--color-hover)]"
+            >
+              Atrás
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="rounded-[var(--radius-md)] border border-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-[var(--color-primary)] hover:bg-[var(--color-hover)]"
+          >
+            Cancelar
+          </button>
+
+          {contentMode === null ? (
+            <button
+              type="button"
+              disabled={!name.trim()}
+              onClick={() => setContentMode('write')}
+              className="rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Continuar
+            </button>
+          ) : contentMode === 'write' ? (
+            <button
+              type="button"
+              disabled={!name.trim() || saving}
+              onClick={handleSaveBlank}
+              className="rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {saving ? 'Guardando…' : 'Crear KU'}
+            </button>
+          ) : (
+            <button
+              type="button"
+              disabled={selectedFiles.length === 0 || uploading}
+              onClick={handleUpload}
+              className="flex items-center gap-1.5 rounded-[var(--radius-md)] bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {uploading && <Loader2 size={14} className="animate-spin" />}
+              {uploading ? 'Subiendo…' : `Subir ${selectedFiles.length || ''}`}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )

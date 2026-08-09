@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { name, type, area } = body
+    const { name, type, area, visibility, status, content } = body
 
     if (!name?.trim()) {
       return NextResponse.json({ error: 'El nombre es obligatorio' }, { status: 400 })
@@ -47,10 +47,13 @@ export async function POST(request: Request) {
         name: name.trim(),
         type: type || 'Documento',
         area: area || 'General',
+        visibility: visibility || 'team',
+        status: status || 'Borrador',
+        content: content || null,
         organization_id: profile.organization_id,
         author_id: profile.id,
       })
-      .select('id, name, type, area, status, created_at')
+      .select('id, name, type, area, status, visibility, created_at')
       .single()
 
     if (error) throw error

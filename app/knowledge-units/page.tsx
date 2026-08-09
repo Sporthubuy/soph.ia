@@ -106,7 +106,7 @@ export default function KnowledgeUnitsPage() {
     setStatusFilter('Todas')
   }
 
-  async function handleCreate(draft: { name: string; type: string; area: string; visibility: string }) {
+  async function handleCreate(draft: { name: string; type: string; area: string; visibility: string; status: string; content?: string }) {
     if (!profile) return
     const supabase = createClient()
     const newUnit = await createKnowledgeUnit(supabase, {
@@ -114,6 +114,8 @@ export default function KnowledgeUnitsPage() {
       type: draft.type,
       area: draft.area,
       visibility: draft.visibility,
+      status: draft.status,
+      content: draft.content,
       organizationId: profile.organization_id,
       authorId: profile.id,
     })
