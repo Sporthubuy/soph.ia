@@ -1,13 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Logo } from '../components/Logo'
+import { ForceLightMode } from '../components/ForceLightMode'
 import { createClient } from '../lib/supabase/client'
+import { CheckCircle2 } from 'lucide-react'
 
 export default function SignupPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [fullName, setFullName] = useState('')
   const [organizationName, setOrganizationName] = useState('')
   const [email, setEmail] = useState('')
@@ -22,44 +25,42 @@ export default function SignupPage() {
     setError(null)
 
     try {
-      // Use API endpoint for secure signup with service role
-      const response = await fetch('/api/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: email.trim(),
-          password,
-          fullName: fullName.trim(),
-          organizationName: organizationName.trim(),
-        }),
+      const supabase = createClient()
+      const redirect = searchParams.get('redirect')
+      const emailRedirectTo = `${window.location.origin}/auth/callback${
+        redirect ? `?next=${encodeURIComponent(redirect)}` : ''
+      }`
+
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          data: {
+            full_name: fullName.trim(),
+            organization_name: organizationName.trim(),
+          },
+          emailRedirectTo,
+        },
       })
 
-      const data = await response.json()
-
-      if (!response.ok) {
-        setError(
-          data.error === 'User already registered'
-            ? 'Ya existe una cuenta con ese email.'
-            : data.error || 'Error al crear la cuenta'
-        )
+      if (signUpError) {
+        if (signUpError.message.toLowerCase().includes('already') || signUpError.message.toLowerCase().includes('registered')) {
+          setError('Ya existe una cuenta con ese email.')
+        } else {
+          setError(signUpError.message)
+        }
         setLoading(false)
         return
       }
 
-      // Successful signup - sign in automatically
-      const supabase = createClient()
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password,
-      })
-
-      if (signInError) {
+      // If session is null, Supabase requires email confirmation before login
+      if (!data.session) {
         setCheckEmail(true)
         return
       }
 
-      // Auto-login successful
-      router.push('/dashboard')
+      const dest = redirect && redirect.startsWith('/') && !redirect.startsWith('//') ? redirect : '/dashboard'
+      router.push(dest)
       router.refresh()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido')
@@ -71,15 +72,21 @@ export default function SignupPage() {
   if (checkEmail) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[var(--color-bg-secondary)] px-4">
+        <ForceLightMode />
         <div className="w-full max-w-[380px] rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-bg-primary)] p-7 text-center shadow-[var(--shadow-sm)]">
           <div className="mb-4 flex justify-center">
             <Logo size={32} />
           </div>
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
+            <CheckCircle2 size={26} />
+          </div>
           <h1 className="m-0 mb-1.5 text-lg font-bold text-[var(--color-text-primary)]">Revisá tu email</h1>
           <p className="m-0 text-sm text-[var(--color-text-secondary)]">
-            Te enviamos un enlace de confirmación a <strong className="font-semibold">{email}</strong>. Confirmá tu cuenta para
-            empezar a usar Soph.ia.
+            Te enviamos un link a <strong className="font-semibold text-[var(--color-text-primary)]">{email}</strong> para confirmar tu cuenta.
           </p>
+          <Link href="/login" className="mt-5 inline-block text-sm font-semibold text-[var(--color-primary)]">
+            Volver a iniciar sesión
+          </Link>
         </div>
       </div>
     )
@@ -87,6 +94,7 @@ export default function SignupPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[var(--color-bg-secondary)] px-4 py-10">
+      <ForceLightMode />
       <div className="w-full max-w-[380px]">
         <div className="mb-8 flex justify-center">
           <Logo size={36} />

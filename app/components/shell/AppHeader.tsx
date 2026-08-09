@@ -13,11 +13,27 @@ type SearchResults = {
   members: { id: string; full_name: string; email: string; initials: string }[]
 }
 
-const NOTIFICATIONS = [
-  { text: 'Lucía Fernández publicó una nueva versión de "Política de reembolsos"', when: 'hace 12 min' },
-  { text: 'Tu agente "Soporte N1" alcanzó 300 consultas este mes', when: 'hace 2 horas' },
-  { text: '3 knowledge units necesitan revisión antes del viernes', when: 'ayer' },
-]
+type Notification = {
+  id: string
+  type: string
+  text: string
+  when: string
+  href?: string
+}
+
+function relativeTime(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime()
+  const mins = Math.round(diff / 60000)
+  if (mins < 1) return 'recién'
+  if (mins < 60) return `hace ${mins} min`
+  const hrs = Math.round(mins / 60)
+  if (hrs < 24) return `hace ${hrs} h`
+  const days = Math.round(hrs / 24)
+  if (days === 1) return 'ayer'
+  if (days < 7) return `hace ${days} días`
+  const weeks = Math.round(days / 7)
+  return `hace ${weeks} sem`
+}
 
 export function AppHeader({
   userName,
@@ -37,6 +53,34 @@ export function AppHeader({
   const [searching, setSearching] = useState(false)
   const [results, setResults] = useState<SearchResults>({ agents: [], kus: [], members: [] })
   const searchAbort = useRef<AbortController | null>(null)
+
+  const [notifications, setNotifications] = useState<Notification[]>([])
+  const [readIds, setReadIds] = useState<Set<string>>(() => {
+    if (typeof window === 'undefined') return new Set()
+    try {
+      const stored = localStorage.getItem('sophia:read-notifs')
+      return stored ? new Set(JSON.parse(stored)) : new Set()
+    } catch {
+      return new Set()
+    }
+  })
+
+  useEffect(() => {
+    fetch('/api/notifications')
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data) => Array.isArray(data) && setNotifications(data))
+      .catch(() => {})
+  }, [])
+
+  function markAllRead() {
+    const ids = new Set(notifications.map((n) => n.id))
+    setReadIds(ids)
+    try {
+      localStorage.setItem('sophia:read-notifs', JSON.stringify([...ids]))
+    } catch {}
+  }
+
+  const unreadCount = notifications.filter((n) => !readIds.has(n.id)).length
 
   useEffect(() => {
     if (query.trim().length < 2) {
@@ -208,31 +252,69 @@ export function AppHeader({
             className="relative flex h-10 w-10 items-center justify-center rounded-[var(--radius-md)] text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)]"
           >
             <Bell size={20} />
-            <span className="absolute right-[9px] top-[9px] flex h-4 min-w-4 items-center justify-center rounded-[var(--radius-full)] border-2 border-[var(--color-bg-primary)] bg-[var(--color-error)] px-1 text-[10px] font-bold text-white">
-              {NOTIFICATIONS.length}
-            </span>
+            {unreadCount > 0 && (
+              <span className="absolute right-[9px] top-[9px] flex h-4 min-w-4 items-center justify-center rounded-[var(--radius-full)] border-2 border-[var(--color-bg-primary)] bg-[var(--color-error)] px-1 text-[10px] font-bold text-white">
+                {unreadCount}
+              </span>
+            )}
           </button>
 
           {notifsOpen && (
-            <div className="absolute right-0 top-[calc(100%+8px)] w-[340px]">
+            <div className="absolute right-0 top-[calc(100%+8px)] w-[360px]">
               <Card variant="elevated">
                 <div className="mb-3.5 flex items-center justify-between">
                   <span className="text-sm font-semibold text-[var(--color-text-primary)]">Notificaciones</span>
-                  <button type="button" className="text-xs font-semibold text-[var(--color-secondary)]">
-                    Marcar como leídas
-                  </button>
+                  {unreadCount > 0 && (
+                    <button
+                      type="button"
+                      onClick={markAllRead}
+                      className="text-xs font-semibold text-[var(--color-secondary)] hover:underline"
+                    >
+                      Marcar como leídas
+                    </button>
+                  )}
                 </div>
-                <div className="flex flex-col gap-3.5">
-                  {NOTIFICATIONS.map((n, i) => (
-                    <div key={i} className="flex items-start gap-2.5">
-                      <span className="mt-1.5 h-[7px] w-[7px] flex-none rounded-full bg-[var(--color-secondary)]" />
-                      <div>
-                        <div className="text-[13px] leading-relaxed text-[var(--color-text-primary)]">{n.text}</div>
-                        <div className="text-xs text-[var(--color-text-tertiary)]">{n.when}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                {notifications.length === 0 ? (
+                  <div className="py-6 text-center text-sm text-[var(--color-text-tertiary)]">
+                    Sin actividad todavía
+                  </div>
+                ) : (
+                  <div className="flex max-h-[420px] flex-col gap-2 overflow-y-auto">
+                    {notifications.map((n) => {
+                      const unread = !readIds.has(n.id)
+                      const content = (
+                        <div className="flex items-start gap-2.5">
+                          <span
+                            className={`mt-1.5 h-[7px] w-[7px] flex-none rounded-full ${
+                              unread ? 'bg-[var(--color-secondary)]' : 'bg-[var(--color-border)]'
+                            }`}
+                          />
+                          <div className="min-w-0">
+                            <div className="text-[13px] leading-relaxed text-[var(--color-text-primary)]">{n.text}</div>
+                            <div className="text-xs text-[var(--color-text-tertiary)]">{relativeTime(n.when)}</div>
+                          </div>
+                        </div>
+                      )
+                      return n.href ? (
+                        <button
+                          key={n.id}
+                          type="button"
+                          onClick={() => {
+                            setNotifsOpen(false)
+                            router.push(n.href!)
+                          }}
+                          className="rounded-[var(--radius-md)] px-2 py-2 text-left hover:bg-[var(--color-bg-secondary)]"
+                        >
+                          {content}
+                        </button>
+                      ) : (
+                        <div key={n.id} className="px-2 py-2">
+                          {content}
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
               </Card>
             </div>
           )}

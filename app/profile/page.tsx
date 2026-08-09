@@ -128,7 +128,10 @@ export default function ProfilePage() {
       if (!user) throw new Error('No hay sesión activa')
 
       const trimmedName = form.full_name?.trim() ?? ''
-      const nextInitials = (form.initials || trimmedName).trim().slice(0, 2).toUpperCase()
+      const parts = trimmedName.split(/\s+/).filter(Boolean)
+      const nextInitials = parts.length >= 2
+        ? (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+        : (parts[0]?.slice(0, 2) ?? 'U').toUpperCase()
 
       let avatarUrl = form.avatar_url?.trim() ?? null
       let coverUrlValue = coverUrl.trim() || null
