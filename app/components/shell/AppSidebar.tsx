@@ -1,8 +1,9 @@
 import Link from 'next/link'
-import { Bot, Globe, LayoutGrid, Network, Plus, Settings, Users } from 'lucide-react'
+import { Bot, FolderKanban, Globe, LayoutGrid, Network, Plus, Settings, Users } from 'lucide-react'
 
 const MODULES = [
   { key: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
+  { key: 'projects', label: 'Proyectos', href: '/projects', icon: FolderKanban },
   { key: 'agents', label: 'Agentes', href: '/agents', icon: Bot },
   { key: 'knowledge-units', label: 'Knowledge units', href: '/knowledge-units', icon: Network },
   { key: 'community', label: 'Comunidad', href: '/community', icon: Globe },
