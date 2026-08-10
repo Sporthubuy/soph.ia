@@ -12,14 +12,37 @@ export async function GET() {
       .from('projects')
       .select(`
         id, name, description, status, owner_id, created_at, updated_at,
-        owner:profiles!projects_owner_id_fkey(id, full_name, initials),
-        project_members(id, user_id, role, profile:profiles(id, full_name, initials))
+        project_members(id, user_id, role)
       `)
       .eq('organization_id', profile.organization_id)
       .order('updated_at', { ascending: false })
 
     if (error) throw error
-    return NextResponse.json(data)
+
+    const allUserIds = new Set<string>()
+    for (const p of data ?? []) {
+      for (const m of p.project_members) allUserIds.add(m.user_id)
+    }
+
+    let profilesMap: Record<string, { id: string; full_name: string; initials: string }> = {}
+    if (allUserIds.size > 0) {
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, initials')
+        .in('id', [...allUserIds])
+      for (const p of profiles ?? []) profilesMap[p.id] = p
+    }
+
+    const enriched = (data ?? []).map((p) => {
+      const members = p.project_members.map((m) => ({
+        ...m,
+        profile: profilesMap[m.user_id] ?? null,
+      }))
+      const ownerMember = members.find((m) => m.role === 'owner')
+      return { ...p, project_members: members, owner: ownerMember?.profile ?? null }
+    })
+
+    return NextResponse.json(enriched)
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to fetch projects' },

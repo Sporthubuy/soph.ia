@@ -30,15 +30,23 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         assigned_to: body.assigned_to || null,
         created_by: profile.id,
       })
-      .select(`
-        id, title, description, type, status, created_at,
-        assigned:profiles!project_tasks_assigned_to_fkey(id, full_name, initials),
-        creator:profiles!project_tasks_created_by_fkey(id, full_name, initials)
-      `)
+      .select('id, title, description, type, status, assigned_to, created_by, created_at')
       .single()
 
     if (error) throw error
-    return NextResponse.json(data, { status: 201 })
+
+    const userIds = [data.created_by, data.assigned_to].filter(Boolean) as string[]
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, full_name, initials')
+      .in('id', userIds)
+    const pMap = Object.fromEntries((profiles ?? []).map((p) => [p.id, p]))
+
+    return NextResponse.json({
+      ...data,
+      assigned: data.assigned_to ? pMap[data.assigned_to] ?? null : null,
+      creator: pMap[data.created_by] ?? null,
+    }, { status: 201 })
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Failed to create task' },

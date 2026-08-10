@@ -103,11 +103,4 @@ alter table public.agents
   add column if not exists project_id uuid references public.projects(id) on delete set null;
 
 alter table public.knowledge_units
-  add column if not exists project_id uuid references public.knowledge_units(id) on delete set null;
-
--- Fix: KU project_id should reference projects, not knowledge_units
-alter table public.knowledge_units
-  drop constraint if exists knowledge_units_project_id_fkey;
-alter table public.knowledge_units
-  add constraint knowledge_units_project_id_fkey
-  foreign key (project_id) references public.projects(id) on delete set null;
+  add column if not exists project_id uuid references public.projects(id) on delete set null;

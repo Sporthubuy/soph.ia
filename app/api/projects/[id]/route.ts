@@ -13,8 +13,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
       .from('projects')
       .select(`
         id, name, description, status, owner_id, created_at, updated_at,
-        owner:profiles!projects_owner_id_fkey(id, full_name, initials),
-        project_members(id, user_id, role, profile:profiles(id, full_name, initials))
+        project_members(id, user_id, role)
       `)
       .eq('id', id)
       .eq('organization_id', profile.organization_id)
@@ -22,6 +21,24 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
 
     if (error) throw error
     if (!data) return NextResponse.json({ error: 'Project not found' }, { status: 404 })
+
+    const memberUserIds = (data.project_members ?? []).map((m: { user_id: string }) => m.user_id)
+    let profilesMap: Record<string, { id: string; full_name: string; initials: string }> = {}
+    if (memberUserIds.length > 0) {
+      const { data: memberProfiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, initials')
+        .in('id', memberUserIds)
+      for (const p of memberProfiles ?? []) profilesMap[p.id] = p
+    }
+
+    const membersWithProfiles = (data.project_members ?? []).map((m: { user_id: string; role: string; id: string }) => ({
+      ...m,
+      profile: profilesMap[m.user_id] ?? null,
+    }))
+    data.project_members = membersWithProfiles
+
+    const ownerMember = membersWithProfiles.find((m: { role: string }) => m.role === 'owner')
 
     const { data: agents } = await supabase
       .from('agents')
@@ -37,19 +54,47 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
 
     const { data: tasks } = await supabase
       .from('project_tasks')
-      .select(`
-        id, title, description, type, status, created_at, updated_at,
-        assigned:profiles!project_tasks_assigned_to_fkey(id, full_name, initials),
-        creator:profiles!project_tasks_created_by_fkey(id, full_name, initials)
-      `)
+      .select('id, title, description, type, status, assigned_to, created_by, created_at, updated_at')
       .eq('project_id', id)
       .order('created_at', { ascending: false })
 
+    const taskUserIds = new Set<string>()
+    for (const t of tasks ?? []) {
+      if (t.assigned_to) taskUserIds.add(t.assigned_to)
+      if (t.created_by) taskUserIds.add(t.created_by)
+    }
+    const knownIds = new Set(memberUserIds)
+    const extraIds = [...taskUserIds].filter((uid) => !knownIds.has(uid))
+
+    const taskProfilesMap: Record<string, { id: string; full_name: string; initials: string }> = { ...profilesMap }
+    if (extraIds.length > 0) {
+      const { data: extraProfiles } = await supabase
+        .from('profiles')
+        .select('id, full_name, initials')
+        .in('id', extraIds)
+      for (const p of extraProfiles ?? []) {
+        taskProfilesMap[p.id] = p
+      }
+    }
+
+    const enrichedTasks = (tasks ?? []).map((t) => ({
+      id: t.id,
+      title: t.title,
+      description: t.description,
+      type: t.type,
+      status: t.status,
+      created_at: t.created_at,
+      updated_at: t.updated_at,
+      assigned: t.assigned_to ? taskProfilesMap[t.assigned_to] ?? null : null,
+      creator: t.created_by ? taskProfilesMap[t.created_by] ?? null : null,
+    }))
+
     return NextResponse.json({
       ...data,
+      owner: ownerMember?.profile ?? null,
       agents: agents ?? [],
       knowledge_units: kus ?? [],
-      tasks: tasks ?? [],
+      tasks: enrichedTasks,
     })
   } catch (error) {
     return NextResponse.json(
